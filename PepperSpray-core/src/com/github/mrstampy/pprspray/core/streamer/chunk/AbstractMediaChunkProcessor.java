@@ -62,6 +62,7 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 		buf.writeBytes(getMediaStreamType().ordinalBytes());
 		buf.writeInt(getMediaHash());
 		buf.writeLong(streamer.getSequence());
+		buf.writeBytes(message);
 
 		return buf;
 	}
