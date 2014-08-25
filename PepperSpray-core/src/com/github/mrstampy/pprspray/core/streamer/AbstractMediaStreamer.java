@@ -71,19 +71,22 @@ public abstract class AbstractMediaStreamer {
 	private Footer mediaFooter;
 
 	private int id = -1;
-	
+
 	private boolean isAckRequired;
-	
+
 	private int throttle = 0;
 	private int chunksPerSecond = -1;
 	private int streamerPipeSize;
-	
+
 	private String description;
 	
+	private MediaProcessor mediaProcessor = new NoProcessMediaProcessor();
+
 	/**
 	 * The Constructor.
 	 *
-	 * @param defaultPipeSize the default pipe size
+	 * @param defaultPipeSize
+	 *          the default pipe size
 	 */
 	protected AbstractMediaStreamer(int defaultPipeSize) {
 		setStreamerPipeSize(defaultPipeSize);
@@ -157,8 +160,10 @@ public abstract class AbstractMediaStreamer {
 	/**
 	 * Adds the.
 	 *
-	 * @param channel the channel
-	 * @param destination the destination
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
 	public void add(KiSyChannel channel, InetSocketAddress destination) {
 		if (contains(destination)) {
@@ -180,8 +185,10 @@ public abstract class AbstractMediaStreamer {
 	/**
 	 * Removes the.
 	 *
-	 * @param channel the channel
-	 * @param destination the destination
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
 	public void remove(KiSyChannel channel, InetSocketAddress destination) {
 		ByteArrayStreamer bas = get(destination);
@@ -218,9 +225,9 @@ public abstract class AbstractMediaStreamer {
 		bas.setProcessChunk(true);
 		bas.setChunkProcessor(getMediaChunkProcessor());
 		bas.setFooter(getMediaFooter());
-		
-		if(isAckRequired()) bas.ackRequired();
-		if(getChunksPerSecond() > 0) bas.setChunksPerSecond(getChunksPerSecond());
+
+		if (isAckRequired()) bas.ackRequired();
+		if (getChunksPerSecond() > 0) bas.setChunksPerSecond(getChunksPerSecond());
 		bas.setThrottle(getThrottle());
 
 		notifyAdd(channel, destination);
@@ -270,8 +277,8 @@ public abstract class AbstractMediaStreamer {
 	 */
 	protected void stream() {
 		byte[] data = getBytes();
-		
-		if(data == null) return;
+
+		if (data == null) return;
 
 		readLock.lock();
 		try {
@@ -289,12 +296,19 @@ public abstract class AbstractMediaStreamer {
 
 	private void stream(byte[] bytes, ByteArrayStreamer bas) {
 		try {
-			bas.stream(bytes);
+			byte[] processed = process(bytes, bas);
+			bas.stream(processed);
 		} catch (Exception e) {
 			log.error("Unexpected exception streaming from {} to {}", bas.getChannel().localAddress(), bas.getDestination(),
 					e);
 			deadStreams.add(bas);
 		}
+	}
+
+	private byte[] process(byte[] chunk, ByteArrayStreamer bas) {
+		MediaProcessor mp = getMediaProcessor();
+		
+		return mp == null ? chunk : mp.process(chunk, bas);
 	}
 
 	private void takeOutYourDead() {
@@ -349,10 +363,19 @@ public abstract class AbstractMediaStreamer {
 	/**
 	 * Sets the media chunk processor.
 	 *
-	 * @param mediaChunkProcessor the media chunk processor
+	 * @param mediaChunkProcessor
+	 *          the media chunk processor
 	 */
 	public void setMediaChunkProcessor(ChunkProcessor mediaChunkProcessor) {
 		this.mediaChunkProcessor = mediaChunkProcessor;
+		readLock.lock();
+		try {
+			for (ByteArrayStreamer streamer : streamers) {
+				streamer.setChunkProcessor(mediaChunkProcessor);
+			}
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	/**
@@ -367,19 +390,39 @@ public abstract class AbstractMediaStreamer {
 	/**
 	 * Sets the media footer.
 	 *
-	 * @param mediaFooter the media footer
+	 * @param mediaFooter
+	 *          the media footer
 	 */
 	public void setMediaFooter(Footer mediaFooter) {
 		this.mediaFooter = mediaFooter;
+		readLock.lock();
+		try {
+			for (ByteArrayStreamer streamer : streamers) {
+				streamer.setFooter(mediaFooter);
+			}
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	/**
 	 * Sets the ack required.
 	 *
-	 * @param isAckRequired the ack required
+	 * @param isAckRequired
+	 *          the ack required
 	 */
 	public void setAckRequired(boolean isAckRequired) {
 		this.isAckRequired = isAckRequired;
+		if (isAckRequired) {
+			readLock.lock();
+			try {
+				for (ByteArrayStreamer streamer : streamers) {
+					streamer.ackRequired();
+				}
+			} finally {
+				readLock.unlock();
+			}
+		}
 	}
 
 	/**
@@ -394,10 +437,19 @@ public abstract class AbstractMediaStreamer {
 	/**
 	 * Sets the throttle.
 	 *
-	 * @param throttle the throttle
+	 * @param throttle
+	 *          the throttle
 	 */
 	public void setThrottle(int throttle) {
 		this.throttle = throttle;
+		readLock.lock();
+		try {
+			for (ByteArrayStreamer streamer : streamers) {
+				streamer.setThrottle(throttle);
+			}
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	/**
@@ -412,16 +464,26 @@ public abstract class AbstractMediaStreamer {
 	/**
 	 * Sets the chunks per second.
 	 *
-	 * @param chunksPerSecond the chunks per second
+	 * @param chunksPerSecond
+	 *          the chunks per second
 	 */
 	public void setChunksPerSecond(int chunksPerSecond) {
 		this.chunksPerSecond = chunksPerSecond;
+		readLock.lock();
+		try {
+			for (ByteArrayStreamer streamer : streamers) {
+				streamer.setChunksPerSecond(chunksPerSecond);
+			}
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	/**
 	 * Sets the streamer pipe size.
 	 *
-	 * @param streamerPipeSize the streamer pipe size
+	 * @param streamerPipeSize
+	 *          the streamer pipe size
 	 */
 	public void setStreamerPipeSize(int streamerPipeSize) {
 		this.streamerPipeSize = streamerPipeSize;
@@ -448,10 +510,19 @@ public abstract class AbstractMediaStreamer {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description the description
+	 * @param description
+	 *          the description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public MediaProcessor getMediaProcessor() {
+		return mediaProcessor;
+	}
+
+	public void setMediaProcessor(MediaProcessor mediaProcessor) {
+		this.mediaProcessor = mediaProcessor;
 	}
 
 }
