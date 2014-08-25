@@ -23,8 +23,6 @@ package com.github.mrstampy.pprspray.core.streamer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import java.util.Arrays;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Enum MediaStreamType.
@@ -50,7 +48,7 @@ public enum MediaStreamType {
 
 	/** The ordinal bytes. */
 	byte[] ordinalBytes;
-	
+
 	/** The eom bytes. */
 	byte[] eomBytes;
 
@@ -89,51 +87,5 @@ public enum MediaStreamType {
 	 */
 	public byte[] eomBytes() {
 		return eomBytes;
-	}
-
-	/**
-	 * Gets the media stream type as footer.
-	 *
-	 * @param message the message
-	 * @return the media stream type as footer
-	 */
-	public static MediaStreamType getMediaStreamTypeAsFooter(byte[] message) {
-		byte[] b = Arrays.copyOfRange(message, 0, 4);
-
-		for (MediaStreamType type : MediaStreamType.values()) {
-			if (Arrays.equals(type.eomBytes(), b)) return type;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Gets the media stream type as chunk header.
-	 *
-	 * @param message the message
-	 * @return the media stream type as chunk header
-	 */
-	public static MediaStreamType getMediaStreamTypeAsChunkHeader(byte[] message) {
-		byte[] b = Arrays.copyOfRange(message, 0, 4);
-
-		for (MediaStreamType type : MediaStreamType.values()) {
-			if (Arrays.equals(type.ordinalBytes(), b)) return type;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Gets the media stream hash.
-	 *
-	 * @param message the message
-	 * @return the media stream hash
-	 */
-	public static int getMediaStreamHash(byte[] message) {
-		byte[] b = Arrays.copyOfRange(message, 4, 8);
-
-		ByteBuf buf = Unpooled.copiedBuffer(b);
-
-		return buf.getInt(0);
 	}
 }

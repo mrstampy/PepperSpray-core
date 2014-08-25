@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -55,7 +56,7 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 * @param expected the expected
 	 */
 	protected AbstractMediaChunk(byte[] message, MediaStreamType expected) {
-		MediaStreamType type = MediaStreamType.getMediaStreamTypeAsChunkHeader(message);
+		MediaStreamType type = MediaStreamerUtils.getMediaStreamTypeAsChunkHeader(message);
 		if (type == null) throw new IllegalArgumentException("Message is not a media type message");
 		if (type != expected) throw new IllegalArgumentException("Expected type " + expected + " but was " + type);
 
@@ -157,46 +158,6 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 */
 	protected void setMediaStreamType(MediaStreamType mediaStreamType) {
 		this.mediaStreamType = mediaStreamType;
-	}
-
-	/**
-	 * Checks if is media type.
-	 *
-	 * @param message the message
-	 * @param type the type
-	 * @param mediaHash the media hash
-	 * @return true, if checks if is media type
-	 */
-	public static boolean isMediaType(byte[] message, MediaStreamType type, int mediaHash) {
-		if (message == null || message.length != HEADER_LENGTH) return false;
-		
-		return isMediaType(message, type) && isMediaHash(message, mediaHash);
-	}
-
-	/**
-	 * Checks if is media type.
-	 *
-	 * @param message the message
-	 * @param type the type
-	 * @return true, if checks if is media type
-	 */
-	public static boolean isMediaType(byte[] message, MediaStreamType type) {
-		if (message == null || message.length != HEADER_LENGTH) return false;
-
-		byte[] b = Arrays.copyOfRange(message, 0, 4);
-
-		return Arrays.equals(b, type.ordinalBytes());
-	}
-	
-	/**
-	 * Checks if is media hash.
-	 *
-	 * @param message the message
-	 * @param mediaHash the media hash
-	 * @return true, if checks if is media hash
-	 */
-	public static boolean isMediaHash(byte[] message, int mediaHash) {
-		return MediaStreamType.getMediaStreamHash(message) == mediaHash;
 	}
 
 }

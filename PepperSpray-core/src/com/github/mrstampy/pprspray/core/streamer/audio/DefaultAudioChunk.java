@@ -22,6 +22,7 @@ package com.github.mrstampy.pprspray.core.streamer.audio;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,23 +33,15 @@ public class DefaultAudioChunk extends AbstractMediaChunk {
 	private static final long serialVersionUID = -955150605214590719L;
 
 	/**
-	 * Only create one of these when {@link #isDefaultAudioChunk(byte[])} returns
-	 * true. Or not. Whatever.
+	 * Only create one of these when
+	 * {@link MediaStreamerUtils#isDefaultAudioChunk(byte[])} returns true. Or
+	 * not. Whatever.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	public DefaultAudioChunk(byte[] message) {
 		super(message, MediaStreamType.AUDIO);
-	}
-
-	/**
-	 * Checks if is default audio chunk.
-	 *
-	 * @param message the message
-	 * @return true, if checks if is default audio chunk
-	 */
-	public static boolean isDefaultAudioChunk(byte[] message) {
-		return AbstractMediaChunk.isMediaType(message, MediaStreamType.AUDIO);
 	}
 
 }
