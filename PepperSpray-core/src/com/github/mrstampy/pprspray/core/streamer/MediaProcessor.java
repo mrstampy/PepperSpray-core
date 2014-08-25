@@ -36,4 +36,9 @@ public interface MediaProcessor {
 	 * @return the byte[]
 	 */
 	byte[] process(byte[] chunk, ByteArrayStreamer bas);
+	
+	/**
+	 * Inits the.
+	 */
+	void init();
 }

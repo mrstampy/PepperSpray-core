@@ -36,4 +36,11 @@ public class NoProcessMediaProcessor implements MediaProcessor {
 		return chunk;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.mrstampy.pprspray.core.streamer.MediaProcessor#init()
+	 */
+	@Override
+	public void init() {
+	}
+
 }

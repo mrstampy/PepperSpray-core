@@ -79,7 +79,7 @@ public abstract class AbstractMediaStreamer {
 	private int streamerPipeSize;
 
 	private String description;
-	
+
 	private MediaProcessor mediaProcessor = new NoProcessMediaProcessor();
 
 	/**
@@ -283,7 +283,8 @@ public abstract class AbstractMediaStreamer {
 		readLock.lock();
 		try {
 			if (streamers.isEmpty()) stop();
-
+			
+			initMediaProcessor();
 			for (ByteArrayStreamer bas : streamers) {
 				stream(data, bas);
 			}
@@ -292,6 +293,12 @@ public abstract class AbstractMediaStreamer {
 		}
 
 		takeOutYourDead();
+	}
+
+	private void initMediaProcessor() {
+		MediaProcessor mp = getMediaProcessor();
+
+		if (mp != null) mp.init();
 	}
 
 	private void stream(byte[] bytes, ByteArrayStreamer bas) {
@@ -307,7 +314,7 @@ public abstract class AbstractMediaStreamer {
 
 	private byte[] process(byte[] chunk, ByteArrayStreamer bas) {
 		MediaProcessor mp = getMediaProcessor();
-		
+
 		return mp == null ? chunk : mp.process(chunk, bas);
 	}
 
