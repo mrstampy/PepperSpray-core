@@ -105,7 +105,7 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 	 *
 	 * @return the int
 	 */
-	protected int remainingCapacity() {
+	public int remainingCapacity() {
 		return queue.remainingCapacity();
 	}
 
