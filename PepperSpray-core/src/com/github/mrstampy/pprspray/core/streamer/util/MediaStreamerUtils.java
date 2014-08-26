@@ -146,6 +146,23 @@ public class MediaStreamerUtils {
 	}
 
 	/**
+	 * Checks if is media type footer.
+	 *
+	 * @param message
+	 *          the message
+	 * @param type
+	 *          the type
+	 * @return true, if checks if is media type
+	 */
+	public static boolean isMediaTypeFooter(byte[] message, MediaStreamType type) {
+		if (message == null || message.length < DEFAULT_HEADER_LENGTH) return false;
+
+		byte[] b = getChunk(message, MEDIA_TYPE_CHUNK);
+
+		return Arrays.equals(b, type.eomBytes());
+	}
+
+	/**
 	 * Checks if is media hash.
 	 *
 	 * @param message

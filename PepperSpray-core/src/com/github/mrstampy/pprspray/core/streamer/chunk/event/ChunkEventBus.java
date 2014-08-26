@@ -24,6 +24,7 @@ import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.file.DefaultFileChunk;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
@@ -100,21 +101,33 @@ public class ChunkEventBus {
 
 	/**
 	 * Spill over for any subclasses of {@link AbstractMediaChunk} not covered.
-	 * 
+	 *
 	 * @param chunk
+	 *          the chunk
 	 */
 	public static void post(AbstractMediaChunk chunk) {
 		BUS.post(chunk);
 	}
 
 	/**
-	 * Objects are registering for notification of {@link AbstractMediaChunk}s as
-	 * specified in the various post methods and must implement a method with
-	 * return of void, accepting a subclass of {@link AbstractMediaChunk} object
-	 * as the only parameter, and annotated with {@link Subscribe}.
+	 * Post.
 	 *
-	 * @param subscriber
-	 *          the subscriber
+	 * @param footerMessage
+	 *          the footer message
+	 */
+	public static void post(MediaFooterMessage footerMessage) {
+		BUS.post(footerMessage);
+	}
+
+	/**
+	 * Objects are registering for notification of {@link AbstractMediaChunk}s and
+	 * corresponding {@link MediaFooterMessage}s as specified in the various post
+	 * methods and must implement a method with return of void, accepting a
+	 * subclass of {@link AbstractMediaChunk} object as the only parameter, and
+	 * annotated with {@link Subscribe}.
+	 *
+	 * @param o
+	 *          the o
 	 */
 	public static void register(Object o) {
 		BUS.register(o);
