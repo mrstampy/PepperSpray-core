@@ -21,6 +21,7 @@
 package com.github.mrstampy.pprspray.core.streamer.chunk;
 
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 import java.util.Arrays;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
@@ -42,6 +43,9 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	private byte[] data;
 
 	private byte[] customHeaderChunk;
+
+	private int channelPort;
+	private InetSocketAddress sender;
 
 	/**
 	 * Constructor assumes that the message supplied is of the correct media type,
@@ -254,6 +258,44 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 */
 	protected void setCustomHeaderChunk(byte[] customHeaderChunk) {
 		this.customHeaderChunk = customHeaderChunk;
+	}
+
+	/**
+	 * Gets the sender.
+	 *
+	 * @return the sender
+	 */
+	public InetSocketAddress getSender() {
+		return sender;
+	}
+
+	/**
+	 * Sets the sender.
+	 *
+	 * @param sender
+	 *          the sender
+	 */
+	public void setSender(InetSocketAddress sender) {
+		this.sender = sender;
+	}
+
+	/**
+	 * Gets the channel port.
+	 *
+	 * @return the channel port
+	 */
+	public int getChannelPort() {
+		return channelPort;
+	}
+
+	/**
+	 * Sets the channel port.
+	 *
+	 * @param channelPort
+	 *          the channel port
+	 */
+	public void setChannelPort(int channelPort) {
+		this.channelPort = channelPort;
 	}
 
 }
