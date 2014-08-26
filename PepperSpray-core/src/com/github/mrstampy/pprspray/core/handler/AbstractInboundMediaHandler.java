@@ -21,6 +21,14 @@
 package com.github.mrstampy.pprspray.core.handler;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rx.Scheduler;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.kitchensync.message.inbound.AbstractInboundKiSyHandler;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
@@ -32,11 +40,19 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 // TODO: Auto-generated Javadoc
 /**
  * The Class AbstractInboundMediaHandler.
+ *
+ * @param <AMC>
+ *          the generic type
  */
 public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk> extends
 		AbstractInboundKiSyHandler<byte[]> {
+	private static final Logger log = LoggerFactory.getLogger(AbstractInboundMediaHandler.class);
 
 	private static final long serialVersionUID = -575695328821545145L;
+
+	private InboundProcessor inboundProcessor = new NoProcessInboundProcessor();
+
+	private Scheduler svc = Schedulers.from(Executors.newCachedThreadPool());
 
 	/*
 	 * (non-Javadoc)
@@ -72,20 +88,38 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 	 * java.net.InetSocketAddress)
 	 */
 	@Override
-	protected final void onReceive(byte[] message, KiSyChannel channel, InetSocketAddress sender) throws Exception {
-		AMC chunk = createChunk(message);
+	protected final void onReceive(final byte[] message, final KiSyChannel channel, final InetSocketAddress sender)
+			throws Exception {
+		svc.createWorker().schedule(new Action0() {
 
-		chunk.setChannelPort(channel.getPort());
-		chunk.setSender(sender);
+			@Override
+			public void call() {
+				try {
+					AMC chunk = createChunk(message);
+					
+					chunk.setChannelPort(channel.getPort());
+					chunk.setSender(sender);
 
-		ChunkEventBus.post(chunk);
+					transformData(chunk, channel, sender);
+
+					ChunkEventBus.post(chunk);
+				} catch (Exception e) {
+					log.error("Unexpected exception", e);
+				}
+			}
+		});
+	}
+
+	private void transformData(AMC chunk, KiSyChannel channel, InetSocketAddress sender) {
+		byte[] transformed = getInboundProcessor() == null ? chunk.getData() : getInboundProcessor().process(
+				chunk.getData(), channel, sender);
+
+		chunk.setData(transformed);
 	}
 
 	/**
 	 * Creates the chunk.
 	 *
-	 * @param <AMC>
-	 *          the generic type
 	 * @param message
 	 *          the message
 	 * @return the amc
@@ -98,5 +132,24 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 	 * @return the type
 	 */
 	protected abstract MediaStreamType getType();
+
+	/**
+	 * Gets the inbound processor.
+	 *
+	 * @return the inbound processor
+	 */
+	public InboundProcessor getInboundProcessor() {
+		return inboundProcessor;
+	}
+
+	/**
+	 * Sets the inbound processor.
+	 *
+	 * @param inboundProcessor
+	 *          the inbound processor
+	 */
+	public void setInboundProcessor(InboundProcessor inboundProcessor) {
+		this.inboundProcessor = inboundProcessor;
+	}
 
 }

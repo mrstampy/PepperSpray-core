@@ -79,6 +79,19 @@ public class MediaFooterMessage implements Serializable {
 	}
 
 	/**
+	 * Checks if is applicable.
+	 *
+	 * @param type
+	 *          the type
+	 * @param mediaHash
+	 *          the media hash
+	 * @return true, if checks if is applicable
+	 */
+	public boolean isApplicable(MediaStreamType type, int mediaHash) {
+		return getMediaStreamType() == type && mediaHash == getMediaHash();
+	}
+
+	/**
 	 * Gets the media hash.
 	 *
 	 * @return the media hash

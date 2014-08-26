@@ -195,7 +195,7 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 * @param data
 	 *          the data
 	 */
-	protected void setData(byte[] data) {
+	public void setData(byte[] data) {
 		this.data = data;
 	}
 
