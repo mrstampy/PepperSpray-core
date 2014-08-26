@@ -23,6 +23,7 @@ package com.github.mrstampy.pprspray.core.receiver;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -62,6 +63,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 
 	private Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
 	private Subscription sub;
+
+	private AtomicInteger errorCount = new AtomicInteger(0);
 
 	/**
 	 * The Constructor.
@@ -126,10 +129,33 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 			dataLine.open();
 			createWriterService();
 		} catch (LineUnavailableException e) {
-			log.error("Unexpected exception", e);
+			int count = errorCount.incrementAndGet();
+			if (count < 2) {
+				retry();
+			} else {
+				log.error("Unexpected exception", e);
+				throw new IllegalStateException("Cannot open " + getAudioFormat() + ", " + getMediaHash(), e);
+			}
 		}
 	}
 
+	private void retry() {
+		log.warn("Line unavailable, initializing");
+		
+		try {
+			init();
+			open();
+		} catch (LineUnavailableException e) {
+			log.error("Unexpected exception", e);
+			throw new IllegalStateException("Cannot open " + getAudioFormat() + ", " + getMediaHash(), e);
+		} finally {
+			errorCount.set(0);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#isOpen()
+	 */
 	@Override
 	public boolean isOpen() {
 		return open.get();
@@ -182,6 +208,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 *           the line unavailable exception
 	 */
 	public void init() throws LineUnavailableException {
+		close();
+
 		dataLine = AudioSystem.getSourceDataLine(getAudioFormat(), getMixerInfo());
 
 		dataLine.addLineListener(new LineListener() {
