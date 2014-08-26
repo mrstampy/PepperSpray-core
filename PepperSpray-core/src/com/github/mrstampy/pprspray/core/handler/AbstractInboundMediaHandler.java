@@ -73,24 +73,6 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 	 */
 	@Override
 	protected final void onReceive(byte[] message, KiSyChannel channel, InetSocketAddress sender) throws Exception {
-		onReceiveImpl(message, channel, sender);
-	}
-
-	/**
-	 * On receive impl.
-	 *
-	 * @param <AMC>
-	 *          the generic type
-	 * @param message
-	 *          the message
-	 * @param channel
-	 *          the channel
-	 * @param sender
-	 *          the sender
-	 * @throws Exception
-	 *           the exception
-	 */
-	protected void onReceiveImpl(byte[] message, KiSyChannel channel, InetSocketAddress sender) throws Exception {
 		AMC chunk = createChunk(message);
 
 		chunk.setChannelPort(channel.getPort());
