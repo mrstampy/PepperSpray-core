@@ -20,6 +20,8 @@
  */
 package com.github.mrstampy.pprspray.core.receiver;
 
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.sound.sampled.AudioFormat;
@@ -30,6 +32,15 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rx.Scheduler;
+import rx.Subscription;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
+
+import com.github.mrstampy.kitchensync.util.KiSyUtils;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
@@ -41,6 +52,7 @@ import com.google.common.eventbus.Subscribe;
  * The Class AudioReceiver.
  */
 public class AudioReceiver {
+	private static final Logger log = LoggerFactory.getLogger(AudioReceiver.class);
 
 	private AudioFormat audioFormat;
 	private Mixer.Info mixerInfo;
@@ -49,6 +61,11 @@ public class AudioReceiver {
 	private AtomicBoolean open = new AtomicBoolean(false);
 
 	private int mediaHash;
+
+	private ConcurrentSkipListSet<DefaultAudioChunk> chunks = new ConcurrentSkipListSet<>();
+
+	private Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
+	private Subscription sub;
 
 	/**
 	 * The Constructor.
@@ -79,18 +96,9 @@ public class AudioReceiver {
 	@Subscribe
 	public void receive(DefaultAudioChunk chunk) {
 		if (chunk.getMediaHash() != mediaHash) return;
-
-		if (!open.get()) {
-			try {
-				open();
-			} catch (Exception e) {
-
-			}
-		}
-
 		if (!open.get()) return;
 
-		dataLine.write(chunk.getData(), 0, chunk.getData().length);
+		chunks.add(chunk);
 	}
 
 	/**
@@ -108,19 +116,59 @@ public class AudioReceiver {
 	}
 
 	/**
+	 * Clear.
+	 */
+	public void clear() {
+		chunks.clear();
+	}
+
+	/**
 	 * Open.
 	 *
 	 * @throws LineUnavailableException
 	 *           the line unavailable exception
 	 */
 	public void open() throws LineUnavailableException {
+		if (open.get()) return;
+
 		dataLine.open();
+		createWriterService();
+	}
+
+	private void createWriterService() {
+		sub = svc.createWorker().schedule(new Action0() {
+
+			@Override
+			public void call() {
+				while (open.get()) {
+					while (open.get() && chunks.size() <= 10) {
+						KiSyUtils.snooze(5);
+					}
+
+					while (open.get() && chunks.size() > 10) {
+						write(chunks.pollFirst());
+					}
+				}
+
+				sub.unsubscribe();
+			}
+		});
+	}
+
+	private void write(DefaultAudioChunk chunk) {
+		try {
+			dataLine.write(chunk.getData(), 0, chunk.getData().length);
+		} catch (Exception e) {
+			log.error("Cannot write audio, closing", e);
+			close();
+		}
 	}
 
 	/**
 	 * Close.
 	 */
 	public void close() {
+		if (!open.get()) return;
 		dataLine.close();
 	}
 
@@ -152,6 +200,7 @@ public class AudioReceiver {
 		});
 
 		open.set(dataLine.isActive());
+		if (open.get()) createWriterService();
 	}
 
 	/**
