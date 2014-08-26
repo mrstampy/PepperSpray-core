@@ -72,11 +72,13 @@ public abstract class AbstractMediaStreamer {
 
 	private int id = -1;
 
-	private boolean isAckRequired;
+	private boolean ackRequired;
+	private boolean fullThrottle;
 
 	private int throttle = 0;
 	private int chunksPerSecond = -1;
 	private int streamerPipeSize;
+	private int concurrentThreads;
 
 	private String description;
 
@@ -228,7 +230,10 @@ public abstract class AbstractMediaStreamer {
 
 		if (isAckRequired()) bas.ackRequired();
 		if (getChunksPerSecond() > 0) bas.setChunksPerSecond(getChunksPerSecond());
+		if (isFullThrottle()) bas.fullThrottle();
+
 		bas.setThrottle(getThrottle());
+		bas.setConcurrentThreads(getConcurrentThreads());
 
 		notifyAdd(channel, destination);
 
@@ -241,7 +246,7 @@ public abstract class AbstractMediaStreamer {
 	 * @return true, if checks if is ack required
 	 */
 	public boolean isAckRequired() {
-		return isAckRequired;
+		return ackRequired;
 	}
 
 	private void notifyAdd(KiSyChannel channel, InetSocketAddress dest) {
@@ -283,7 +288,7 @@ public abstract class AbstractMediaStreamer {
 		readLock.lock();
 		try {
 			if (streamers.isEmpty()) stop();
-			
+
 			initMediaProcessor();
 			for (ByteArrayStreamer bas : streamers) {
 				stream(data, bas);
@@ -419,7 +424,7 @@ public abstract class AbstractMediaStreamer {
 	 *          the ack required
 	 */
 	public void setAckRequired(boolean isAckRequired) {
-		this.isAckRequired = isAckRequired;
+		this.ackRequired = isAckRequired;
 		if (isAckRequired) {
 			readLock.lock();
 			try {
@@ -524,12 +529,79 @@ public abstract class AbstractMediaStreamer {
 		this.description = description;
 	}
 
+	/**
+	 * Gets the media processor.
+	 *
+	 * @return the media processor
+	 */
 	public MediaProcessor getMediaProcessor() {
 		return mediaProcessor;
 	}
 
+	/**
+	 * Sets the media processor.
+	 *
+	 * @param mediaProcessor
+	 *          the media processor
+	 */
 	public void setMediaProcessor(MediaProcessor mediaProcessor) {
 		this.mediaProcessor = mediaProcessor;
+	}
+
+	/**
+	 * Gets the concurrent threads.
+	 *
+	 * @return the concurrent threads
+	 */
+	public int getConcurrentThreads() {
+		return concurrentThreads;
+	}
+
+	/**
+	 * Sets the concurrent threads.
+	 *
+	 * @param concurrentThreads
+	 *          the concurrent threads
+	 */
+	public void setConcurrentThreads(int concurrentThreads) {
+		this.concurrentThreads = concurrentThreads;
+		readLock.lock();
+		try {
+			for (ByteArrayStreamer streamer : streamers) {
+				streamer.setConcurrentThreads(concurrentThreads);
+			}
+		} finally {
+			readLock.unlock();
+		}
+	}
+
+	/**
+	 * Checks if is full throttle.
+	 *
+	 * @return true, if checks if is full throttle
+	 */
+	public boolean isFullThrottle() {
+		return fullThrottle;
+	}
+
+	/**
+	 * Sets the full throttle.
+	 *
+	 * @param fullThrottle
+	 *          the full throttle
+	 */
+	public void setFullThrottle(boolean fullThrottle) {
+		this.fullThrottle = fullThrottle;
+		if (!fullThrottle) return;
+
+		readLock.lock();
+		try {
+			for (ByteArrayStreamer streamer : streamers) {
+				streamer.fullThrottle();
+			}
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 }

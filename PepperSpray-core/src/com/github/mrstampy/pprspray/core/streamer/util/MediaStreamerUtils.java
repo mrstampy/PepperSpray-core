@@ -33,11 +33,19 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
  */
 public class MediaStreamerUtils {
 
+	/** The Constant DEFAULT_HEADER_LENGTH. */
 	public static final int DEFAULT_HEADER_LENGTH = 18;
 
+	/** The Constant MEDIA_TYPE_CHUNK. */
 	protected static final Chunk MEDIA_TYPE_CHUNK = new Chunk(0, 4);
+
+	/** The Constant HEADER_LENGTH_CHUNK. */
 	protected static final Chunk HEADER_LENGTH_CHUNK = new Chunk(4, 6);
+
+	/** The Constant MEDIA_HASH_CHUNK. */
 	protected static final Chunk MEDIA_HASH_CHUNK = new Chunk(6, 10);
+
+	/** The Constant SEQUENCE_CHUNK. */
 	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, 18);
 
 	/**
@@ -198,10 +206,26 @@ public class MediaStreamerUtils {
 		return getShortChunk(getChunk(message, HEADER_LENGTH_CHUNK));
 	}
 
+	/**
+	 * Gets the sequence.
+	 *
+	 * @param message
+	 *          the message
+	 * @return the sequence
+	 */
 	public static long getSequence(byte[] message) {
 		return getLongChunk(getChunk(message, SEQUENCE_CHUNK));
 	}
 
+	/**
+	 * Gets the custom header chunk.
+	 *
+	 * @param message
+	 *          the message
+	 * @param headerLength
+	 *          the header length
+	 * @return the custom header chunk
+	 */
 	public static byte[] getCustomHeaderChunk(byte[] message, int headerLength) {
 		//@formatter:off
 		return headerLength <= DEFAULT_HEADER_LENGTH 
@@ -210,35 +234,83 @@ public class MediaStreamerUtils {
 		//@formatter:on
 	}
 
+	/**
+	 * Gets the integer chunk.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 * @return the integer chunk
+	 */
 	protected static int getIntegerChunk(byte[] chunk) {
 		ByteBuf buf = Unpooled.copiedBuffer(chunk);
 
 		return buf.getInt(0);
 	}
 
+	/**
+	 * Gets the short chunk.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 * @return the short chunk
+	 */
 	protected static int getShortChunk(byte[] chunk) {
 		ByteBuf buf = Unpooled.copiedBuffer(chunk);
 
 		return buf.getShort(0);
 	}
 
+	/**
+	 * Gets the long chunk.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 * @return the long chunk
+	 */
 	protected static long getLongChunk(byte[] chunk) {
 		ByteBuf buf = Unpooled.copiedBuffer(chunk);
 
 		return buf.getLong(0);
 	}
 
+	/**
+	 * Gets the chunk.
+	 *
+	 * @param message
+	 *          the message
+	 * @param chunk
+	 *          the chunk
+	 * @return the chunk
+	 */
 	protected static byte[] getChunk(byte[] message, Chunk chunk) {
 		return Arrays.copyOfRange(message, chunk.start, chunk.end);
 	}
 
+	/**
+	 * The Constructor.
+	 */
 	protected MediaStreamerUtils() {
 	}
 
+	/**
+	 * The Class Chunk.
+	 */
 	protected static class Chunk {
+
+		/** The start. */
 		int start;
+
+		/** The end. */
 		int end;
 
+		/**
+		 * The Constructor.
+		 *
+		 * @param start
+		 *          the start
+		 * @param end
+		 *          the end
+		 */
 		public Chunk(int start, int end) {
 			this.start = start;
 			this.end = end;
