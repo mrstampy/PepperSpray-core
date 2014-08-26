@@ -36,21 +36,27 @@ public class MediaFooter implements Footer {
 	/**
 	 * The Constructor.
 	 *
-	 * @param footerMessage the footer message
+	 * @param footerMessage
+	 *          the footer message
 	 */
 	public MediaFooter(MediaFooterMessage footerMessage) {
 		setFooterMessage(footerMessage);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.mrstampy.kitchensync.stream.footer.Footer#isFooter(byte[])
 	 */
 	@Override
 	public boolean isFooter(byte[] message) {
-		return MediaFooterMessage.isMediaFooter(message, getFooterMessage().getMediaStreamType(), getFooterMessage().getMediaHash());
+		return MediaFooterMessage.isMediaFooter(message, getFooterMessage().getMediaStreamType(), getFooterMessage()
+				.getMediaHash());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.mrstampy.kitchensync.stream.footer.Footer#createFooter()
 	 */
 	@Override
@@ -63,7 +69,9 @@ public class MediaFooter implements Footer {
 		return buf.array();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.mrstampy.kitchensync.stream.footer.Footer#reset()
 	 */
 	@Override
@@ -82,7 +90,8 @@ public class MediaFooter implements Footer {
 	/**
 	 * Sets the footer message.
 	 *
-	 * @param footerMessage the footer message
+	 * @param footerMessage
+	 *          the footer message
 	 */
 	public void setFooterMessage(MediaFooterMessage footerMessage) {
 		this.footerMessage = footerMessage;

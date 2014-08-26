@@ -34,7 +34,8 @@ public class DefaultFileChunk extends AbstractMediaChunk {
 	/**
 	 * The Constructor.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	public DefaultFileChunk(byte[] message) {
 		super(message, MediaStreamType.FILE);

@@ -34,12 +34,13 @@ public class DefaultTextChunk extends AbstractMediaChunk {
 	/**
 	 * The Constructor.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	public DefaultTextChunk(byte[] message) {
 		super(message, MediaStreamType.TEXT);
 	}
-	
+
 	/**
 	 * Gets the message.
 	 *

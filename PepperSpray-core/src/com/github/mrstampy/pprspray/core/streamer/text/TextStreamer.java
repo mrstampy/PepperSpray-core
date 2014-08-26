@@ -50,7 +50,8 @@ public class TextStreamer extends BinaryStreamer {
 	/**
 	 * Stream.
 	 *
-	 * @param text the text
+	 * @param text
+	 *          the text
 	 */
 	public void stream(String text) {
 		if (StringUtils.isEmpty(text)) return;

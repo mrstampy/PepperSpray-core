@@ -36,8 +36,12 @@ public class DefaultTextChunkProcessor extends AbstractMediaChunkProcessor {
 		super(MediaStreamType.TEXT);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor#createMediaHash()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor
+	 * #createMediaHash()
 	 */
 	@Override
 	protected int createMediaHash() {

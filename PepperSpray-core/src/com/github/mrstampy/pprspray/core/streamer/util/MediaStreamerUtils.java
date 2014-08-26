@@ -26,12 +26,16 @@ import io.netty.buffer.Unpooled;
 import java.util.Arrays;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
+import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunkProcessor;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class MediaStreamerUtils.
  */
 public class MediaStreamerUtils {
+
+	private static final int JSON_KEY_LENGTH = DefaultJsonChunkProcessor.JSON_KEY_BYTES.length;
 
 	/** The Constant DEFAULT_HEADER_LENGTH. */
 	public static final int DEFAULT_HEADER_LENGTH = 18;
@@ -46,7 +50,11 @@ public class MediaStreamerUtils {
 	protected static final Chunk MEDIA_HASH_CHUNK = new Chunk(6, 10);
 
 	/** The Constant SEQUENCE_CHUNK. */
-	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, 18);
+	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, DEFAULT_HEADER_LENGTH);
+
+	/** The Constant JSON_KEY_CHUNK. */
+	protected static final Chunk JSON_KEY_CHUNK = new Chunk(DEFAULT_HEADER_LENGTH, DEFAULT_HEADER_LENGTH
+			+ JSON_KEY_LENGTH);
 
 	/**
 	 * Checks if is binary chunk.
@@ -232,6 +240,46 @@ public class MediaStreamerUtils {
 				? new byte[0] 
 				: getChunk(message, new Chunk(DEFAULT_HEADER_LENGTH, headerLength));
 		//@formatter:on
+	}
+
+	/**
+	 * Returns true if the message indicates it is a JSON message.
+	 *
+	 * @param message
+	 *          the message
+	 * @return true, if checks if is json message
+	 * @see DefaultJsonChunk
+	 * @see DefaultJsonChunkProcessor
+	 */
+	public static boolean isJsonMessage(byte[] message) {
+		if (message == null || message.length <= DEFAULT_HEADER_LENGTH + JSON_KEY_LENGTH) return false;
+
+		byte[] b = getChunk(message, JSON_KEY_CHUNK);
+
+		return Arrays.equals(b, DefaultJsonChunkProcessor.JSON_KEY_BYTES);
+	}
+
+	/**
+	 * Returns true if the message indicates it is a JSON message and it contains
+	 * the name of the specified class as the Java representation of the message.
+	 *
+	 * @param message
+	 *          the message
+	 * @param jsonClassBytes
+	 *          the json class bytes
+	 * @return true, if checks if is json message
+	 * @see DefaultJsonChunk
+	 * @see DefaultJsonChunkProcessor
+	 */
+	public static boolean isJsonMessage(byte[] message, byte[] jsonClassBytes) {
+		if (!isJsonMessage(message)) return false;
+
+		int start = DEFAULT_HEADER_LENGTH + JSON_KEY_LENGTH;
+		int end = start + jsonClassBytes.length;
+
+		byte[] b = getChunk(message, new Chunk(start, end));
+
+		return Arrays.equals(b, jsonClassBytes);
 	}
 
 	/**

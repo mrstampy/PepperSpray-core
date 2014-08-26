@@ -64,7 +64,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Extract custom header chunk.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	protected void extractCustomHeaderChunk(byte[] message) {
 		setCustomHeaderChunk(MediaStreamerUtils.getCustomHeaderChunk(message, getHeaderLength()));
@@ -73,7 +74,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Extract sequence.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	protected void extractSequence(byte[] message) {
 		long sequence = MediaStreamerUtils.getSequence(message);
@@ -83,7 +85,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Extract media hash.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	protected void extractMediaHash(byte[] message) {
 		int mediaHash = MediaStreamerUtils.getMediaStreamHash(message);
@@ -93,7 +96,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Extract header length.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	protected void extractHeaderLength(byte[] message) {
 		int headerLength = MediaStreamerUtils.getMediaStreamHeaderLength(message);
@@ -108,8 +112,10 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Extract media stream type.
 	 *
-	 * @param message the message
-	 * @param expected the expected
+	 * @param message
+	 *          the message
+	 * @param expected
+	 *          the expected
 	 */
 	protected void extractMediaStreamType(byte[] message, MediaStreamType expected) {
 		MediaStreamType type = MediaStreamerUtils.getMediaStreamTypeAsChunkHeader(message);
@@ -220,7 +226,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Sets the header length.
 	 *
-	 * @param headerLength the header length
+	 * @param headerLength
+	 *          the header length
 	 */
 	protected void setHeaderLength(int headerLength) {
 		this.headerLength = headerLength;
@@ -230,7 +237,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 * Gets the custom header chunk.
 	 *
 	 * @return the custom header chunk
-	 * @see AbstractMediaChunkProcessor#writeHeader(com.github.mrstampy.kitchensync.stream.Streamer, io.netty.buffer.ByteBuf, int)
+	 * @see AbstractMediaChunkProcessor#writeHeader(com.github.mrstampy.kitchensync.stream.Streamer,
+	 *      io.netty.buffer.ByteBuf, int)
 	 */
 	protected byte[] getCustomHeaderChunk() {
 		return customHeaderChunk;
@@ -239,8 +247,10 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Sets the custom header chunk.
 	 *
-	 * @param customHeaderChunk the custom header chunk
-	 * @see AbstractMediaChunkProcessor#writeHeader(com.github.mrstampy.kitchensync.stream.Streamer, io.netty.buffer.ByteBuf, int)
+	 * @param customHeaderChunk
+	 *          the custom header chunk
+	 * @see AbstractMediaChunkProcessor#writeHeader(com.github.mrstampy.kitchensync.stream.Streamer,
+	 *      io.netty.buffer.ByteBuf, int)
 	 */
 	protected void setCustomHeaderChunk(byte[] customHeaderChunk) {
 		this.customHeaderChunk = customHeaderChunk;

@@ -38,7 +38,8 @@ public class DefaultAudioChunkProcessor extends AbstractMediaChunkProcessor {
 	/**
 	 * The Constructor.
 	 *
-	 * @param audioFormat the audio format
+	 * @param audioFormat
+	 *          the audio format
 	 */
 	public DefaultAudioChunkProcessor(AudioFormat audioFormat) {
 		super(MediaStreamType.AUDIO);
@@ -57,8 +58,12 @@ public class DefaultAudioChunkProcessor extends AbstractMediaChunkProcessor {
 		return audioFormat;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor#createMediaHash()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor
+	 * #createMediaHash()
 	 */
 	@Override
 	protected int createMediaHash() {

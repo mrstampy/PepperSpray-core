@@ -44,7 +44,8 @@ public class MediaFooterMessage implements Serializable {
 	/**
 	 * The Constructor.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	public MediaFooterMessage(byte[] message) {
 		parseMessage(message);
@@ -53,8 +54,10 @@ public class MediaFooterMessage implements Serializable {
 	/**
 	 * The Constructor.
 	 *
-	 * @param type the type
-	 * @param mediaHash the media hash
+	 * @param type
+	 *          the type
+	 * @param mediaHash
+	 *          the media hash
 	 */
 	public MediaFooterMessage(MediaStreamType type, int mediaHash) {
 		setMediaHash(mediaHash);
@@ -64,7 +67,8 @@ public class MediaFooterMessage implements Serializable {
 	/**
 	 * Parses the message.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	protected void parseMessage(byte[] message) {
 		ByteBuf buf = Unpooled.buffer(8);
@@ -86,7 +90,8 @@ public class MediaFooterMessage implements Serializable {
 	/**
 	 * Sets the media hash.
 	 *
-	 * @param mediaHash the media hash
+	 * @param mediaHash
+	 *          the media hash
 	 */
 	protected void setMediaHash(int mediaHash) {
 		this.mediaHash = mediaHash;
@@ -104,7 +109,8 @@ public class MediaFooterMessage implements Serializable {
 	/**
 	 * Sets the media stream type.
 	 *
-	 * @param mediaStreamType the media stream type
+	 * @param mediaStreamType
+	 *          the media stream type
 	 */
 	protected void setMediaStreamType(MediaStreamType mediaStreamType) {
 		if (mediaStreamType == null) throw new IllegalArgumentException("Media stream type cannot be null");
@@ -114,9 +120,12 @@ public class MediaFooterMessage implements Serializable {
 	/**
 	 * Checks if is media footer.
 	 *
-	 * @param message the message
-	 * @param type the type
-	 * @param mediaHash the media hash
+	 * @param message
+	 *          the message
+	 * @param type
+	 *          the type
+	 * @param mediaHash
+	 *          the media hash
 	 * @return true, if checks if is media footer
 	 */
 	public static boolean isMediaFooter(byte[] message, MediaStreamType type, int mediaHash) {

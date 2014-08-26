@@ -31,21 +31,26 @@ import com.github.sarxos.webcam.Webcam;
  * The Class DefaultWebcamChunkProcessor.
  */
 public class DefaultWebcamChunkProcessor extends AbstractMediaChunkProcessor {
-	
+
 	private Webcam webcam;
 
 	/**
 	 * The Constructor.
 	 *
-	 * @param webcam the webcam
+	 * @param webcam
+	 *          the webcam
 	 */
 	public DefaultWebcamChunkProcessor(Webcam webcam) {
 		super(MediaStreamType.VIDEO);
 		this.webcam = webcam;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor#createMediaHash()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor
+	 * #createMediaHash()
 	 */
 	@Override
 	protected int createMediaHash() {

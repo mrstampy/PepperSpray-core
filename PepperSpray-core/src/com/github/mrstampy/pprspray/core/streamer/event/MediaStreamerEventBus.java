@@ -35,18 +35,21 @@ public class MediaStreamerEventBus {
 	/**
 	 * Used by {@link AbstractMediaStreamer} implementations to publish events.
 	 *
-	 * @param e the e
+	 * @param e
+	 *          the e
 	 */
 	public static void post(MediaStreamerEvent e) {
 		BUS.post(e);
 	}
 
 	/**
-	 * Objects are registering for notification of {@link MediaStreamerEvent}s and must
-	 * implement a method with return of void, accepting a {@link MediaStreamerEvent}
-	 * object as the only parameter, and annotated with {@link Subscribe}.
+	 * Objects are registering for notification of {@link MediaStreamerEvent}s and
+	 * must implement a method with return of void, accepting a
+	 * {@link MediaStreamerEvent} object as the only parameter, and annotated with
+	 * {@link Subscribe}.
 	 *
-	 * @param subscriber the subscriber
+	 * @param subscriber
+	 *          the subscriber
 	 */
 	public static void register(Object subscriber) {
 		BUS.register(subscriber);

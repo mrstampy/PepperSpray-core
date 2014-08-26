@@ -53,8 +53,10 @@ public class MediaFileStreamer extends BinaryStreamer {
 	/**
 	 * Stream.
 	 *
-	 * @param file the file
-	 * @throws IOException the IO exception
+	 * @param file
+	 *          the file
+	 * @throws IOException
+	 *           the IO exception
 	 */
 	public void stream(File file) throws IOException {
 		if (file == null) return;

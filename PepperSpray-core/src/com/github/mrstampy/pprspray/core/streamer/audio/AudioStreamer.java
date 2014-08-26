@@ -77,9 +77,12 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	/**
 	 * The Constructor.
 	 *
-	 * @param audioFormat the audio format
-	 * @param mixerInfo the mixer info
-	 * @throws LineUnavailableException the line unavailable exception
+	 * @param audioFormat
+	 *          the audio format
+	 * @param mixerInfo
+	 *          the mixer info
+	 * @throws LineUnavailableException
+	 *           the line unavailable exception
 	 */
 	public AudioStreamer(AudioFormat audioFormat, Mixer.Info mixerInfo) throws LineUnavailableException {
 		super(DEFAULT_AUDIO_PIPE_SIZE);
@@ -92,9 +95,12 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	/**
 	 * Inits the.
 	 *
-	 * @param audioFormat the audio format
-	 * @param mixerInfo the mixer info
-	 * @throws LineUnavailableException the line unavailable exception
+	 * @param audioFormat
+	 *          the audio format
+	 * @param mixerInfo
+	 *          the mixer info
+	 * @throws LineUnavailableException
+	 *           the line unavailable exception
 	 */
 	public void init(AudioFormat audioFormat, Mixer.Info mixerInfo) throws LineUnavailableException {
 		if (isStreaming()) throw new IllegalStateException("Cannot initialize when streaming");
@@ -115,8 +121,11 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
 	 */
 	public void start() {
 		dataLine.start();
@@ -126,8 +135,11 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		super.start();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#stop()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#stop()
 	 */
 	public void stop() {
 		dataLine.stop();
@@ -184,16 +196,23 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#isStreamable()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#isStreamable
+	 * ()
 	 */
 	@Override
 	protected boolean isStreamable() {
 		return streamable.get();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#getBytes()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#getBytes()
 	 */
 	@Override
 	protected byte[] getBytes() {
@@ -251,7 +270,8 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	/**
 	 * Sets the audio chunk size.
 	 *
-	 * @param audioChunkSize the audio chunk size
+	 * @param audioChunkSize
+	 *          the audio chunk size
 	 */
 	public void setAudioChunkSize(int audioChunkSize) {
 		if (isStreaming()) throw new IllegalStateException("Cannot set audio chunk size when streaming");

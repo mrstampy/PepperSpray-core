@@ -34,7 +34,8 @@ public class DefaultBinaryChunk extends AbstractMediaChunk {
 	/**
 	 * The Constructor.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 */
 	public DefaultBinaryChunk(byte[] message) {
 		super(message, MediaStreamType.BINARY);

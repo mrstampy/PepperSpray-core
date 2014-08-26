@@ -28,15 +28,21 @@ import com.github.mrstampy.kitchensync.stream.ByteArrayStreamer;
  */
 public class NoProcessMediaProcessor implements MediaProcessor {
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.MediaProcessor#process(byte[], com.github.mrstampy.kitchensync.stream.ByteArrayStreamer)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.MediaProcessor#process(byte[],
+	 * com.github.mrstampy.kitchensync.stream.ByteArrayStreamer)
 	 */
 	@Override
 	public byte[] process(byte[] chunk, ByteArrayStreamer bas) {
 		return chunk;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.github.mrstampy.pprspray.core.streamer.MediaProcessor#init()
 	 */
 	@Override

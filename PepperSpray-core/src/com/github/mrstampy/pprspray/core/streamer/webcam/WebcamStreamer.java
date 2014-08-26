@@ -49,11 +49,12 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 	/**
 	 * The Constructor.
 	 *
-	 * @param webcam the webcam
+	 * @param webcam
+	 *          the webcam
 	 */
 	public WebcamStreamer(Webcam webcam) {
 		super(DEFAULT_VIDEO_PIPE_SIZE);
-		
+
 		this.webcam = webcam;
 		webcam.addWebcamListener(listener);
 		open.set(webcam.isOpen());
@@ -61,8 +62,11 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		initDefaultChunkProcessorAndFooter();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
 	 */
 	public void start() {
 		if (isStreaming()) return;
@@ -71,8 +75,11 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		super.start();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#stop()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#stop()
 	 */
 	public void stop() {
 		if (!isStreaming()) return;
@@ -81,16 +88,22 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		webcam.close();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#destroy()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#destroy()
 	 */
 	public void destroy() {
 		super.destroy();
 		webcam.removeWebcamListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#getBytes()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#getBytes()
 	 */
 	@Override
 	protected byte[] getBytes() {
@@ -101,8 +114,12 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		return ImageUtils.toByteArray(image, ImageUtils.FORMAT_PNG);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#isStreamable()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#isStreamable
+	 * ()
 	 */
 	@Override
 	protected boolean isStreamable() {
@@ -127,24 +144,36 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 	 */
 	protected class WebamStreamerListener implements WebcamListener {
 
-		/* (non-Javadoc)
-		 * @see com.github.sarxos.webcam.WebcamListener#webcamOpen(com.github.sarxos.webcam.WebcamEvent)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * com.github.sarxos.webcam.WebcamListener#webcamOpen(com.github.sarxos.
+		 * webcam.WebcamEvent)
 		 */
 		@Override
 		public void webcamOpen(WebcamEvent we) {
 			open.set(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see com.github.sarxos.webcam.WebcamListener#webcamClosed(com.github.sarxos.webcam.WebcamEvent)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * com.github.sarxos.webcam.WebcamListener#webcamClosed(com.github.sarxos
+		 * .webcam.WebcamEvent)
 		 */
 		@Override
 		public void webcamClosed(WebcamEvent we) {
 			phooCamClosed();
 		}
 
-		/* (non-Javadoc)
-		 * @see com.github.sarxos.webcam.WebcamListener#webcamDisposed(com.github.sarxos.webcam.WebcamEvent)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * com.github.sarxos.webcam.WebcamListener#webcamDisposed(com.github.sarxos
+		 * .webcam.WebcamEvent)
 		 */
 		@Override
 		public void webcamDisposed(WebcamEvent we) {

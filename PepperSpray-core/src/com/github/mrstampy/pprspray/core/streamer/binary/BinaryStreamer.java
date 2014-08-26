@@ -47,11 +47,12 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 	public BinaryStreamer() {
 		this(DEFAULT_BINARY_PIPE_SIZE);
 	}
-	
+
 	/**
 	 * The Constructor.
 	 *
-	 * @param defaultPipeSize the default pipe size
+	 * @param defaultPipeSize
+	 *          the default pipe size
 	 */
 	public BinaryStreamer(int defaultPipeSize) {
 		super(defaultPipeSize);
@@ -62,7 +63,8 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 	/**
 	 * Stream.
 	 *
-	 * @param bytes the bytes
+	 * @param bytes
+	 *          the bytes
 	 */
 	public void stream(byte[] bytes) {
 		if (bytes == null || bytes.length == 0) return;
@@ -72,16 +74,23 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 		add(bytes);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#isStreamable()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#isStreamable
+	 * ()
 	 */
 	@Override
 	protected boolean isStreamable() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#getBytes()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#getBytes()
 	 */
 	@Override
 	protected byte[] getBytes() {
@@ -93,7 +102,8 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 	/**
 	 * Adds the.
 	 *
-	 * @param bytes the bytes
+	 * @param bytes
+	 *          the bytes
 	 */
 	protected void add(byte[] bytes) {
 		if (remainingCapacity() == 0) take();

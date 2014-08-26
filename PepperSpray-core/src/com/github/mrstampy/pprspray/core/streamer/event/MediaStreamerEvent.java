@@ -39,8 +39,10 @@ public class MediaStreamerEvent {
 	/**
 	 * The Constructor.
 	 *
-	 * @param source the source
-	 * @param type the type
+	 * @param source
+	 *          the source
+	 * @param type
+	 *          the type
 	 */
 	public MediaStreamerEvent(AbstractMediaStreamer source, MediaStreamerEventType type) {
 		this.source = source;
@@ -50,10 +52,14 @@ public class MediaStreamerEvent {
 	/**
 	 * The Constructor.
 	 *
-	 * @param source the source
-	 * @param type the type
-	 * @param channel the channel
-	 * @param destination the destination
+	 * @param source
+	 *          the source
+	 * @param type
+	 *          the type
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
 	public MediaStreamerEvent(AbstractMediaStreamer source, MediaStreamerEventType type, KiSyChannel channel,
 			InetSocketAddress destination) {

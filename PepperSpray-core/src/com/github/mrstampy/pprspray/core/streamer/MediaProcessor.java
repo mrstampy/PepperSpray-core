@@ -31,12 +31,14 @@ public interface MediaProcessor {
 	/**
 	 * Process.
 	 *
-	 * @param chunk the chunk
-	 * @param bas the bas
+	 * @param chunk
+	 *          the chunk
+	 * @param bas
+	 *          the bas
 	 * @return the byte[]
 	 */
 	byte[] process(byte[] chunk, ByteArrayStreamer bas);
-	
+
 	/**
 	 * Inits the.
 	 */
