@@ -29,8 +29,11 @@ public interface MediaTransformer {
 	/**
 	 * Transform.
 	 *
-	 * @param data the data
+	 * @param data
+	 *          the data
+	 * @param mediaHash
+	 *          the media hash
 	 * @return the byte[]
 	 */
-	byte[] transform(byte[] data);
+	byte[] transform(byte[] data, int mediaHash);
 }

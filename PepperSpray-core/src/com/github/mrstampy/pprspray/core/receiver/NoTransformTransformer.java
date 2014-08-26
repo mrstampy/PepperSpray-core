@@ -31,10 +31,10 @@ public class NoTransformTransformer implements MediaTransformer {
 	 * 
 	 * @see
 	 * com.github.mrstampy.pprspray.core.receiver.MediaTransformer#transform(byte
-	 * [])
+	 * [], int)
 	 */
 	@Override
-	public byte[] transform(byte[] data) {
+	public byte[] transform(byte[] data, int mediaHash) {
 		return data;
 	}
 

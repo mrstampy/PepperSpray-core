@@ -120,7 +120,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	}
 
 	private byte[] transform(byte[] rehydrated) {
-		return getTransformer() == null ? rehydrated : getTransformer().transform(rehydrated);
+		return getTransformer() == null ? rehydrated : getTransformer().transform(rehydrated, getMediaHash());
 	}
 
 	private int calcSize(AMC[] array) {
