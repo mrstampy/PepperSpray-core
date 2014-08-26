@@ -116,16 +116,24 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 
 			@Override
 			public void call() {
-				try {
-					byte[] transformed = rehydrateAndTransform(array);
-
-					write(transformed);
-				} catch (Exception e) {
-					log.error("Unexpected exception, closing", e);
-					close();
-				}
+				write(array);
 			}
 		});
+	}
+
+	private void write(DefaultAudioChunk[] array) {
+		try {
+			byte[] b = rehydrateAndTransform(array);
+
+			if (hasTransformed(b)) dataLine.write(b, 0, b.length);
+		} catch (Exception e) {
+			log.error("Unexpected exception, closing", e);
+			close();
+		}
+	}
+
+	private boolean hasTransformed(byte[] b) {
+		return b != null && b.length > 0;
 	}
 
 	private DefaultAudioChunk[] getCurrentAndClear() {
@@ -181,10 +189,6 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 		} finally {
 			errorCount.set(0);
 		}
-	}
-
-	private void write(byte[] data) {
-		dataLine.write(data, 0, data.length);
 	}
 
 	/*
