@@ -22,6 +22,8 @@ package com.github.mrstampy.pprspray.core.streamer.text;
 
 import java.io.Serializable;
 
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class DefaultJsonChunk.
@@ -38,33 +40,13 @@ public class DefaultJsonChunk extends DefaultTextChunk {
 	 *          the message
 	 */
 	public DefaultJsonChunk(byte[] message) {
-		this(message, NoJsonClass.class);
-	}
-
-	/**
-	 * The Constructor.
-	 *
-	 * @param message
-	 *          the message
-	 * @param jsonClass
-	 *          the json class
-	 */
-	public DefaultJsonChunk(byte[] message, Class<?> jsonClass) {
-		this(message, jsonClass.getName().hashCode());
-	}
-
-	/**
-	 * The Constructor.
-	 *
-	 * @param message
-	 *          the message
-	 * @param jsonClassNameHash
-	 *          the json class name hash
-	 */
-	protected DefaultJsonChunk(byte[] message, int jsonClassNameHash) {
 		super(message);
+		
+		extractJsonClassNameHash(message);
+	}
 
-		setJsonClassNameHash(jsonClassNameHash);
+	private void extractJsonClassNameHash(byte[] message) {
+		setJsonClassNameHash(MediaStreamerUtils.getJsonClassHash(message));
 	}
 
 	/**
