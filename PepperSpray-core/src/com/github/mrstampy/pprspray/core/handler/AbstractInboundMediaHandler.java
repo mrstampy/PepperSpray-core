@@ -33,7 +33,8 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 /**
  * The Class AbstractInboundMediaHandler.
  */
-public abstract class AbstractInboundMediaHandler extends AbstractInboundKiSyHandler<byte[]> {
+public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk> extends
+		AbstractInboundKiSyHandler<byte[]> {
 
 	private static final long serialVersionUID = -575695328821545145L;
 
@@ -89,8 +90,7 @@ public abstract class AbstractInboundMediaHandler extends AbstractInboundKiSyHan
 	 * @throws Exception
 	 *           the exception
 	 */
-	protected <AMC extends AbstractMediaChunk> void onReceiveImpl(byte[] message, KiSyChannel channel,
-			InetSocketAddress sender) throws Exception {
+	protected void onReceiveImpl(byte[] message, KiSyChannel channel, InetSocketAddress sender) throws Exception {
 		AMC chunk = createChunk(message);
 
 		chunk.setChannelPort(channel.getPort());
@@ -108,7 +108,7 @@ public abstract class AbstractInboundMediaHandler extends AbstractInboundKiSyHan
 	 *          the message
 	 * @return the amc
 	 */
-	protected abstract <AMC extends AbstractMediaChunk> AMC createChunk(byte[] message);
+	protected abstract AMC createChunk(byte[] message);
 
 	/**
 	 * Gets the type.

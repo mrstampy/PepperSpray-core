@@ -22,13 +22,12 @@ package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
-import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AudioMediaHandler.
  */
-public class AudioMediaHandler extends AbstractInboundMediaHandler {
+public class AudioMediaHandler extends AbstractInboundMediaHandler<DefaultAudioChunk> {
 
 	private static final long serialVersionUID = 4808369413505276113L;
 
@@ -38,10 +37,9 @@ public class AudioMediaHandler extends AbstractInboundMediaHandler {
 	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
 	 * createChunk(byte[])
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <AMC extends AbstractMediaChunk> AMC createChunk(byte[] message) {
-		return (AMC) new DefaultAudioChunk(message);
+	protected DefaultAudioChunk createChunk(byte[] message) {
+		return new DefaultAudioChunk(message);
 	}
 
 	/*

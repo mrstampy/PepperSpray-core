@@ -21,7 +21,6 @@
 package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
@@ -29,7 +28,7 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 /**
  * The Class JsonMediaHandler.
  */
-public class JsonMediaHandler extends AbstractInboundMediaHandler {
+public class JsonMediaHandler extends AbstractInboundMediaHandler<DefaultJsonChunk> {
 
 	private static final long serialVersionUID = -2924726176067175463L;
 
@@ -61,10 +60,9 @@ public class JsonMediaHandler extends AbstractInboundMediaHandler {
 	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
 	 * createChunk(byte[])
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <AMC extends AbstractMediaChunk> AMC createChunk(byte[] message) {
-		return (AMC) new DefaultJsonChunk(message);
+	protected DefaultJsonChunk createChunk(byte[] message) {
+		return new DefaultJsonChunk(message);
 	}
 
 	/*

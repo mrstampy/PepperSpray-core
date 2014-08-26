@@ -21,7 +21,6 @@
 package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
@@ -29,7 +28,7 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 /**
  * The Class TextMediaHandler.
  */
-public class TextMediaHandler extends AbstractInboundMediaHandler {
+public class TextMediaHandler extends AbstractInboundMediaHandler<DefaultTextChunk> {
 
 	private static final long serialVersionUID = -1716123926356955368L;
 
@@ -50,10 +49,9 @@ public class TextMediaHandler extends AbstractInboundMediaHandler {
 	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
 	 * createChunk(byte[])
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <AMC extends AbstractMediaChunk> AMC createChunk(byte[] message) {
-		return (AMC) new DefaultTextChunk(message);
+	protected DefaultTextChunk createChunk(byte[] message) {
+		return new DefaultTextChunk(message);
 	}
 
 	/*

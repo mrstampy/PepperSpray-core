@@ -21,14 +21,13 @@
 package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.file.DefaultFileChunk;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class FileMediaHandler.
  */
-public class FileMediaHandler extends AbstractInboundMediaHandler {
+public class FileMediaHandler extends AbstractInboundMediaHandler<DefaultFileChunk> {
 
 	private static final long serialVersionUID = -2092069884261330398L;
 
@@ -38,10 +37,9 @@ public class FileMediaHandler extends AbstractInboundMediaHandler {
 	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
 	 * createChunk(byte[])
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <AMC extends AbstractMediaChunk> AMC createChunk(byte[] message) {
-		return (AMC) new DefaultFileChunk(message);
+	protected DefaultFileChunk createChunk(byte[] message) {
+		return new DefaultFileChunk(message);
 	}
 
 	/*

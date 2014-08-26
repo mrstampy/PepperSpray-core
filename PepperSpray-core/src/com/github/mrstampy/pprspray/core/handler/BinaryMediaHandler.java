@@ -22,13 +22,12 @@ package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
-import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class BinaryMediaHandler.
  */
-public class BinaryMediaHandler extends AbstractInboundMediaHandler {
+public class BinaryMediaHandler extends AbstractInboundMediaHandler<DefaultBinaryChunk> {
 
 	private static final long serialVersionUID = -6601630017155590876L;
 
@@ -50,10 +49,9 @@ public class BinaryMediaHandler extends AbstractInboundMediaHandler {
 	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
 	 * createChunk(byte[])
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <AMC extends AbstractMediaChunk> AMC createChunk(byte[] message) {
-		return (AMC) new DefaultBinaryChunk(message);
+	protected DefaultBinaryChunk createChunk(byte[] message) {
+		return new DefaultBinaryChunk(message);
 	}
 
 }

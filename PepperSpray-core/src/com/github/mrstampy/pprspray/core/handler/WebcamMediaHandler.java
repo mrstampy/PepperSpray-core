@@ -21,14 +21,13 @@
 package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class WebcamMediaHandler.
  */
-public class WebcamMediaHandler extends AbstractInboundMediaHandler {
+public class WebcamMediaHandler extends AbstractInboundMediaHandler<DefaultWebcamChunk> {
 
 	private static final long serialVersionUID = -8863121991149019035L;
 
@@ -38,10 +37,9 @@ public class WebcamMediaHandler extends AbstractInboundMediaHandler {
 	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
 	 * createChunk(byte[])
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <AMC extends AbstractMediaChunk> AMC createChunk(byte[] message) {
-		return (AMC) new DefaultWebcamChunk(message);
+	protected DefaultWebcamChunk createChunk(byte[] message) {
+		return new DefaultWebcamChunk(message);
 	}
 
 	/*
