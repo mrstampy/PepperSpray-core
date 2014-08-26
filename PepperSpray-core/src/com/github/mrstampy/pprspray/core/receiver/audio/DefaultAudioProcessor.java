@@ -117,9 +117,9 @@ public class DefaultAudioProcessor {
 	 * Open.
 	 */
 	public void open() {
+		if (isOpen()) return;
+		
 		try {
-			if (isOpen()) return;
-
 			close();
 
 			dataLine = AudioSystem.getSourceDataLine(getAudioFormat(), getMixerInfo());
@@ -131,8 +131,8 @@ public class DefaultAudioProcessor {
 					open.set(event.getType() == LineEvent.Type.START);
 				}
 			});
-
-			open.set(dataLine.isActive());
+			
+			dataLine.open(getAudioFormat());
 		} catch (Exception e) {
 			log.error("Could not open", e);
 		}
