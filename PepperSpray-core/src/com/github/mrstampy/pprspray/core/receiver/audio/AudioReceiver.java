@@ -98,7 +98,12 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 		});
 	}
 
-	private void write(DefaultAudioChunk[] array) {
+	/**
+	 * Write.
+	 *
+	 * @param array the array
+	 */
+	protected void write(DefaultAudioChunk[] array) {
 		try {
 			byte[] b = rehydrateAndTransform(array);
 
