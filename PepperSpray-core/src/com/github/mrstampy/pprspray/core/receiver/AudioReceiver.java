@@ -101,7 +101,7 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * (com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk)
 	 */
 	protected void receiveImpl(DefaultAudioChunk chunk) {
-		if (!isOpen()) return;
+		if (!isOpen()) open();
 
 		lock.lock();
 		try {
