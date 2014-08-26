@@ -198,6 +198,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 
 		if (!ok) return;
 
+		if (chunks.isEmpty()) return;
+
 		lock.lock();
 		DefaultAudioChunk[] array = null;
 		try {
