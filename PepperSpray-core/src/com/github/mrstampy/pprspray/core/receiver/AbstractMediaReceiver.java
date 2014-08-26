@@ -181,13 +181,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 		return mediaHash;
 	}
 
-	/**
-	 * Sets the media hash.
-	 *
-	 * @param mediaHash
-	 *          the media hash
-	 */
-	public void setMediaHash(int mediaHash) {
+	private void setMediaHash(int mediaHash) {
 		this.mediaHash = mediaHash;
 	}
 
