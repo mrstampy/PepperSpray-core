@@ -61,6 +61,8 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	protected AbstractMediaReceiver(MediaStreamType type, int mediaHash) {
 		setType(type);
 		setMediaHash(mediaHash);
+
+		ChunkEventBus.register(this);
 	}
 
 	/**

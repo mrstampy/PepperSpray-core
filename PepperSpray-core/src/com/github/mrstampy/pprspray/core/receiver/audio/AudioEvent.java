@@ -18,27 +18,27 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.receiver.event;
+package com.github.mrstampy.pprspray.core.receiver.audio;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ReceiverEvent.
+ * The Class AudioEvent.
  */
-public class ReceiverEvent {
+public class AudioEvent {
 
-	private ReceiverEventType type;
 	private int mediaHash;
+	private byte[] chunk;
 
 	/**
 	 * The Constructor.
 	 *
-	 * @param type
-	 *          the type
 	 * @param mediaHash
 	 *          the media hash
+	 * @param chunk
+	 *          the chunk
 	 */
-	public ReceiverEvent(ReceiverEventType type, int mediaHash) {
-		this.type = type;
+	public AudioEvent(int mediaHash, byte[] chunk) {
+		this.chunk = chunk;
 		this.mediaHash = mediaHash;
 	}
 
@@ -54,12 +54,12 @@ public class ReceiverEvent {
 	}
 
 	/**
-	 * Gets the type.
+	 * Gets the chunk.
 	 *
-	 * @return the type
+	 * @return the chunk
 	 */
-	public ReceiverEventType getType() {
-		return type;
+	public byte[] getChunk() {
+		return chunk;
 	}
 
 	/**
@@ -70,4 +70,5 @@ public class ReceiverEvent {
 	public int getMediaHash() {
 		return mediaHash;
 	}
+
 }

@@ -18,56 +18,45 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.receiver.event;
+package com.github.mrstampy.pprspray.core.receiver.audio;
+
+import com.google.common.eventbus.EventBus;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ReceiverEvent.
+ * The Class AudioEventBus.
  */
-public class ReceiverEvent {
+public class AudioEventBus {
 
-	private ReceiverEventType type;
-	private int mediaHash;
+	private static final EventBus BUS = new EventBus("Processed Audio Event Bus");
 
 	/**
-	 * The Constructor.
+	 * Post.
 	 *
-	 * @param type
-	 *          the type
-	 * @param mediaHash
-	 *          the media hash
+	 * @param event
+	 *          the event
 	 */
-	public ReceiverEvent(ReceiverEventType type, int mediaHash) {
-		this.type = type;
-		this.mediaHash = mediaHash;
+	public static void post(AudioEvent event) {
+		BUS.post(event);
 	}
 
 	/**
-	 * Checks if is applicable.
+	 * Register.
 	 *
-	 * @param mediaHash
-	 *          the media hash
-	 * @return true, if checks if is applicable
+	 * @param o
+	 *          the o
 	 */
-	public boolean isApplicable(int mediaHash) {
-		return mediaHash == getMediaHash();
+	public static void register(Object o) {
+		BUS.register(o);
 	}
 
 	/**
-	 * Gets the type.
+	 * Unregister.
 	 *
-	 * @return the type
+	 * @param o
+	 *          the o
 	 */
-	public ReceiverEventType getType() {
-		return type;
-	}
-
-	/**
-	 * Gets the media hash.
-	 *
-	 * @return the media hash
-	 */
-	public int getMediaHash() {
-		return mediaHash;
+	public static void unregister(Object o) {
+		BUS.unregister(o);
 	}
 }
