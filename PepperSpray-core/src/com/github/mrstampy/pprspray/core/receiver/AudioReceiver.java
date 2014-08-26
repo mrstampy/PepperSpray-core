@@ -21,9 +21,13 @@
 package com.github.mrstampy.pprspray.core.receiver;
 
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -66,6 +70,10 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 
 	private AtomicInteger errorCount = new AtomicInteger(0);
 
+	private Lock lock = new ReentrantLock();
+
+	private CountDownLatch latch;
+
 	/**
 	 * The Constructor.
 	 *
@@ -95,7 +103,12 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	protected void receiveImpl(DefaultAudioChunk chunk) {
 		if (!isOpen()) return;
 
-		chunks.add(chunk);
+		lock.lock();
+		try {
+			chunks.add(chunk);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	/*
@@ -106,7 +119,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
 	protected void endOfMessageImpl(MediaFooterMessage eom) {
-		close();
+		latch.countDown();
+		latch = new CountDownLatch(1);
 	}
 
 	/**
@@ -141,7 +155,7 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 
 	private void retry() {
 		log.warn("Line unavailable, initializing");
-		
+
 		try {
 			init();
 			open();
@@ -153,8 +167,11 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#isOpen()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#isOpen()
 	 */
 	@Override
 	public boolean isOpen() {
@@ -162,18 +179,13 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	}
 
 	private void createWriterService() {
+		latch = new CountDownLatch(1);
 		sub = svc.createWorker().schedule(new Action0() {
 
 			@Override
 			public void call() {
 				while (isOpen()) {
-					while (isOpen() && chunks.size() <= 10) {
-						KiSyUtils.snooze(5);
-					}
-
-					while (isOpen() && chunks.size() > 10) {
-						write(chunks.pollFirst());
-					}
+					awaitWrite();
 				}
 
 				sub.unsubscribe();
@@ -181,9 +193,28 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 		});
 	}
 
-	private void write(DefaultAudioChunk chunk) {
+	private void awaitWrite() {
+		boolean ok = KiSyUtils.await(latch, 100, TimeUnit.MILLISECONDS);
+
+		if (!ok) return;
+
+		lock.lock();
+		DefaultAudioChunk[] array = null;
 		try {
-			dataLine.write(chunk.getData(), 0, chunk.getData().length);
+			array = chunks.toArray(new DefaultAudioChunk[] {});
+			clear();
+		} finally {
+			lock.unlock();
+		}
+
+		byte[] transformed = rehydrateAndTransform(array);
+
+		write(transformed);
+	}
+
+	private void write(byte[] data) {
+		try {
+			dataLine.write(data, 0, data.length);
 		} catch (Exception e) {
 			log.error("Cannot write audio, closing", e);
 			close();
@@ -199,6 +230,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	public void close() {
 		if (!isOpen()) return;
 		dataLine.close();
+		if (sub != null) sub.unsubscribe();
+		if (latch != null) latch.countDown();
 	}
 
 	/**

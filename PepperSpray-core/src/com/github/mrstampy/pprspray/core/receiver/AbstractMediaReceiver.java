@@ -20,6 +20,9 @@
  */
 package com.github.mrstampy.pprspray.core.receiver;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
@@ -37,6 +40,8 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 
 	private MediaStreamType type;
 	private int mediaHash;
+
+	private MediaTransformer transformer = new NoTransformTransformer();
 
 	/**
 	 * The Constructor.
@@ -96,6 +101,38 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	protected abstract void endOfMessageImpl(MediaFooterMessage eom);
 
 	/**
+	 * Rehydrate and transform.
+	 *
+	 * @param array
+	 *          the array
+	 * @return the byte[]
+	 * @see #setTransformer(MediaTransformer)
+	 */
+	protected byte[] rehydrateAndTransform(AMC[] array) {
+		int size = calcSize(array);
+		ByteBuf buf = Unpooled.buffer(size);
+
+		for (AMC chunk : array) {
+			buf.writeBytes(chunk.getData());
+		}
+
+		return transform(buf.array());
+	}
+
+	private byte[] transform(byte[] rehydrated) {
+		return getTransformer() == null ? rehydrated : getTransformer().transform(rehydrated);
+	}
+
+	private int calcSize(AMC[] array) {
+		int size = 0;
+		for (AMC chunk : array) {
+			size += chunk.getData().length;
+		}
+
+		return size;
+	}
+
+	/**
 	 * Destroy.
 	 * 
 	 * @see ChunkEventBus#unregister(Object)
@@ -114,7 +151,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * Open.
 	 */
 	public abstract void open();
-	
+
 	/**
 	 * Checks if is open.
 	 *
@@ -152,5 +189,24 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 */
 	public void setMediaHash(int mediaHash) {
 		this.mediaHash = mediaHash;
+	}
+
+	/**
+	 * Gets the transformer.
+	 *
+	 * @return the transformer
+	 */
+	public MediaTransformer getTransformer() {
+		return transformer;
+	}
+
+	/**
+	 * Sets the transformer.
+	 *
+	 * @param transformer
+	 *          the transformer
+	 */
+	public void setTransformer(MediaTransformer transformer) {
+		this.transformer = transformer;
 	}
 }

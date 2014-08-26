@@ -50,8 +50,6 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 
 	private static final long serialVersionUID = -575695328821545145L;
 
-	private InboundProcessor inboundProcessor = new NoProcessInboundProcessor();
-
 	private Scheduler svc = Schedulers.from(Executors.newCachedThreadPool());
 
 	/*
@@ -96,11 +94,9 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 			public void call() {
 				try {
 					AMC chunk = createChunk(message);
-					
+
 					chunk.setChannelPort(channel.getPort());
 					chunk.setSender(sender);
-
-					transformData(chunk, channel, sender);
 
 					ChunkEventBus.post(chunk);
 				} catch (Exception e) {
@@ -108,13 +104,6 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 				}
 			}
 		});
-	}
-
-	private void transformData(AMC chunk, KiSyChannel channel, InetSocketAddress sender) {
-		byte[] transformed = getInboundProcessor() == null ? chunk.getData() : getInboundProcessor().process(
-				chunk.getData(), channel, sender);
-
-		chunk.setData(transformed);
 	}
 
 	/**
@@ -132,24 +121,5 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 	 * @return the type
 	 */
 	protected abstract MediaStreamType getType();
-
-	/**
-	 * Gets the inbound processor.
-	 *
-	 * @return the inbound processor
-	 */
-	public InboundProcessor getInboundProcessor() {
-		return inboundProcessor;
-	}
-
-	/**
-	 * Sets the inbound processor.
-	 *
-	 * @param inboundProcessor
-	 *          the inbound processor
-	 */
-	public void setInboundProcessor(InboundProcessor inboundProcessor) {
-		this.inboundProcessor = inboundProcessor;
-	}
 
 }

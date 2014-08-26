@@ -18,25 +18,24 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.handler;
-
-import java.net.InetSocketAddress;
-
-import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
+package com.github.mrstampy.pprspray.core.receiver;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface InboundProcessor.
+ * The Class NoTransformTransformer.
  */
-public interface InboundProcessor {
+public class NoTransformTransformer implements MediaTransformer {
 
-	/**
-	 * Process.
-	 *
-	 * @param data the data
-	 * @param channel the channel
-	 * @param sender the sender
-	 * @return the byte[]
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.MediaTransformer#transform(byte
+	 * [])
 	 */
-	byte[] process(byte[] data, KiSyChannel channel, InetSocketAddress sender);
+	@Override
+	public byte[] transform(byte[] data) {
+		return data;
+	}
+
 }
