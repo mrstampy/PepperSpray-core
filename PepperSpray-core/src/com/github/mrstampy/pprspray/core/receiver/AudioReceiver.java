@@ -43,15 +43,13 @@ import rx.schedulers.Schedulers;
 import com.github.mrstampy.kitchensync.util.KiSyUtils;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
-import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
-import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AudioReceiver.
  */
-public class AudioReceiver {
+public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	private static final Logger log = LoggerFactory.getLogger(AudioReceiver.class);
 
 	private AudioFormat audioFormat;
@@ -59,8 +57,6 @@ public class AudioReceiver {
 	private SourceDataLine dataLine;
 
 	private AtomicBoolean open = new AtomicBoolean(false);
-
-	private int mediaHash;
 
 	private ConcurrentSkipListSet<DefaultAudioChunk> chunks = new ConcurrentSkipListSet<>();
 
@@ -80,38 +76,33 @@ public class AudioReceiver {
 	 *           the line unavailable exception
 	 */
 	public AudioReceiver(AudioFormat audioFormat, Mixer.Info mixerInfo, int mediaHash) throws LineUnavailableException {
+		super(MediaStreamType.AUDIO, mediaHash);
 		setAudioFormat(audioFormat);
 		setMixerInfo(mixerInfo);
-		setMediaHash(mediaHash);
 		init();
 	}
 
-	/**
-	 * Receive.
-	 *
-	 * @param chunk
-	 *          the chunk
-	 * @see ChunkEventBus#register(Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#receiveImpl
+	 * (com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk)
 	 */
-	@Subscribe
-	public void receive(DefaultAudioChunk chunk) {
-		if (!chunk.isApplicable(getMediaHash())) return;
-		if (!open.get()) return;
+	protected void receiveImpl(DefaultAudioChunk chunk) {
+		if (!isOpen()) return;
 
 		chunks.add(chunk);
 	}
 
-	/**
-	 * End of message.
-	 *
-	 * @param eom
-	 *          the eom
-	 * @see ChunkEventBus#register(Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#
+	 * endOfMessageImpl
+	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
-	@Subscribe
-	public void endOfMessage(MediaFooterMessage eom) {
-		if (!eom.isApplicable(MediaStreamType.AUDIO, getMediaHash())) return;
-
+	protected void endOfMessageImpl(MediaFooterMessage eom) {
 		close();
 	}
 
@@ -122,17 +113,26 @@ public class AudioReceiver {
 		chunks.clear();
 	}
 
-	/**
-	 * Open.
-	 *
-	 * @throws LineUnavailableException
-	 *           the line unavailable exception
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#open()
 	 */
-	public void open() throws LineUnavailableException {
-		if (open.get()) return;
+	public void open() {
+		if (isOpen()) return;
 
-		dataLine.open();
-		createWriterService();
+		try {
+			dataLine.open();
+			createWriterService();
+		} catch (LineUnavailableException e) {
+			log.error("Unexpected exception", e);
+		}
+	}
+
+	@Override
+	public boolean isOpen() {
+		return open.get();
 	}
 
 	private void createWriterService() {
@@ -140,12 +140,12 @@ public class AudioReceiver {
 
 			@Override
 			public void call() {
-				while (open.get()) {
-					while (open.get() && chunks.size() <= 10) {
+				while (isOpen()) {
+					while (isOpen() && chunks.size() <= 10) {
 						KiSyUtils.snooze(5);
 					}
 
-					while (open.get() && chunks.size() > 10) {
+					while (isOpen() && chunks.size() > 10) {
 						write(chunks.pollFirst());
 					}
 				}
@@ -164,22 +164,15 @@ public class AudioReceiver {
 		}
 	}
 
-	/**
-	 * Close.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#close()
 	 */
 	public void close() {
-		if (!open.get()) return;
+		if (!isOpen()) return;
 		dataLine.close();
-	}
-
-	/**
-	 * Destroy.
-	 * 
-	 * @see ChunkEventBus#unregister(Object)
-	 */
-	public void destroy() {
-		close();
-		ChunkEventBus.unregister(this);
 	}
 
 	/**
@@ -200,7 +193,7 @@ public class AudioReceiver {
 		});
 
 		open.set(dataLine.isActive());
-		if (open.get()) createWriterService();
+		if (isOpen()) createWriterService();
 	}
 
 	/**
@@ -239,24 +232,5 @@ public class AudioReceiver {
 	 */
 	public void setMixerInfo(Mixer.Info mixerInfo) {
 		this.mixerInfo = mixerInfo;
-	}
-
-	/**
-	 * Gets the media hash.
-	 *
-	 * @return the media hash
-	 */
-	public int getMediaHash() {
-		return mediaHash;
-	}
-
-	/**
-	 * Sets the media hash.
-	 *
-	 * @param mediaHash
-	 *          the media hash
-	 */
-	public void setMediaHash(int mediaHash) {
-		this.mediaHash = mediaHash;
 	}
 }
