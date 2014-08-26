@@ -37,7 +37,7 @@ public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
 	public static final byte[] JSON_KEY_BYTES = JSON_KEY.getBytes();
 
 	private Class<?> jsonClass;
-	private byte[] jsonClassBytes;
+	private int jsonClassNameHash;
 
 	/**
 	 * The Constructor.
@@ -65,7 +65,7 @@ public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
 	 */
 	@Override
 	public int sizeInBytes() {
-		return super.sizeInBytes() + JSON_KEY_BYTES.length + jsonClassBytes.length;
+		return super.sizeInBytes() + JSON_KEY_BYTES.length + 4;
 	}
 
 	/*
@@ -80,7 +80,7 @@ public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
 		super.writeHeader(streamer, buf, headerLength);
 
 		buf.writeBytes(JSON_KEY_BYTES);
-		buf.writeBytes(jsonClassBytes);
+		buf.writeInt(getJsonClassNameHash());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
 	}
 
 	/**
-	 * Subclasses to override to encrypt the jsonClassBytes.
+	 * Sets the json class.
 	 *
 	 * @param jsonClass
 	 *          the json class
@@ -101,26 +101,26 @@ public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
 	public void setJsonClass(Class<?> jsonClass) {
 		this.jsonClass = jsonClass;
 
-		setJsonClassBytes(jsonClass.getName().getBytes());
+		setJsonClassNameHash(jsonClass.getName().hashCode());
 	}
 
 	/**
-	 * Gets the json class bytes.
+	 * Gets the json class name hash.
 	 *
-	 * @return the json class bytes
+	 * @return the json class name hash
 	 */
-	protected byte[] getJsonClassBytes() {
-		return jsonClassBytes;
+	public int getJsonClassNameHash() {
+		return jsonClassNameHash;
 	}
 
 	/**
-	 * Sets the json class bytes.
+	 * Sets the json class name hash.
 	 *
-	 * @param jsonClassBytes
-	 *          the json class bytes
+	 * @param jsonClassHash
+	 *          the json class name hash
 	 */
-	protected void setJsonClassBytes(byte[] jsonClassBytes) {
-		this.jsonClassBytes = jsonClassBytes;
+	public void setJsonClassNameHash(int jsonClassHash) {
+		this.jsonClassNameHash = jsonClassHash;
 	}
 
 }

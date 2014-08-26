@@ -283,6 +283,21 @@ public class MediaStreamerUtils {
 	}
 
 	/**
+	 * Returns the hash of the name of the class representation relevant to this JSON message.
+	 * 
+	 * @param message
+	 * @return
+	 * @see DefaultJsonChunkProcessor#setJsonClassNameHash(int)
+	 * @see Class#getName()
+	 */
+	public static int getJsonClassHash(byte[] message) {
+		int start = DEFAULT_HEADER_LENGTH + JSON_KEY_LENGTH;
+		int end = start + 4;
+
+		return getIntegerChunk(getChunk(message, new Chunk(start, end)));
+	}
+
+	/**
 	 * Gets the integer chunk.
 	 *
 	 * @param chunk
