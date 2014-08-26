@@ -120,7 +120,7 @@ public class DefaultAudioProcessor {
 		if (isOpen()) return;
 		
 		try {
-			close();
+			closeDataLine();
 
 			dataLine = AudioSystem.getSourceDataLine(getAudioFormat(), getMixerInfo());
 
@@ -152,6 +152,10 @@ public class DefaultAudioProcessor {
 	 */
 	public void close() {
 		if (!isOpen()) return;
+		closeDataLine();
+	}
+
+	private void closeDataLine() {
 		if (dataLine != null) dataLine.close();
 	}
 
