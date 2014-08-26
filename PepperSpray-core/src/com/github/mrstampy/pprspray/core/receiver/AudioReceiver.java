@@ -95,7 +95,7 @@ public class AudioReceiver {
 	 */
 	@Subscribe
 	public void receive(DefaultAudioChunk chunk) {
-		if (chunk.getMediaHash() != mediaHash) return;
+		if (!chunk.isApplicable(getMediaHash())) return;
 		if (!open.get()) return;
 
 		chunks.add(chunk);
