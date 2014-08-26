@@ -21,10 +21,7 @@
 package com.github.mrstampy.pprspray.core.receiver;
 
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,11 +38,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rx.Scheduler;
-import rx.Subscription;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
-import com.github.mrstampy.kitchensync.util.KiSyUtils;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
@@ -61,18 +56,13 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	private Mixer.Info mixerInfo;
 	private SourceDataLine dataLine;
 
-	private AtomicBoolean open = new AtomicBoolean(false);
-
 	private ConcurrentSkipListSet<DefaultAudioChunk> chunks = new ConcurrentSkipListSet<>();
 
 	private Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
-	private Subscription sub;
 
 	private AtomicInteger errorCount = new AtomicInteger(0);
 
 	private Lock lock = new ReentrantLock();
-
-	private CountDownLatch latch;
 
 	/**
 	 * The Constructor.
@@ -118,8 +108,35 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
 	protected void endOfMessageImpl(MediaFooterMessage eom) {
-		latch.countDown();
-		latch = new CountDownLatch(1);
+		if (chunks.isEmpty()) return;
+
+		final DefaultAudioChunk[] array = getCurrentAndClear();
+
+		svc.createWorker().schedule(new Action0() {
+
+			@Override
+			public void call() {
+				try {
+					byte[] transformed = rehydrateAndTransform(array);
+
+					write(transformed);
+				} catch (Exception e) {
+					log.error("Unexpected exception, closing", e);
+					close();
+				}
+			}
+		});
+	}
+
+	private DefaultAudioChunk[] getCurrentAndClear() {
+		lock.lock();
+		try {
+			DefaultAudioChunk[] array = chunks.toArray(new DefaultAudioChunk[] {});
+			clear();
+			return array;
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	/**
@@ -140,7 +157,7 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 
 		try {
 			dataLine.open();
-			createWriterService();
+			setOpen(true);
 		} catch (LineUnavailableException e) {
 			int count = errorCount.incrementAndGet();
 			if (count < 2) {
@@ -166,60 +183,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#isOpen()
-	 */
-	@Override
-	public boolean isOpen() {
-		return open.get();
-	}
-
-	private void createWriterService() {
-		latch = new CountDownLatch(1);
-		sub = svc.createWorker().schedule(new Action0() {
-
-			@Override
-			public void call() {
-				while (isOpen()) {
-					awaitWrite();
-				}
-
-				sub.unsubscribe();
-			}
-		});
-	}
-
-	private void awaitWrite() {
-		boolean ok = KiSyUtils.await(latch, 100, TimeUnit.MILLISECONDS);
-
-		if (!ok) return;
-
-		if (chunks.isEmpty()) return;
-
-		lock.lock();
-		DefaultAudioChunk[] array = null;
-		try {
-			array = chunks.toArray(new DefaultAudioChunk[] {});
-			clear();
-		} finally {
-			lock.unlock();
-		}
-
-		byte[] transformed = rehydrateAndTransform(array);
-
-		write(transformed);
-	}
-
 	private void write(byte[] data) {
-		try {
-			dataLine.write(data, 0, data.length);
-		} catch (Exception e) {
-			log.error("Cannot write audio, closing", e);
-			close();
-		}
+		dataLine.write(data, 0, data.length);
 	}
 
 	/*
@@ -231,8 +196,6 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	public void close() {
 		if (!isOpen()) return;
 		dataLine.close();
-		if (sub != null) sub.unsubscribe();
-		if (latch != null) latch.countDown();
 	}
 
 	/**
@@ -250,12 +213,11 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 
 			@Override
 			public void update(LineEvent event) {
-				open.set(event.getType() == LineEvent.Type.START);
+				setOpen(event.getType() == LineEvent.Type.START);
 			}
 		});
 
-		open.set(dataLine.isActive());
-		if (isOpen()) createWriterService();
+		setOpen(dataLine.isActive());
 	}
 
 	/**

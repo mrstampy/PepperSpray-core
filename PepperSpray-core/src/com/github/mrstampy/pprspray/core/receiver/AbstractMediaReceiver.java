@@ -23,6 +23,11 @@ package com.github.mrstampy.pprspray.core.receiver;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
+import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
+import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventType;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
@@ -42,6 +47,8 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	private int mediaHash;
 
 	private MediaTransformer transformer = new NoTransformTransformer();
+
+	private AtomicBoolean open = new AtomicBoolean(false);
 
 	/**
 	 * The Constructor.
@@ -140,6 +147,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	public void destroy() {
 		close();
 		ChunkEventBus.unregister(this);
+		notifyDestroy();
 	}
 
 	/**
@@ -157,7 +165,25 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 *
 	 * @return true, if checks if is open
 	 */
-	public abstract boolean isOpen();
+	public boolean isOpen() {
+		return open.get();
+	}
+
+	/**
+	 * Sets the open.
+	 *
+	 * @param b
+	 *          the open
+	 */
+	protected void setOpen(boolean b) {
+		open.set(b);
+
+		if (b) {
+			notifyOpen();
+		} else {
+			notifyClose();
+		}
+	}
 
 	/**
 	 * Gets the type.
@@ -170,6 +196,33 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 
 	private void setType(MediaStreamType type) {
 		this.type = type;
+	}
+
+	/**
+	 * Notify close.
+	 */
+	protected void notifyClose() {
+		notify(ReceiverEventType.CLOSE);
+	}
+
+	/**
+	 * Notify open.
+	 */
+	protected void notifyOpen() {
+		notify(ReceiverEventType.OPEN);
+	}
+
+	/**
+	 * Notify destroy.
+	 */
+	protected void notifyDestroy() {
+		notify(ReceiverEventType.DESTROY);
+	}
+
+	private void notify(ReceiverEventType type) {
+		ReceiverEvent event = new ReceiverEvent(type, getMediaHash());
+
+		ReceiverEventBus.post(event);
 	}
 
 	/**
