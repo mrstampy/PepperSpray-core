@@ -29,7 +29,7 @@ import java.io.Serializable;
 public class DefaultJsonChunk extends DefaultTextChunk {
 
 	private static final long serialVersionUID = 1173299761378273183L;
-	private Class<?> jsonClass;
+	private int jsonClassNameHash;
 
 	/**
 	 * The Constructor.
@@ -50,37 +50,51 @@ public class DefaultJsonChunk extends DefaultTextChunk {
 	 *          the json class
 	 */
 	public DefaultJsonChunk(byte[] message, Class<?> jsonClass) {
-		super(message);
-		setJsonClass(jsonClass);
+		this(message, jsonClass.getName().hashCode());
 	}
 
 	/**
-	 * Returns true if {@link #getJsonClass()} returns a class object of which the
-	 * JSON in {@link #getData()} is a representation.
+	 * The Constructor.
+	 *
+	 * @param message
+	 *          the message
+	 * @param jsonClassNameHash
+	 *          the json class name hash
+	 */
+	protected DefaultJsonChunk(byte[] message, int jsonClassNameHash) {
+		super(message);
+
+		setJsonClassNameHash(jsonClassNameHash);
+	}
+
+	/**
+	 * Returns true if {@link #getJsonClassNameHash()} references a class object
+	 * of which the JSON in {@link #getData()} is a representation.
 	 *
 	 * @return true, if checks for json class
+	 * @see Class#getName()
 	 */
 	public boolean hasJsonClass() {
-		return !NoJsonClass.class.equals(getJsonClass());
+		return NoJsonClass.class.getName().hashCode() != getJsonClassNameHash();
 	}
 
 	/**
-	 * Gets the json class.
+	 * Gets the json class name hash.
 	 *
-	 * @return the json class
+	 * @return the json class name hash
 	 */
-	public Class<?> getJsonClass() {
-		return jsonClass;
+	public int getJsonClassNameHash() {
+		return jsonClassNameHash;
 	}
 
 	/**
-	 * Sets the json class.
+	 * Sets the json class name hash.
 	 *
-	 * @param jsonClass
-	 *          the json class
+	 * @param jsonClassNameHash
+	 *          the json class name hash
 	 */
-	public void setJsonClass(Class<?> jsonClass) {
-		this.jsonClass = jsonClass;
+	public void setJsonClassNameHash(int jsonClassNameHash) {
+		this.jsonClassNameHash = jsonClassNameHash;
 	}
 
 	/**
