@@ -36,10 +36,6 @@ import com.github.mrstampy.pprspray.core.streamer.text.DefaultXmlChunkProcessor;
  */
 public class MediaStreamerUtils {
 
-	private static final int JSON_KEY_LENGTH = DefaultJsonChunkProcessor.JSON_KEY_BYTES.length;
-
-	private static final int XML_KEY_LENGTH = DefaultXmlChunkProcessor.XML_KEY_BYTES.length;
-
 	/** The Constant DEFAULT_HEADER_LENGTH. */
 	public static final int DEFAULT_HEADER_LENGTH = 18;
 
@@ -54,13 +50,6 @@ public class MediaStreamerUtils {
 
 	/** The Constant SEQUENCE_CHUNK. */
 	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, DEFAULT_HEADER_LENGTH);
-
-	/** The Constant JSON_KEY_CHUNK. */
-	protected static final Chunk JSON_KEY_CHUNK = new Chunk(DEFAULT_HEADER_LENGTH, DEFAULT_HEADER_LENGTH
-			+ JSON_KEY_LENGTH);
-
-	/** The Constant XML_KEY_CHUNK. */
-	protected static final Chunk XML_KEY_CHUNK = new Chunk(DEFAULT_HEADER_LENGTH, DEFAULT_HEADER_LENGTH + XML_KEY_LENGTH);
 
 	/**
 	 * Checks if is binary chunk.
@@ -275,11 +264,7 @@ public class MediaStreamerUtils {
 	 * @see DefaultJsonChunkProcessor
 	 */
 	public static boolean isJsonMessage(byte[] message) {
-		if (message == null || message.length <= DEFAULT_HEADER_LENGTH + JSON_KEY_LENGTH) return false;
-
-		byte[] b = getChunk(message, JSON_KEY_CHUNK);
-
-		return Arrays.equals(b, DefaultJsonChunkProcessor.JSON_KEY_BYTES);
+		return isCustomHeaderMessage(message, DefaultJsonChunkProcessor.JSON_KEY_BYTES);
 	}
 
 	/**
@@ -317,11 +302,26 @@ public class MediaStreamerUtils {
 	 * @return true, if checks if is xml message
 	 */
 	public static boolean isXmlMessage(byte[] message) {
-		if (message == null || message.length <= DEFAULT_HEADER_LENGTH + XML_KEY_LENGTH) return false;
+		return isCustomHeaderMessage(message, DefaultXmlChunkProcessor.XML_KEY_BYTES);
+	}
 
-		byte[] b = getChunk(message, XML_KEY_CHUNK);
+	/**
+	 * Checks if is custom header message.
+	 *
+	 * @param message
+	 *          the message
+	 * @param headerBytes
+	 *          the header bytes
+	 * @return true, if checks if is custom header message
+	 */
+	public static boolean isCustomHeaderMessage(byte[] message, byte[] headerBytes) {
+		int minLength = DEFAULT_HEADER_LENGTH + headerBytes.length;
 
-		return Arrays.equals(b, DefaultXmlChunkProcessor.XML_KEY_BYTES);
+		if (message == null || message.length <= minLength) return false;
+
+		byte[] b = getChunk(message, new Chunk(DEFAULT_HEADER_LENGTH, minLength));
+
+		return Arrays.equals(b, headerBytes);
 	}
 
 	/**
