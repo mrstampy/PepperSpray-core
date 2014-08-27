@@ -41,16 +41,6 @@ public class NegotiationEventBus {
 	}
 
 	/**
-	 * Post.
-	 *
-	 * @param event
-	 *          the event
-	 */
-	public static void post(NegotiationAckChunk event) {
-		BUS.post(event);
-	}
-
-	/**
 	 * Register.
 	 *
 	 * @param o

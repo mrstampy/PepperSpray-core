@@ -20,19 +20,28 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.negotiation;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import rx.Scheduler;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
+
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
-import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessageUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class NegotiationAckReceiver.
  */
-public class NegotiationAckReceiver extends AbstractMediaReceiver<NegotiationAckChunk> {
+public abstract class NegotiationAckReceiver extends AbstractMediaReceiver<NegotiationAckChunk> {
 
 	private static final NegotiationAckChunk[] MT = new NegotiationAckChunk[] {};
+
+	private static final Scheduler SVC = Schedulers.from(Executors.newCachedThreadPool());
 
 	/**
 	 * The Constructor.
@@ -42,6 +51,25 @@ public class NegotiationAckReceiver extends AbstractMediaReceiver<NegotiationAck
 	 */
 	public NegotiationAckReceiver(int mediaHash) {
 		super(MediaStreamType.NEGOTIATION_ACK, mediaHash);
+
+		SVC.createWorker().schedule(new Action0() {
+
+			@Override
+			public void call() {
+				failed();
+			}
+		}, 5, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * Failed.
+	 */
+	protected void failed() {
+		if (!isOpen()) return;
+
+		byte[] failed = NegotiationMessageUtils.getNegotiationAckMessage(getMediaHash(), false).array();
+
+		receiveImpl(new NegotiationAckChunk(failed));
 	}
 
 	/*
@@ -53,9 +81,18 @@ public class NegotiationAckReceiver extends AbstractMediaReceiver<NegotiationAck
 	 */
 	@Override
 	protected void receiveImpl(NegotiationAckChunk chunk) {
-		NegotiationEventBus.post(chunk);
 		destroy();
+
+		ackReceived(chunk);
 	}
+
+	/**
+	 * Ack received.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 */
+	protected abstract void ackReceived(NegotiationAckChunk chunk);
 
 	/*
 	 * (non-Javadoc)

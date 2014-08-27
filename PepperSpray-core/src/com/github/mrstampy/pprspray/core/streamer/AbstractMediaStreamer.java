@@ -43,10 +43,12 @@ import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
 import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationAckReceiver;
 import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationReceiver;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEvent;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventType;
-import com.github.mrstampy.pprspray.core.streamer.negotiation.AbstractNegotiationAckSubscriber;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.AbstractNegotiationSubscriber;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
@@ -162,6 +164,7 @@ public abstract class AbstractMediaStreamer {
 	 * invoked, else {@link #start()}.
 	 */
 	public void connect() {
+		if (notifying()) return;
 		if (isStreaming()) return;
 		if (!isStreamable()) throw new IllegalStateException("Media streamer cannot be opened");
 
@@ -239,26 +242,44 @@ public abstract class AbstractMediaStreamer {
 	 * @see NegotiationAckChunk
 	 * @see NegotiationAckReceiver
 	 * @see NegotiationReceiver
-	 * @see AbstractNegotiationAckSubscriber
+	 * @see AbstractNegotiationSubscriber
+	 * @see AcceptingNegotationSubscriber
 	 */
 	protected void negotiate() {
 		notifying.set(true);
 
 		ByteBuf buf = NegotiationMessageUtils.getNegotiationMessage(getMediaHash(), getType());
 
-		NegotiationEventBus.register(new AbstractNegotiationAckSubscriber(getMediaHash()) {
+		ChunkEventBus.register(new NegotiationAckReceiver(getMediaHash()) {
 
 			@Override
-			protected void negotiationAckReceivedImpl(NegotiationAckChunk event) {
+			protected void ackReceived(NegotiationAckChunk chunk) {
 				notifying.set(false);
 
-				notifyAccepted.set(event.isAccepted());
+				notifyAccepted.set(chunk.isAccepted());
 
-				if (notifyAccepted()) start();
+				if (notifyAccepted()) {
+					start();
+				} else {
+					negotiationFailed(chunk);
+				}
 			}
+
 		});
 
 		getChannel().send(buf.array(), getDestination());
+	}
+
+	/**
+	 * Blank impl (no action) when negotiation has failed. Override as necessary.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 * @see #negotiate()
+	 * @see NegotiationAckReceiver
+	 */
+	protected void negotiationFailed(NegotiationAckChunk chunk) {
+
 	}
 
 	/**
