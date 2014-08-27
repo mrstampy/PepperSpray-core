@@ -18,20 +18,20 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.receiver.audio;
+package com.github.mrstampy.pprspray.core.receiver.file;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
+import com.github.mrstampy.pprspray.core.streamer.file.DefaultFileChunk;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AudioReceiver.
+ * The Class FileReceiver.
  */
-public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
+public class FileReceiver extends AbstractMediaReceiver<DefaultFileChunk> {
 
-	private static final DefaultAudioChunk[] MT = new DefaultAudioChunk[] {};
+	private static final DefaultFileChunk[] MT = new DefaultFileChunk[] {};
 
 	/**
 	 * The Constructor.
@@ -39,8 +39,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * @param mediaHash
 	 *          the media hash
 	 */
-	public AudioReceiver(int mediaHash) {
-		super(MediaStreamType.AUDIO, mediaHash);
+	public FileReceiver(int mediaHash) {
+		super(MediaStreamType.FILE, mediaHash);
 	}
 
 	/*
@@ -50,7 +50,8 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#receiveImpl
 	 * (com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk)
 	 */
-	protected void receiveImpl(DefaultAudioChunk chunk) {
+	@Override
+	protected void receiveImpl(DefaultFileChunk chunk) {
 		add(chunk);
 	}
 
@@ -61,6 +62,7 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * endOfMessageImpl
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
+	@Override
 	protected void endOfMessageImpl(MediaFooterMessage eom) {
 		finalizeMessage();
 	}
@@ -73,7 +75,7 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * ()
 	 */
 	@Override
-	protected DefaultAudioChunk[] getEmptyArray() {
+	protected DefaultFileChunk[] getEmptyArray() {
 		return MT;
 	}
 

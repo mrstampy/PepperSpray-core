@@ -32,8 +32,11 @@ import javax.sound.sampled.SourceDataLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
+import com.github.mrstampy.pprspray.core.receiver.MediaEventBus;
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
+import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -66,7 +69,7 @@ public class DefaultAudioProcessor {
 		setMixerInfo(mixerInfo);
 
 		ReceiverEventBus.register(this);
-		AudioEventBus.register(this);
+		MediaEventBus.register(this);
 	}
 
 	/**
@@ -101,13 +104,13 @@ public class DefaultAudioProcessor {
 	 *          the event
 	 */
 	@Subscribe
-	public void audioEvent(AudioEvent event) {
-		if (!event.isApplicable(getMediaHash())) return;
+	public void audioEvent(MediaEvent event) {
+		if (!event.isApplicable(MediaStreamType.AUDIO, getMediaHash())) return;
 
 		if (!isOpen()) open();
 
 		try {
-			dataLine.write(event.getChunk(), 0, event.getChunk().length);
+			dataLine.write(event.getProcessed(), 0, event.getProcessed().length);
 		} catch (Exception e) {
 			log.error("Unexpected exception", e);
 		}
@@ -118,7 +121,7 @@ public class DefaultAudioProcessor {
 	 */
 	public void open() {
 		if (isOpen()) return;
-		
+
 		try {
 			closeDataLine();
 
@@ -131,7 +134,7 @@ public class DefaultAudioProcessor {
 					open.set(event.getType() == LineEvent.Type.START);
 				}
 			});
-			
+
 			dataLine.open(getAudioFormat());
 		} catch (Exception e) {
 			log.error("Could not open", e);
@@ -165,7 +168,7 @@ public class DefaultAudioProcessor {
 	public void destroy() {
 		close();
 
-		AudioEventBus.unregister(this);
+		MediaEventBus.unregister(this);
 		ReceiverEventBus.unregister(this);
 	}
 

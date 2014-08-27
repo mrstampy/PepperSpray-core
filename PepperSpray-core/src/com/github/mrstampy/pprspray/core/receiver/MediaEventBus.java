@@ -18,17 +18,17 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.receiver.audio;
+package com.github.mrstampy.pprspray.core.receiver;
 
 import com.google.common.eventbus.EventBus;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AudioEventBus.
+ * The Class MediaEventBus.
  */
-public class AudioEventBus {
+public class MediaEventBus {
 
-	private static final EventBus BUS = new EventBus("Processed Audio Event Bus");
+	private static final EventBus BUS = new EventBus("Media Event Bus");
 
 	/**
 	 * Post.
@@ -36,7 +36,7 @@ public class AudioEventBus {
 	 * @param event
 	 *          the event
 	 */
-	public static void post(AudioEvent event) {
+	public static void post(MediaEvent event) {
 		BUS.post(event);
 	}
 
@@ -59,4 +59,9 @@ public class AudioEventBus {
 	public static void unregister(Object o) {
 		BUS.unregister(o);
 	}
+
+	private MediaEventBus() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

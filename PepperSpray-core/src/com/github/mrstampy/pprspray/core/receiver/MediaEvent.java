@@ -18,48 +18,56 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.receiver.audio;
+package com.github.mrstampy.pprspray.core.receiver;
+
+import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AudioEvent.
+ * The Class MediaEvent.
  */
-public class AudioEvent {
+public class MediaEvent {
 
+	private MediaStreamType type;
 	private int mediaHash;
-	private byte[] chunk;
+	private byte[] processed;
 
 	/**
 	 * The Constructor.
 	 *
+	 * @param type
+	 *          the type
 	 * @param mediaHash
 	 *          the media hash
-	 * @param chunk
-	 *          the chunk
+	 * @param processed
+	 *          the processed
 	 */
-	public AudioEvent(int mediaHash, byte[] chunk) {
-		this.chunk = chunk;
+	public MediaEvent(MediaStreamType type, int mediaHash, byte[] processed) {
+		this.type = type;
 		this.mediaHash = mediaHash;
+		this.processed = processed;
 	}
 
 	/**
 	 * Checks if is applicable.
 	 *
+	 * @param type
+	 *          the type
 	 * @param mediaHash
 	 *          the media hash
 	 * @return true, if checks if is applicable
 	 */
-	public boolean isApplicable(int mediaHash) {
-		return mediaHash == getMediaHash();
+	public boolean isApplicable(MediaStreamType type, int mediaHash) {
+		return type == getType() && mediaHash == getMediaHash();
 	}
 
 	/**
-	 * Gets the chunk.
+	 * Gets the type.
 	 *
-	 * @return the chunk
+	 * @return the type
 	 */
-	public byte[] getChunk() {
-		return chunk;
+	public MediaStreamType getType() {
+		return type;
 	}
 
 	/**
@@ -69,6 +77,15 @@ public class AudioEvent {
 	 */
 	public int getMediaHash() {
 		return mediaHash;
+	}
+
+	/**
+	 * Gets the processed.
+	 *
+	 * @return the processed
+	 */
+	public byte[] getProcessed() {
+		return processed;
 	}
 
 }

@@ -23,7 +23,18 @@ package com.github.mrstampy.pprspray.core.receiver;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rx.Scheduler;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
@@ -42,13 +53,22 @@ import com.google.common.eventbus.Subscribe;
  *          the generic type
  */
 public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
+	private static final Logger log = LoggerFactory.getLogger(AbstractMediaReceiver.class);
 
 	private MediaStreamType type;
 	private int mediaHash;
 
-	private MediaTransformer transformer = new NoTransformTransformer();
+	private MediaTransformer transformer;
 
 	private AtomicBoolean open = new AtomicBoolean(false);
+
+	/** The chunks. */
+	protected ConcurrentSkipListSet<AMC> chunks = new ConcurrentSkipListSet<>();
+
+	/** The svc. */
+	protected Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
+
+	private Lock lock = new ReentrantLock();
 
 	/**
 	 * The Constructor.
@@ -61,6 +81,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	protected AbstractMediaReceiver(MediaStreamType type, int mediaHash) {
 		setType(type);
 		setMediaHash(mediaHash);
+		setTransformer(new NoTransformTransformer());
 
 		ChunkEventBus.register(this);
 	}
@@ -88,6 +109,22 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	protected abstract void receiveImpl(AMC chunk);
 
 	/**
+	 * Adds the.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 */
+	protected void add(AMC chunk) {
+		lock.lock();
+		try {
+			if (!isOpen()) open();
+			chunks.add(chunk);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	/**
 	 * End of message.
 	 *
 	 * @param eom
@@ -108,6 +145,70 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 *          the eom
 	 */
 	protected abstract void endOfMessageImpl(MediaFooterMessage eom);
+
+	/**
+	 * Finalize message.
+	 */
+	protected void finalizeMessage() {
+		if (chunks.isEmpty()) return;
+
+		final AMC[] array = getCurrentAndClear();
+
+		svc.createWorker().schedule(new Action0() {
+
+			@Override
+			public void call() {
+				write(array);
+			}
+		});
+
+	}
+
+	private AMC[] getCurrentAndClear() {
+		lock.lock();
+		try {
+			AMC[] array = chunks.toArray(getEmptyArray());
+			clear();
+			return array;
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	/**
+	 * Gets the empty array.
+	 *
+	 * @return the empty array
+	 */
+	protected abstract AMC[] getEmptyArray();
+
+	/**
+	 * Clear.
+	 */
+	public void clear() {
+		chunks.clear();
+	}
+
+	/**
+	 * Write.
+	 *
+	 * @param array
+	 *          the array
+	 */
+	protected void write(AMC[] array) {
+		try {
+			byte[] b = rehydrateAndTransform(array);
+
+			if (hasTransformed(b)) MediaEventBus.post(new MediaEvent(getType(), getMediaHash(), b));
+		} catch (Exception e) {
+			log.error("Unexpected exception, closing", e);
+			close();
+		}
+	}
+
+	private boolean hasTransformed(byte[] b) {
+		return b != null && b.length > 0;
+	}
 
 	/**
 	 * Rehydrate and transform.
@@ -153,14 +254,22 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	}
 
 	/**
-	 * Close.
-	 */
-	public abstract void close();
-
-	/**
 	 * Open.
 	 */
-	public abstract void open();
+	public void open() {
+		if (isOpen()) return;
+
+		setOpen(true);
+	}
+
+	/**
+	 * Close.
+	 */
+	public void close() {
+		if (!isOpen()) return;
+
+		setOpen(false);
+	}
 
 	/**
 	 * Checks if is open.
