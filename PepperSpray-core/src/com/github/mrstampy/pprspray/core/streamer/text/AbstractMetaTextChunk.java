@@ -45,6 +45,7 @@ public class AbstractMetaTextChunk extends DefaultTextChunk {
 	 */
 	protected AbstractMetaTextChunk(byte[] message, byte[] headerBytes) {
 		super(message);
+		this.headerBytes = headerBytes;
 		extractMarshallingClassNameHash(message);
 	}
 
