@@ -20,6 +20,7 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,7 @@ import rx.Scheduler;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
+import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.BinaryStreamer;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
@@ -50,9 +52,14 @@ public class TextStreamer extends BinaryStreamer {
 
 	/**
 	 * The Constructor.
+	 *
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
-	public TextStreamer() {
-		super(DEFAULT_TEXT_PIPE_SIZE);
+	public TextStreamer(KiSyChannel channel, InetSocketAddress destination) {
+		super(DEFAULT_TEXT_PIPE_SIZE, channel, destination);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
 		setTransformer(new DefaultTextTransformer());

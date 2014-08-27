@@ -21,14 +21,9 @@
 package com.github.mrstampy.pprspray.core.streamer;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +50,6 @@ public abstract class AbstractMediaStreamer {
 
 	private static final AtomicInteger ID = new AtomicInteger(0);
 
-	private List<ByteArrayStreamer> streamers = new ArrayList<ByteArrayStreamer>();
-	private List<ByteArrayStreamer> deadStreams = new ArrayList<ByteArrayStreamer>();
-
-	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	private ReadLock readLock = lock.readLock();
-	private WriteLock writeLock = lock.writeLock();
-
 	private AtomicBoolean streaming = new AtomicBoolean(false);
 
 	private Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
@@ -82,14 +70,36 @@ public abstract class AbstractMediaStreamer {
 
 	private String description;
 
+	private KiSyChannel channel;
+	private InetSocketAddress destination;
+
+	private ByteArrayStreamer streamer;
+
 	/**
 	 * The Constructor.
 	 *
 	 * @param defaultPipeSize
 	 *          the default pipe size
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
-	protected AbstractMediaStreamer(int defaultPipeSize) {
+	protected AbstractMediaStreamer(int defaultPipeSize, KiSyChannel channel, InetSocketAddress destination) {
 		setStreamerPipeSize(defaultPipeSize);
+		this.channel = channel;
+		this.destination = destination;
+
+		initStreamer();
+	}
+
+	private void initStreamer() {
+		try {
+			streamer = createStreamer(channel, destination);
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+			throw new IllegalStateException("Cannot initialize streamer", e);
+		}
 	}
 
 	/**
@@ -120,7 +130,7 @@ public abstract class AbstractMediaStreamer {
 	public void destroy() {
 		if (isStreaming()) stop();
 
-		remove(streamers.toArray(new ByteArrayStreamer[] {}));
+		streamer.cancel();
 		notifyDestroyed();
 	}
 
@@ -132,6 +142,7 @@ public abstract class AbstractMediaStreamer {
 		if (!isStreamable()) throw new IllegalStateException("Media streamer cannot be opened");
 
 		streaming.set(true);
+		if (!streamer.isStreaming()) streamer.stream();
 		notifyStart();
 
 		sub = scheduler.createWorker().schedule(new Action0() {
@@ -154,68 +165,8 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void stop() {
 		unsubscribe();
+		streamer.pause();
 		notifyStop();
-	}
-
-	/**
-	 * Adds the.
-	 *
-	 * @param channel
-	 *          the channel
-	 * @param destination
-	 *          the destination
-	 */
-	public void add(KiSyChannel channel, InetSocketAddress destination) {
-		if (contains(destination)) {
-			log.warn("Destination {} already added", destination);
-			return;
-		}
-
-		writeLock.lock();
-		try {
-			streamers.add(createStreamer(channel, destination));
-		} catch (Exception e) {
-			log.error("Unexpected exception", e);
-			throw new IllegalStateException("Could not create streamer for destination " + destination);
-		} finally {
-			writeLock.unlock();
-		}
-	}
-
-	/**
-	 * Removes the.
-	 *
-	 * @param channel
-	 *          the channel
-	 * @param destination
-	 *          the destination
-	 */
-	public void remove(KiSyChannel channel, InetSocketAddress destination) {
-		ByteArrayStreamer bas = get(destination);
-		if (bas == null) return;
-
-		remove(bas);
-	}
-
-	private boolean contains(InetSocketAddress destination) {
-		return get(destination) != null;
-	}
-
-	private ByteArrayStreamer get(InetSocketAddress destination) {
-		readLock.lock();
-		try {
-			for (ByteArrayStreamer bas : streamers) {
-				if (isStreamer(destination, bas)) return bas;
-			}
-		} finally {
-			readLock.unlock();
-		}
-
-		return null;
-	}
-
-	private boolean isStreamer(InetSocketAddress destination, ByteArrayStreamer bas) {
-		return bas.getDestination().equals(destination);
 	}
 
 	private ByteArrayStreamer createStreamer(KiSyChannel channel, InetSocketAddress destination) throws Exception {
@@ -248,7 +199,7 @@ public abstract class AbstractMediaStreamer {
 	}
 
 	private void notifyAdd(KiSyChannel channel, InetSocketAddress dest) {
-		log.debug("Adding PhooCam streamer for channel {} and destination {}", channel.localAddress(), dest);
+		log.debug("Adding Media Streamer for channel {} and destination {}", channel.localAddress(), dest);
 		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.DESTINATION_ADDED, channel, dest));
 	}
 
@@ -267,14 +218,6 @@ public abstract class AbstractMediaStreamer {
 		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.DESTROYED));
 	}
 
-	private void notifyRemoval(ByteArrayStreamer bas) {
-		KiSyChannel channel = bas.getChannel();
-		InetSocketAddress dest = bas.getDestination();
-
-		log.debug("Removing PhooCam streamer for channel {} and destination {}", channel.localAddress(), dest);
-		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.DESTINATION_REMOVED, channel, dest));
-	}
-
 	/**
 	 * Stream.
 	 */
@@ -283,49 +226,15 @@ public abstract class AbstractMediaStreamer {
 
 		if (data == null) return;
 
-		readLock.lock();
-		try {
-			if (streamers.isEmpty()) stop();
-
-			for (ByteArrayStreamer bas : streamers) {
-				stream(data, bas);
-			}
-		} finally {
-			readLock.unlock();
-		}
-
-		takeOutYourDead();
+		stream(data);
 	}
 
-	private void stream(byte[] bytes, ByteArrayStreamer bas) {
+	private void stream(byte[] bytes) {
 		try {
-			bas.stream(bytes);
+			streamer.stream(bytes);
 		} catch (Exception e) {
-			log.error("Unexpected exception streaming from {} to {}", bas.getChannel().localAddress(), bas.getDestination(),
-					e);
-			deadStreams.add(bas);
-		}
-	}
-
-	private void takeOutYourDead() {
-		if (deadStreams.isEmpty()) return;
-
-		ByteArrayStreamer[] bass = deadStreams.toArray(new ByteArrayStreamer[] {});
-		deadStreams.clear();
-
-		remove(bass);
-	}
-
-	private void remove(ByteArrayStreamer... bass) {
-		writeLock.lock();
-		try {
-			for (ByteArrayStreamer bas : bass) {
-				bas.cancel();
-				notifyRemoval(bas);
-				streamers.remove(bas);
-			}
-		} finally {
-			writeLock.unlock();
+			log.error("Unexpected exception streaming from {} to {}", streamer.getChannel().localAddress(),
+					streamer.getDestination(), e);
 		}
 	}
 
@@ -364,14 +273,7 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setMediaChunkProcessor(AbstractMediaChunkProcessor mediaChunkProcessor) {
 		this.mediaChunkProcessor = mediaChunkProcessor;
-		readLock.lock();
-		try {
-			for (ByteArrayStreamer streamer : streamers) {
-				streamer.setChunkProcessor(mediaChunkProcessor);
-			}
-		} finally {
-			readLock.unlock();
-		}
+		streamer.setChunkProcessor(mediaChunkProcessor);
 	}
 
 	/**
@@ -400,14 +302,7 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setMediaFooter(Footer mediaFooter) {
 		this.mediaFooter = mediaFooter;
-		readLock.lock();
-		try {
-			for (ByteArrayStreamer streamer : streamers) {
-				streamer.setFooter(mediaFooter);
-			}
-		} finally {
-			readLock.unlock();
-		}
+		streamer.setFooter(mediaFooter);
 	}
 
 	/**
@@ -418,16 +313,7 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setAckRequired(boolean isAckRequired) {
 		this.ackRequired = isAckRequired;
-		if (isAckRequired) {
-			readLock.lock();
-			try {
-				for (ByteArrayStreamer streamer : streamers) {
-					streamer.ackRequired();
-				}
-			} finally {
-				readLock.unlock();
-			}
-		}
+		if (isAckRequired) streamer.ackRequired();
 	}
 
 	/**
@@ -447,14 +333,7 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setThrottle(int throttle) {
 		this.throttle = throttle;
-		readLock.lock();
-		try {
-			for (ByteArrayStreamer streamer : streamers) {
-				streamer.setThrottle(throttle);
-			}
-		} finally {
-			readLock.unlock();
-		}
+		streamer.setThrottle(throttle);
 	}
 
 	/**
@@ -474,14 +353,7 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setChunksPerSecond(int chunksPerSecond) {
 		this.chunksPerSecond = chunksPerSecond;
-		readLock.lock();
-		try {
-			for (ByteArrayStreamer streamer : streamers) {
-				streamer.setChunksPerSecond(chunksPerSecond);
-			}
-		} finally {
-			readLock.unlock();
-		}
+		streamer.setChunksPerSecond(chunksPerSecond);
 	}
 
 	/**
@@ -539,14 +411,7 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setConcurrentThreads(int concurrentThreads) {
 		this.concurrentThreads = concurrentThreads;
-		readLock.lock();
-		try {
-			for (ByteArrayStreamer streamer : streamers) {
-				streamer.setConcurrentThreads(concurrentThreads);
-			}
-		} finally {
-			readLock.unlock();
-		}
+		streamer.setConcurrentThreads(concurrentThreads);
 	}
 
 	/**
@@ -568,14 +433,25 @@ public abstract class AbstractMediaStreamer {
 		this.fullThrottle = fullThrottle;
 		if (!fullThrottle) return;
 
-		readLock.lock();
-		try {
-			for (ByteArrayStreamer streamer : streamers) {
-				streamer.fullThrottle();
-			}
-		} finally {
-			readLock.unlock();
-		}
+		streamer.fullThrottle();
+	}
+
+	/**
+	 * Gets the channel.
+	 *
+	 * @return the channel
+	 */
+	public KiSyChannel getChannel() {
+		return channel;
+	}
+
+	/**
+	 * Gets the destination.
+	 *
+	 * @return the destination
+	 */
+	public InetSocketAddress getDestination() {
+		return destination;
 	}
 
 }

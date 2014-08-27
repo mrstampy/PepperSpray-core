@@ -38,8 +38,5 @@ public enum MediaStreamerEventType {
 	
 	/** The destination added. */
 	DESTINATION_ADDED,
-	
-	/** The destination removed. */
-	DESTINATION_REMOVED;
 	//@formatter:on
 }

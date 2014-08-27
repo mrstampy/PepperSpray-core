@@ -21,8 +21,10 @@
 package com.github.mrstampy.pprspray.core.streamer.webcam;
 
 import java.awt.image.BufferedImage;
+import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
@@ -52,9 +54,13 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 	 *
 	 * @param webcam
 	 *          the webcam
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
-	public WebcamStreamer(Webcam webcam) {
-		super(DEFAULT_VIDEO_PIPE_SIZE);
+	public WebcamStreamer(Webcam webcam, KiSyChannel channel, InetSocketAddress destination) {
+		super(DEFAULT_VIDEO_PIPE_SIZE, channel, destination);
 
 		this.webcam = webcam;
 		webcam.addWebcamListener(listener);

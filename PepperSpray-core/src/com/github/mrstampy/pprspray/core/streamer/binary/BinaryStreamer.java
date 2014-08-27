@@ -20,11 +20,13 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.binary;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
@@ -43,9 +45,14 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 
 	/**
 	 * The Constructor.
+	 *
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
-	public BinaryStreamer() {
-		this(DEFAULT_BINARY_PIPE_SIZE);
+	public BinaryStreamer(KiSyChannel channel, InetSocketAddress destination) {
+		this(DEFAULT_BINARY_PIPE_SIZE, channel, destination);
 	}
 
 	/**
@@ -53,9 +60,13 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 	 *
 	 * @param defaultPipeSize
 	 *          the default pipe size
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
-	public BinaryStreamer(int defaultPipeSize) {
-		super(defaultPipeSize);
+	public BinaryStreamer(int defaultPipeSize, KiSyChannel channel, InetSocketAddress destination) {
+		super(defaultPipeSize, channel, destination);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
 	}

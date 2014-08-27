@@ -22,6 +22,7 @@ package com.github.mrstampy.pprspray.core.streamer.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import rx.Scheduler;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
+import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.BinaryStreamer;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
@@ -51,9 +53,14 @@ public class MediaFileStreamer extends BinaryStreamer {
 
 	/**
 	 * The Constructor.
+	 *
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 */
-	public MediaFileStreamer() {
-		super(DEFAULT_FILE_PIPE_SIZE);
+	public MediaFileStreamer(KiSyChannel channel, InetSocketAddress destination) {
+		super(DEFAULT_FILE_PIPE_SIZE, channel, destination);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
 		setFileTransformer(new DefaultFileTransformer());

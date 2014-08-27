@@ -23,6 +23,7 @@ package com.github.mrstampy.pprspray.core.streamer.audio;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,6 +44,7 @@ import rx.Subscription;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
+import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.kitchensync.util.KiSyUtils;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
@@ -78,6 +80,10 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	/**
 	 * The Constructor.
 	 *
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
 	 * @param audioFormat
 	 *          the audio format
 	 * @param mixerInfo
@@ -85,8 +91,9 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	 * @throws LineUnavailableException
 	 *           the line unavailable exception
 	 */
-	public AudioStreamer(AudioFormat audioFormat, Mixer.Info mixerInfo) throws LineUnavailableException {
-		super(DEFAULT_AUDIO_PIPE_SIZE);
+	public AudioStreamer(KiSyChannel channel, InetSocketAddress destination, AudioFormat audioFormat, Mixer.Info mixerInfo)
+			throws LineUnavailableException {
+		super(DEFAULT_AUDIO_PIPE_SIZE, channel, destination);
 		init(audioFormat, mixerInfo);
 
 		initDefaultChunkProcessorAndFooter();
@@ -188,8 +195,8 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 		if (available < 0) stop();
 		if (available == 0) return;
-		
-		if(buf.writerIndex() + available > buf.capacity()) buf.clear();
+
+		if (buf.writerIndex() + available > buf.capacity()) buf.clear();
 
 		byte[] b = new byte[available];
 
