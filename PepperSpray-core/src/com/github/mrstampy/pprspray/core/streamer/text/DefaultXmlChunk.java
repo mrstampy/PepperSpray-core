@@ -51,7 +51,7 @@ public class DefaultXmlChunk extends DefaultTextChunk {
 
 	/**
 	 * Returns true if {@link #getXmlClassNameHash()} references a class object of
-	 * which the JSON in {@link #getData()} is a representation.
+	 * which the XML in {@link #getData()} is a representation.
 	 *
 	 * @return true, if checks for xml class
 	 * @see Class#getName()

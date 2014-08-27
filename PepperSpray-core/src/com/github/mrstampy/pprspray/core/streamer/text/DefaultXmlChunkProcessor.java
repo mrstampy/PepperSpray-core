@@ -30,10 +30,10 @@ import com.github.mrstampy.kitchensync.stream.Streamer;
  */
 public class DefaultXmlChunkProcessor extends DefaultTextChunkProcessor {
 
-	/** The Constant JSON_KEY. */
+	/** The Constant XML_KEY. */
 	public static final String XML_KEY = "XML:";
 
-	/** The Constant JSON_KEY_BYTES. */
+	/** The Constant XML_KEY_BYTES. */
 	public static final byte[] XML_KEY_BYTES = XML_KEY.getBytes();
 
 	private Class<?> xmlClass;
