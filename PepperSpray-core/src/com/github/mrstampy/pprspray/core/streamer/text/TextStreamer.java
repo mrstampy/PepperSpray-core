@@ -20,9 +20,15 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
+import java.util.concurrent.Executors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rx.Scheduler;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.BinaryStreamer;
@@ -38,6 +44,10 @@ public class TextStreamer extends BinaryStreamer {
 
 	private static final int DEFAULT_TEXT_PIPE_SIZE = 1024 * 1000;
 
+	private TextTransformer transformer;
+
+	private Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
+
 	/**
 	 * The Constructor.
 	 */
@@ -45,6 +55,7 @@ public class TextStreamer extends BinaryStreamer {
 		super(DEFAULT_TEXT_PIPE_SIZE);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
+		setTransformer(new DefaultTextTransformer());
 	}
 
 	/**
@@ -53,12 +64,45 @@ public class TextStreamer extends BinaryStreamer {
 	 * @param text
 	 *          the text
 	 */
-	public void stream(String text) {
+	public void stream(final String text) {
 		if (StringUtils.isEmpty(text)) return;
 
 		log.debug("Streaming text {}", text);
 
-		stream(text.getBytes());
+		final TextTransformer tt = getTransformer();
+
+		if (tt == null) throw new IllegalStateException("TextTransformer cannot be null");
+
+		svc.createWorker().schedule(new Action0() {
+
+			@Override
+			public void call() {
+				try {
+					tt.transform(text, TextStreamer.this);
+				} catch (Exception e) {
+					log.error("Unexpected exception", e);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Gets the transformer.
+	 *
+	 * @return the transformer
+	 */
+	public TextTransformer getTransformer() {
+		return transformer;
+	}
+
+	/**
+	 * Sets the transformer.
+	 *
+	 * @param transformer
+	 *          the transformer
+	 */
+	public void setTransformer(TextTransformer transformer) {
+		this.transformer = transformer;
 	}
 
 	private void initDefaultChunkProcessorAndFooter() {

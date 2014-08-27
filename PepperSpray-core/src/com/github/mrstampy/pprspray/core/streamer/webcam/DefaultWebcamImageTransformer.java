@@ -18,29 +18,28 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.streamer;
+package com.github.mrstampy.pprspray.core.streamer.webcam;
 
-import com.github.mrstampy.kitchensync.stream.ByteArrayStreamer;
+import java.awt.image.BufferedImage;
+
+import com.github.sarxos.webcam.util.ImageUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface MediaProcessor.
+ * The Class DefaultWebcamImageTransformer.
  */
-public interface MediaProcessor {
+public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 
-	/**
-	 * Process.
-	 *
-	 * @param chunk
-	 *          the chunk
-	 * @param bas
-	 *          the bas
-	 * @return the byte[]
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.streamer.webcam.WebcamImageTransformer
+	 * #transform(java.awt.image.BufferedImage)
 	 */
-	byte[] process(byte[] chunk, ByteArrayStreamer bas);
+	@Override
+	public byte[] transform(BufferedImage image) {
+		return ImageUtils.toByteArray(image, ImageUtils.FORMAT_PNG);
+	}
 
-	/**
-	 * Inits the.
-	 */
-	void init();
 }

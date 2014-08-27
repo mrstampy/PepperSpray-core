@@ -41,7 +41,7 @@ import rx.schedulers.Schedulers;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.kitchensync.stream.ByteArrayStreamer;
 import com.github.mrstampy.kitchensync.stream.footer.Footer;
-import com.github.mrstampy.kitchensync.stream.header.ChunkProcessor;
+import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEvent;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventType;
@@ -67,7 +67,7 @@ public abstract class AbstractMediaStreamer {
 	private Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
 	private Subscription sub;
 
-	private ChunkProcessor mediaChunkProcessor;
+	private AbstractMediaChunkProcessor mediaChunkProcessor;
 	private Footer mediaFooter;
 
 	private int id = -1;
@@ -81,8 +81,6 @@ public abstract class AbstractMediaStreamer {
 	private int concurrentThreads;
 
 	private String description;
-
-	private MediaProcessor mediaProcessor = new NoProcessMediaProcessor();
 
 	/**
 	 * The Constructor.
@@ -289,7 +287,6 @@ public abstract class AbstractMediaStreamer {
 		try {
 			if (streamers.isEmpty()) stop();
 
-			initMediaProcessor();
 			for (ByteArrayStreamer bas : streamers) {
 				stream(data, bas);
 			}
@@ -300,27 +297,14 @@ public abstract class AbstractMediaStreamer {
 		takeOutYourDead();
 	}
 
-	private void initMediaProcessor() {
-		MediaProcessor mp = getMediaProcessor();
-
-		if (mp != null) mp.init();
-	}
-
 	private void stream(byte[] bytes, ByteArrayStreamer bas) {
 		try {
-			byte[] processed = process(bytes, bas);
-			bas.stream(processed);
+			bas.stream(bytes);
 		} catch (Exception e) {
 			log.error("Unexpected exception streaming from {} to {}", bas.getChannel().localAddress(), bas.getDestination(),
 					e);
 			deadStreams.add(bas);
 		}
-	}
-
-	private byte[] process(byte[] chunk, ByteArrayStreamer bas) {
-		MediaProcessor mp = getMediaProcessor();
-
-		return mp == null ? chunk : mp.process(chunk, bas);
 	}
 
 	private void takeOutYourDead() {
@@ -368,7 +352,7 @@ public abstract class AbstractMediaStreamer {
 	 *
 	 * @return the media chunk processor
 	 */
-	public ChunkProcessor getMediaChunkProcessor() {
+	public AbstractMediaChunkProcessor getMediaChunkProcessor() {
 		return mediaChunkProcessor;
 	}
 
@@ -378,7 +362,7 @@ public abstract class AbstractMediaStreamer {
 	 * @param mediaChunkProcessor
 	 *          the media chunk processor
 	 */
-	public void setMediaChunkProcessor(ChunkProcessor mediaChunkProcessor) {
+	public void setMediaChunkProcessor(AbstractMediaChunkProcessor mediaChunkProcessor) {
 		this.mediaChunkProcessor = mediaChunkProcessor;
 		readLock.lock();
 		try {
@@ -388,6 +372,15 @@ public abstract class AbstractMediaStreamer {
 		} finally {
 			readLock.unlock();
 		}
+	}
+
+	/**
+	 * Gets the media hash.
+	 *
+	 * @return the media hash
+	 */
+	public int getMediaHash() {
+		return getMediaChunkProcessor().getMediaHash();
 	}
 
 	/**
@@ -527,25 +520,6 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * Gets the media processor.
-	 *
-	 * @return the media processor
-	 */
-	public MediaProcessor getMediaProcessor() {
-		return mediaProcessor;
-	}
-
-	/**
-	 * Sets the media processor.
-	 *
-	 * @param mediaProcessor
-	 *          the media processor
-	 */
-	public void setMediaProcessor(MediaProcessor mediaProcessor) {
-		this.mediaProcessor = mediaProcessor;
 	}
 
 	/**

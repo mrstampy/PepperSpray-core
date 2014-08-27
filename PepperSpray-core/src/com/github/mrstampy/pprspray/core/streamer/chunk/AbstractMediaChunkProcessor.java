@@ -79,10 +79,13 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 * Subclasses which have overridden {@link #sizeInBytes()} for custom header
 	 * information will override this method, call super.writeHeader then write
 	 * the custom header part.
-	 * 
+	 *
 	 * @param streamer
+	 *          the streamer
 	 * @param buf
+	 *          the buf
 	 * @param headerLength
+	 *          the header length
 	 * @see AbstractMediaChunk#extractCustomHeaderChunk(byte[])
 	 */
 	protected void writeHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {

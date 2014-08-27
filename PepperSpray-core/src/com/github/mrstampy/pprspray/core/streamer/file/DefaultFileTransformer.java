@@ -28,24 +28,25 @@ import java.io.IOException;
 /**
  * The Class DefaultFileTransformer.
  */
-class DefaultFileTransformer implements FileTransformer {
+public class DefaultFileTransformer implements FileTransformer {
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * com.github.mrstampy.pprspray.core.streamer.file.FileTransformer#transform
-	 * (java.io.File)
+	 * (java.io.File,
+	 * com.github.mrstampy.pprspray.core.streamer.file.MediaFileStreamer)
 	 */
 	@Override
-	public byte[] transform(File file) throws IOException {
+	public void transform(File file, MediaFileStreamer streamer) throws IOException {
 		FileInputStream fis = new FileInputStream(file);
 
 		byte[] b = new byte[fis.available()];
 		fis.read(b);
 		fis.close();
 
-		return b;
+		streamer.stream(b);
 	}
 
 }

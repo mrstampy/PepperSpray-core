@@ -18,26 +18,21 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.streamer.file;
-
-import java.io.File;
-import java.io.IOException;
+package com.github.mrstampy.pprspray.core.streamer.text;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface FileTransformer.
+ * The Interface TextTransformer.
  */
-public interface FileTransformer {
+public interface TextTransformer {
 
 	/**
 	 * Transform.
 	 *
-	 * @param file
-	 *          the file
+	 * @param text
+	 *          the text
 	 * @param streamer
 	 *          the streamer
-	 * @throws IOException
-	 *           the IO exception
 	 */
-	void transform(File file, MediaFileStreamer streamer) throws IOException;
+	void transform(String text, TextStreamer streamer);
 }

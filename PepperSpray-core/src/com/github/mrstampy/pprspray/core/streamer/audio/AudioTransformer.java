@@ -18,26 +18,22 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.streamer.file;
+package com.github.mrstampy.pprspray.core.streamer.audio;
 
-import java.io.File;
-import java.io.IOException;
+import io.netty.buffer.ByteBuf;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface FileTransformer.
+ * The Interface AudioTransformer.
  */
-public interface FileTransformer {
+public interface AudioTransformer {
 
 	/**
 	 * Transform.
 	 *
-	 * @param file
-	 *          the file
-	 * @param streamer
-	 *          the streamer
-	 * @throws IOException
-	 *           the IO exception
+	 * @param buf
+	 *          the buf
+	 * @return the byte[]
 	 */
-	void transform(File file, MediaFileStreamer streamer) throws IOException;
+	byte[] transform(ByteBuf buf);
 }

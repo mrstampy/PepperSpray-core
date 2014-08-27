@@ -74,6 +74,8 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	private Subscription audioSub;
 	private Subscription monitorSub;
 
+	private AudioTransformer transformer;
+
 	/**
 	 * The Constructor.
 	 *
@@ -90,6 +92,7 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 		initQueue();
 		initDefaultChunkProcessorAndFooter();
+		setTransformer(new DefaultAudioTransformer());
 	}
 
 	/**
@@ -237,7 +240,9 @@ public class AudioStreamer extends AbstractMediaStreamer {
 			}
 		}
 
-		return buf.array();
+		if (getTransformer() == null) throw new IllegalArgumentException("Transformer cannot be null");
+
+		return getTransformer().transform(buf);
 	}
 
 	/**
@@ -294,6 +299,25 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		MediaFooterMessage mfm = new MediaFooterMessage(MediaStreamType.AUDIO, dacp.getMediaHash());
 
 		setMediaFooter(new MediaFooter(mfm));
+	}
+
+	/**
+	 * Gets the transformer.
+	 *
+	 * @return the transformer
+	 */
+	public AudioTransformer getTransformer() {
+		return transformer;
+	}
+
+	/**
+	 * Sets the transformer.
+	 *
+	 * @param transformer
+	 *          the transformer
+	 */
+	public void setTransformer(AudioTransformer transformer) {
+		this.transformer = transformer;
 	}
 
 }

@@ -41,7 +41,7 @@ public class DefaultJsonChunk extends DefaultTextChunk {
 	 */
 	public DefaultJsonChunk(byte[] message) {
 		super(message);
-		
+
 		extractJsonClassNameHash(message);
 	}
 

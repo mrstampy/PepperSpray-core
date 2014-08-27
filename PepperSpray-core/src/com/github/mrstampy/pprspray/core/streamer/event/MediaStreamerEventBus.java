@@ -54,11 +54,12 @@ public class MediaStreamerEventBus {
 	public static void register(Object subscriber) {
 		BUS.register(subscriber);
 	}
-	
+
 	/**
 	 * Unregister.
 	 *
-	 * @param subscriber the subscriber
+	 * @param subscriber
+	 *          the subscriber
 	 */
 	public static void unregister(Object subscriber) {
 		BUS.unregister(subscriber);

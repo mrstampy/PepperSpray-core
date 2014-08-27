@@ -30,7 +30,6 @@ import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamEvent;
 import com.github.sarxos.webcam.WebcamListener;
-import com.github.sarxos.webcam.util.ImageUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -46,6 +45,8 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 
 	private WebamStreamerListener listener = new WebamStreamerListener();
 
+	private WebcamImageTransformer transformer;
+
 	/**
 	 * The Constructor.
 	 *
@@ -60,6 +61,7 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		open.set(webcam.isOpen());
 
 		initDefaultChunkProcessorAndFooter();
+		setTransformer(new DefaultWebcamImageTransformer());
 	}
 
 	/*
@@ -99,6 +101,25 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		webcam.removeWebcamListener(listener);
 	}
 
+	/**
+	 * Gets the transformer.
+	 *
+	 * @return the transformer
+	 */
+	public WebcamImageTransformer getTransformer() {
+		return transformer;
+	}
+
+	/**
+	 * Sets the transformer.
+	 *
+	 * @param transformer
+	 *          the transformer
+	 */
+	public void setTransformer(WebcamImageTransformer transformer) {
+		this.transformer = transformer;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -111,7 +132,9 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 
 		if (image == null) stop();
 
-		return ImageUtils.toByteArray(image, ImageUtils.FORMAT_PNG);
+		if (getTransformer() == null) throw new IllegalStateException("Transformer cannot be null");
+
+		return getTransformer().transform(image);
 	}
 
 	/*

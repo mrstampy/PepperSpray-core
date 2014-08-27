@@ -300,10 +300,12 @@ public class MediaStreamerUtils {
 	}
 
 	/**
-	 * Returns the hash of the name of the class representation relevant to this JSON message.
-	 * 
+	 * Returns the hash of the name of the class representation relevant to this
+	 * JSON message.
+	 *
 	 * @param message
-	 * @return
+	 *          the message
+	 * @return the json class hash
 	 * @see DefaultJsonChunkProcessor#setJsonClassNameHash(int)
 	 * @see Class#getName()
 	 */

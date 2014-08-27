@@ -18,35 +18,22 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.streamer;
+package com.github.mrstampy.pprspray.core.streamer.webcam;
 
-import com.github.mrstampy.kitchensync.stream.ByteArrayStreamer;
+import java.awt.image.BufferedImage;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class NoProcessMediaProcessor.
+ * The Interface WebcamImageTransformer.
  */
-public class NoProcessMediaProcessor implements MediaProcessor {
+public interface WebcamImageTransformer {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.streamer.MediaProcessor#process(byte[],
-	 * com.github.mrstampy.kitchensync.stream.ByteArrayStreamer)
+	/**
+	 * Transform.
+	 *
+	 * @param image
+	 *          the image
+	 * @return the byte[]
 	 */
-	@Override
-	public byte[] process(byte[] chunk, ByteArrayStreamer bas) {
-		return chunk;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.github.mrstampy.pprspray.core.streamer.MediaProcessor#init()
-	 */
-	@Override
-	public void init() {
-	}
-
+	byte[] transform(BufferedImage image);
 }

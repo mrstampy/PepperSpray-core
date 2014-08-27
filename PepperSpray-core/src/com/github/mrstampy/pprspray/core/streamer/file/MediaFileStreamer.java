@@ -22,9 +22,14 @@ package com.github.mrstampy.pprspray.core.streamer.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rx.Scheduler;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.BinaryStreamer;
@@ -41,6 +46,8 @@ public class MediaFileStreamer extends BinaryStreamer {
 	private static final int DEFAULT_FILE_PIPE_SIZE = 1024 * 4000;
 
 	private FileTransformer fileTransformer;
+
+	private Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
 
 	/**
 	 * The Constructor.
@@ -60,18 +67,27 @@ public class MediaFileStreamer extends BinaryStreamer {
 	 * @throws IOException
 	 *           the IO exception
 	 */
-	public void stream(File file) throws IOException {
+	public void stream(final File file) throws IOException {
 		if (file == null) return;
 
 		log.debug("Streaming file {}", file.getAbsolutePath());
 
-		FileTransformer ft = getFileTransformer();
+		final FileTransformer ft = getFileTransformer();
 
 		if (ft == null) throw new IllegalStateException("FileTransformer cannot be null");
 
-		byte[] b = ft.transform(file);
+		svc.createWorker().schedule(new Action0() {
 
-		stream(b);
+			@Override
+			public void call() {
+				try {
+					ft.transform(file, MediaFileStreamer.this);
+				} catch (IOException e) {
+					log.error("Unexpected exception streaming file {}", file.getAbsolutePath(), e);
+				}
+
+			}
+		});
 	}
 
 	/**
