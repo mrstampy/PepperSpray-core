@@ -21,7 +21,6 @@
 package com.github.mrstampy.pprspray.core.streamer.file;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -41,6 +40,8 @@ public class MediaFileStreamer extends BinaryStreamer {
 
 	private static final int DEFAULT_FILE_PIPE_SIZE = 1024 * 4000;
 
+	private FileTransformer fileTransformer;
+
 	/**
 	 * The Constructor.
 	 */
@@ -48,6 +49,7 @@ public class MediaFileStreamer extends BinaryStreamer {
 		super(DEFAULT_FILE_PIPE_SIZE);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
+		setFileTransformer(new DefaultFileTransformer());
 	}
 
 	/**
@@ -63,13 +65,32 @@ public class MediaFileStreamer extends BinaryStreamer {
 
 		log.debug("Streaming file {}", file.getAbsolutePath());
 
-		FileInputStream fis = new FileInputStream(file);
-		byte[] b = new byte[fis.available()];
-		fis.read(b);
+		FileTransformer ft = getFileTransformer();
+
+		if (ft == null) throw new IllegalStateException("FileTransformer cannot be null");
+
+		byte[] b = ft.transform(file);
 
 		stream(b);
+	}
 
-		fis.close();
+	/**
+	 * Gets the file transformer.
+	 *
+	 * @return the file transformer
+	 */
+	public FileTransformer getFileTransformer() {
+		return fileTransformer;
+	}
+
+	/**
+	 * Sets the file transformer.
+	 *
+	 * @param fileTransformer
+	 *          the file transformer
+	 */
+	public void setFileTransformer(FileTransformer fileTransformer) {
+		this.fileTransformer = fileTransformer;
 	}
 
 	private void initDefaultChunkProcessorAndFooter() {
