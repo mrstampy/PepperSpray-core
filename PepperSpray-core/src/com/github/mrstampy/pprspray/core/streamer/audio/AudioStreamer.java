@@ -23,7 +23,6 @@ package com.github.mrstampy.pprspray.core.streamer.audio;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -64,9 +63,9 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	private Mixer.Info mixerInfo;
 	private TargetDataLine dataLine;
 
-	private int audioChunkSize = DEFAULT_AUDIO_CHUNK_SIZE;
+	private int audioChunkSize;
 
-	private ArrayBlockingQueue<Byte> queue;
+	private ByteBuf buf = Unpooled.buffer(10240, 1000 * 10240);
 	private AtomicBoolean dataReady = new AtomicBoolean(false);
 	private AtomicBoolean streamable = new AtomicBoolean(false);
 
@@ -90,9 +89,9 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		super(DEFAULT_AUDIO_PIPE_SIZE);
 		init(audioFormat, mixerInfo);
 
-		initQueue();
 		initDefaultChunkProcessorAndFooter();
 		setTransformer(new DefaultAudioTransformer());
+		setAudioChunkSize(DEFAULT_AUDIO_CHUNK_SIZE);
 	}
 
 	/**
@@ -167,7 +166,7 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	}
 
 	private void setDataReady() {
-		boolean ready = queue.size() >= getAudioChunkSize();
+		boolean ready = buf.writerIndex() >= getAudioChunkSize();
 
 		if (ready == dataReady.get()) return;
 
@@ -189,14 +188,14 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 		if (available < 0) stop();
 		if (available == 0) return;
+		
+		if(buf.writerIndex() + available > buf.capacity()) buf.clear();
 
 		byte[] b = new byte[available];
 
 		dataLine.read(b, 0, b.length);
 
-		for (byte bite : b) {
-			queue.add(bite);
-		}
+		buf.writeBytes(b);
 	}
 
 	/*
@@ -230,19 +229,13 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 		int size = getAudioChunkSize();
 
-		ByteBuf buf = Unpooled.buffer(size);
+		ByteBuf b = buf.readBytes(size);
 
-		for (int i = 0; i < size; i++) {
-			try {
-				buf.writeByte(queue.take());
-			} catch (InterruptedException e) {
-				log.error("Unexpected exception", e);
-			}
-		}
+		buf.discardSomeReadBytes();
 
 		if (getTransformer() == null) throw new IllegalArgumentException("Transformer cannot be null");
 
-		return getTransformer().transform(buf);
+		return getTransformer().transform(b);
 	}
 
 	/**
@@ -283,12 +276,6 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		if (audioChunkSize <= 0) throw new IllegalArgumentException("Audio chunk size must be > 0");
 
 		this.audioChunkSize = audioChunkSize;
-
-		initQueue();
-	}
-
-	private void initQueue() {
-		queue = new ArrayBlockingQueue<>(100 * getAudioChunkSize());
 	}
 
 	private void initDefaultChunkProcessorAndFooter() {
