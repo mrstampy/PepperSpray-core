@@ -180,11 +180,7 @@ public class MediaStreamerUtils {
 	public static MediaStreamType getMediaStreamTypeAsChunkHeader(byte[] message) {
 		byte[] b = getChunk(message, MEDIA_TYPE_CHUNK);
 
-		for (MediaStreamType type : MediaStreamType.values()) {
-			if (Arrays.equals(type.ordinalBytes(), b)) return type;
-		}
-
-		return null;
+		return MediaStreamType.getTypeAsHeader(b);
 	}
 
 	/**
@@ -197,11 +193,7 @@ public class MediaStreamerUtils {
 	public static MediaStreamType getMediaStreamTypeAsFooter(byte[] message) {
 		byte[] b = getChunk(message, MEDIA_TYPE_CHUNK);
 
-		for (MediaStreamType type : MediaStreamType.values()) {
-			if (Arrays.equals(type.eomBytes(), b)) return type;
-		}
-
-		return null;
+		return MediaStreamType.getTypeAsFooter(b);
 	}
 
 	/**
@@ -374,6 +366,27 @@ public class MediaStreamerUtils {
 	 */
 	protected static byte[] getChunk(byte[] message, Chunk chunk) {
 		return Arrays.copyOfRange(message, chunk.start, chunk.end);
+	}
+
+	/**
+	 * Write header.
+	 *
+	 * @param buf
+	 *          the buf
+	 * @param type
+	 *          the type
+	 * @param headerLength
+	 *          the header length
+	 * @param mediaHash
+	 *          the media hash
+	 * @param sequence
+	 *          the sequence
+	 */
+	public static void writeHeader(ByteBuf buf, MediaStreamType type, int headerLength, int mediaHash, long sequence) {
+		buf.writeBytes(type.ordinalBytes());
+		buf.writeShort(headerLength);
+		buf.writeInt(mediaHash);
+		buf.writeLong(sequence);
 	}
 
 	/**

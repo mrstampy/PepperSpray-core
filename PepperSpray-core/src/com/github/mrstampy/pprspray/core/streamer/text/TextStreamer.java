@@ -59,7 +59,7 @@ public class TextStreamer extends BinaryStreamer {
 	 *          the destination
 	 */
 	public TextStreamer(KiSyChannel channel, InetSocketAddress destination) {
-		super(DEFAULT_TEXT_PIPE_SIZE, channel, destination);
+		super(DEFAULT_TEXT_PIPE_SIZE, channel, destination, MediaStreamType.TEXT);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
 		setTransformer(new DefaultTextTransformer());

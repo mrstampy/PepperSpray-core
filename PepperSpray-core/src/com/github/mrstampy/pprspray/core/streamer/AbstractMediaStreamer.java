@@ -20,6 +20,8 @@
  */
 package com.github.mrstampy.pprspray.core.streamer;
 
+import io.netty.buffer.ByteBuf;
+
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,10 +38,19 @@ import rx.schedulers.Schedulers;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.kitchensync.stream.ByteArrayStreamer;
 import com.github.mrstampy.kitchensync.stream.footer.Footer;
+import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
+import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
+import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationAckReceiver;
+import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationReceiver;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEvent;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventType;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.AbstractNegotiationAckSubscriber;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessageUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,6 +62,12 @@ public abstract class AbstractMediaStreamer {
 	private static final AtomicInteger ID = new AtomicInteger(0);
 
 	private AtomicBoolean streaming = new AtomicBoolean(false);
+
+	/** The notifying. */
+	protected AtomicBoolean notifying = new AtomicBoolean(false);
+
+	/** The notify accepted. */
+	protected AtomicBoolean notifyAccepted = new AtomicBoolean(false);
 
 	private Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
 	private Subscription sub;
@@ -75,6 +92,8 @@ public abstract class AbstractMediaStreamer {
 
 	private ByteArrayStreamer streamer;
 
+	private MediaStreamType type;
+
 	/**
 	 * The Constructor.
 	 *
@@ -84,11 +103,15 @@ public abstract class AbstractMediaStreamer {
 	 *          the channel
 	 * @param destination
 	 *          the destination
+	 * @param type
+	 *          the type
 	 */
-	protected AbstractMediaStreamer(int defaultPipeSize, KiSyChannel channel, InetSocketAddress destination) {
+	protected AbstractMediaStreamer(int defaultPipeSize, KiSyChannel channel, InetSocketAddress destination,
+			MediaStreamType type) {
 		setStreamerPipeSize(defaultPipeSize);
 		this.channel = channel;
 		this.destination = destination;
+		this.type = type;
 
 		initStreamer();
 	}
@@ -135,12 +158,24 @@ public abstract class AbstractMediaStreamer {
 	}
 
 	/**
-	 * Start.
+	 * If the connection has not been negotiated {@link #negotiate()} will be
+	 * invoked, else {@link #start()}.
 	 */
-	public void start() {
+	public void connect() {
 		if (isStreaming()) return;
 		if (!isStreamable()) throw new IllegalStateException("Media streamer cannot be opened");
 
+		if (notifyAccepted()) {
+			start();
+		} else {
+			negotiate();
+		}
+	}
+
+	/**
+	 * Start.
+	 */
+	protected void start() {
 		streaming.set(true);
 		if (!streamer.isStreaming()) streamer.stream();
 		notifyStart();
@@ -158,6 +193,72 @@ public abstract class AbstractMediaStreamer {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Returns true if this streamer is awaiting negotiation confirmation.
+	 *
+	 * @return true, if notifying
+	 * @see NegotiationEventBus
+	 * @see NegotiationChunk
+	 * @see NegotiationAckChunk
+	 * @see NegotiationReceiver
+	 * @see NegotiationAckReceiver
+	 * @see NegotiationHandler
+	 * @see NegotiationAckHandler
+	 */
+	public boolean notifying() {
+		return notifying.get();
+	}
+
+	/**
+	 * Returns true if this media streamer has received affirmative negotiation
+	 * confirmation.
+	 *
+	 * @return true, if notify accepted
+	 * @see NegotiationEventBus
+	 * @see NegotiationChunk
+	 * @see NegotiationAckChunk
+	 * @see NegotiationReceiver
+	 * @see NegotiationAckReceiver
+	 * @see NegotiationHandler
+	 * @see NegotiationAckHandler
+	 */
+	public boolean notifyAccepted() {
+		return notifyAccepted.get();
+	}
+
+	/**
+	 * Sends a
+	 * {@link NegotiationMessageUtils#getNegotiationMessage(int, MediaStreamType)}
+	 * to the destinations and awaits acknowledgement. If affirmative
+	 * {@link #start()} is invoked to commence streaming.
+	 * 
+	 * @see NegotiationEventBus
+	 * @see NegotiationChunk
+	 * @see NegotiationAckChunk
+	 * @see NegotiationAckReceiver
+	 * @see NegotiationReceiver
+	 * @see AbstractNegotiationAckSubscriber
+	 */
+	protected void negotiate() {
+		notifying.set(true);
+
+		ByteBuf buf = NegotiationMessageUtils.getNegotiationMessage(getMediaHash(), getType());
+
+		NegotiationEventBus.register(new AbstractNegotiationAckSubscriber(getMediaHash()) {
+
+			@Override
+			protected void negotiationAckReceivedImpl(NegotiationAckChunk event) {
+				notifying.set(false);
+
+				notifyAccepted.set(event.isAccepted());
+
+				if (notifyAccepted()) start();
+			}
+		});
+
+		getChannel().send(buf.array(), getDestination());
 	}
 
 	/**
@@ -452,6 +553,15 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public InetSocketAddress getDestination() {
 		return destination;
+	}
+
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
+	public MediaStreamType getType() {
+		return type;
 	}
 
 }

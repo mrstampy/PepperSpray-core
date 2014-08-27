@@ -89,10 +89,7 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 * @see AbstractMediaChunk#extractCustomHeaderChunk(byte[])
 	 */
 	protected void writeHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
-		buf.writeBytes(getMediaStreamType().ordinalBytes());
-		buf.writeShort(headerLength);
-		buf.writeInt(getMediaHash());
-		buf.writeLong(streamer.getSequence());
+		MediaStreamerUtils.writeHeader(buf, getMediaStreamType(), headerLength, getMediaHash(), streamer.getSequence());
 	}
 
 	/**

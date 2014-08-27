@@ -93,7 +93,7 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	 */
 	public AudioStreamer(KiSyChannel channel, InetSocketAddress destination, AudioFormat audioFormat, Mixer.Info mixerInfo)
 			throws LineUnavailableException {
-		super(DEFAULT_AUDIO_PIPE_SIZE, channel, destination);
+		super(DEFAULT_AUDIO_PIPE_SIZE, channel, destination, MediaStreamType.AUDIO);
 		init(audioFormat, mixerInfo);
 
 		initDefaultChunkProcessorAndFooter();

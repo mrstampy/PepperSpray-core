@@ -20,11 +20,18 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.chunk.event;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationReceiver;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.file.DefaultFileChunk;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
@@ -38,6 +45,17 @@ import com.google.common.eventbus.Subscribe;
 public class ChunkEventBus {
 
 	private static final EventBus BUS = new EventBus("Chunk Arrival Event Bus");
+
+	private static Map<Integer, AbstractMediaReceiver<?>> receivers = new ConcurrentHashMap<Integer, AbstractMediaReceiver<?>>();
+
+	static {
+		init();
+	}
+
+	private static void init() {
+		// for all negotiation requests
+		new NegotiationReceiver();
+	}
 
 	/**
 	 * Post.
@@ -100,6 +118,26 @@ public class ChunkEventBus {
 	}
 
 	/**
+	 * Post.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 */
+	public static void post(NegotiationChunk chunk) {
+		BUS.post(chunk);
+	}
+
+	/**
+	 * Post.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 */
+	public static void post(NegotiationAckChunk chunk) {
+		BUS.post(chunk);
+	}
+
+	/**
 	 * Spill over for any subclasses of {@link AbstractMediaChunk} not covered.
 	 *
 	 * @param chunk
@@ -131,6 +169,74 @@ public class ChunkEventBus {
 	 */
 	public static void register(Object o) {
 		BUS.register(o);
+	}
+
+	/**
+	 * Objects are registering for notification of {@link AbstractMediaChunk}s and
+	 * corresponding {@link MediaFooterMessage}s as specified in the various post
+	 * methods and must implement a method with return of void, accepting a
+	 * subclass of {@link AbstractMediaChunk} object as the only parameter, and
+	 * annotated with {@link Subscribe}.
+	 *
+	 * @param receiver
+	 *          the receiver
+	 */
+	public static void register(AbstractMediaReceiver<?> receiver) {
+		BUS.register(receiver);
+
+		receivers.put(receiver.getMediaHash(), receiver);
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @return the abstract media receiver<?>
+	 */
+	public static AbstractMediaReceiver<?> get(int mediaHash) {
+		return receivers.get(mediaHash);
+	}
+
+	/**
+	 * Removes the.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @return the abstract media receiver<?>
+	 */
+	public static AbstractMediaReceiver<?> remove(int mediaHash) {
+		AbstractMediaReceiver<?> receiver = receivers.remove(mediaHash);
+
+		if (receiver == null) return null;
+
+		receiver.destroy();
+
+		return receiver;
+	}
+
+	/**
+	 * Contains.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @return true, if contains
+	 */
+	public static boolean contains(int mediaHash) {
+		return receivers.containsKey(mediaHash);
+	}
+
+	/**
+	 * Clear.
+	 */
+	public static void clear() {
+		for (AbstractMediaReceiver<?> receiver : receivers.values()) {
+			receiver.destroy();
+		}
+
+		receivers.clear();
+
+		init();
 	}
 
 	/**

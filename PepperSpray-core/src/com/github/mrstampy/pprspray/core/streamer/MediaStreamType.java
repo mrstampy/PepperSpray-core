@@ -23,6 +23,8 @@ package com.github.mrstampy.pprspray.core.streamer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.util.Arrays;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Enum MediaStreamType.
@@ -43,7 +45,13 @@ public enum MediaStreamType {
 	TEXT,
 	
 	/** The video. */
-	VIDEO;
+	VIDEO,
+	
+	/** The negotiation. */
+	NEGOTIATION,
+	
+	/** The negotiation ack. */
+	NEGOTIATION_ACK;
 	//@formatter:on
 
 	/** The ordinal bytes. */
@@ -87,5 +95,35 @@ public enum MediaStreamType {
 	 */
 	public byte[] eomBytes() {
 		return eomBytes;
+	}
+
+	/**
+	 * Gets the type as header.
+	 *
+	 * @param b
+	 *          the b
+	 * @return the type as header
+	 */
+	public static MediaStreamType getTypeAsHeader(byte[] b) {
+		for (MediaStreamType type : MediaStreamType.values()) {
+			if (Arrays.equals(type.ordinalBytes(), b)) return type;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets the type as footer.
+	 *
+	 * @param b
+	 *          the b
+	 * @return the type as footer
+	 */
+	public static MediaStreamType getTypeAsFooter(byte[] b) {
+		for (MediaStreamType type : MediaStreamType.values()) {
+			if (Arrays.equals(type.eomBytes(), b)) return type;
+		}
+
+		return null;
 	}
 }

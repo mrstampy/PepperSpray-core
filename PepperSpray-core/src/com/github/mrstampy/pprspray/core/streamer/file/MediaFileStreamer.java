@@ -60,7 +60,7 @@ public class MediaFileStreamer extends BinaryStreamer {
 	 *          the destination
 	 */
 	public MediaFileStreamer(KiSyChannel channel, InetSocketAddress destination) {
-		super(DEFAULT_FILE_PIPE_SIZE, channel, destination);
+		super(DEFAULT_FILE_PIPE_SIZE, channel, destination, MediaStreamType.FILE);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
 		setFileTransformer(new DefaultFileTransformer());

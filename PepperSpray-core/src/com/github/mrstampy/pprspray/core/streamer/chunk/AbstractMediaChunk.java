@@ -46,6 +46,7 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 
 	private int channelPort;
 	private InetSocketAddress sender;
+	private InetSocketAddress receiver;
 
 	/**
 	 * Constructor assumes that the message supplied is of the correct media type,
@@ -307,6 +308,25 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 */
 	public void setChannelPort(int channelPort) {
 		this.channelPort = channelPort;
+	}
+
+	/**
+	 * Gets the receiver.
+	 *
+	 * @return the receiver
+	 */
+	public InetSocketAddress getReceiver() {
+		return receiver;
+	}
+
+	/**
+	 * Sets the receiver.
+	 *
+	 * @param receiver
+	 *          the receiver
+	 */
+	public void setReceiver(InetSocketAddress receiver) {
+		this.receiver = receiver;
 	}
 
 }

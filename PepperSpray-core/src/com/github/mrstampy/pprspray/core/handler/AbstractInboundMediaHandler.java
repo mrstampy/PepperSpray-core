@@ -97,6 +97,7 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 
 					chunk.setChannelPort(channel.getPort());
 					chunk.setSender(sender);
+					chunk.setReceiver(channel.localAddress());
 
 					ChunkEventBus.post(chunk);
 				} catch (Exception e) {

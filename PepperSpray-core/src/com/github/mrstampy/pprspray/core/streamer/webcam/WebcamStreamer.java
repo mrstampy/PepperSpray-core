@@ -60,7 +60,7 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 	 *          the destination
 	 */
 	public WebcamStreamer(Webcam webcam, KiSyChannel channel, InetSocketAddress destination) {
-		super(DEFAULT_VIDEO_PIPE_SIZE, channel, destination);
+		super(DEFAULT_VIDEO_PIPE_SIZE, channel, destination, MediaStreamType.VIDEO);
 
 		this.webcam = webcam;
 		webcam.addWebcamListener(listener);

@@ -66,7 +66,23 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 	 *          the destination
 	 */
 	public BinaryStreamer(int defaultPipeSize, KiSyChannel channel, InetSocketAddress destination) {
-		super(defaultPipeSize, channel, destination);
+		this(defaultPipeSize, channel, destination, MediaStreamType.BINARY);
+	}
+
+	/**
+	 * The Constructor.
+	 *
+	 * @param defaultPipeSize
+	 *          the default pipe size
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
+	 * @param type
+	 *          the type
+	 */
+	protected BinaryStreamer(int defaultPipeSize, KiSyChannel channel, InetSocketAddress destination, MediaStreamType type) {
+		super(defaultPipeSize, channel, destination, type);
 		initDefaultChunkProcessorAndFooter();
 		setAckRequired(true);
 	}
