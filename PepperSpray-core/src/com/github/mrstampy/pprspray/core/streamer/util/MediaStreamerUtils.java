@@ -28,6 +28,7 @@ import java.util.Arrays;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunkProcessor;
+import com.github.mrstampy.pprspray.core.streamer.text.DefaultXmlChunkProcessor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,6 +37,8 @@ import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunkProcessor
 public class MediaStreamerUtils {
 
 	private static final int JSON_KEY_LENGTH = DefaultJsonChunkProcessor.JSON_KEY_BYTES.length;
+
+	private static final int XML_KEY_LENGTH = DefaultXmlChunkProcessor.XML_KEY_BYTES.length;
 
 	/** The Constant DEFAULT_HEADER_LENGTH. */
 	public static final int DEFAULT_HEADER_LENGTH = 18;
@@ -55,6 +58,9 @@ public class MediaStreamerUtils {
 	/** The Constant JSON_KEY_CHUNK. */
 	protected static final Chunk JSON_KEY_CHUNK = new Chunk(DEFAULT_HEADER_LENGTH, DEFAULT_HEADER_LENGTH
 			+ JSON_KEY_LENGTH);
+
+	/** The Constant XML_KEY_CHUNK. */
+	protected static final Chunk XML_KEY_CHUNK = new Chunk(DEFAULT_HEADER_LENGTH, DEFAULT_HEADER_LENGTH + XML_KEY_LENGTH);
 
 	/**
 	 * Checks if is binary chunk.
@@ -276,27 +282,8 @@ public class MediaStreamerUtils {
 		return Arrays.equals(b, DefaultJsonChunkProcessor.JSON_KEY_BYTES);
 	}
 
-	/**
-	 * Returns true if the message indicates it is a JSON message and it contains
-	 * the name of the specified class as the Java representation of the message.
-	 *
-	 * @param message
-	 *          the message
-	 * @param jsonClassBytes
-	 *          the json class bytes
-	 * @return true, if checks if is json message
-	 * @see DefaultJsonChunk
-	 * @see DefaultJsonChunkProcessor
-	 */
-	public static boolean isJsonMessage(byte[] message, byte[] jsonClassBytes) {
-		if (!isJsonMessage(message)) return false;
-
-		int start = DEFAULT_HEADER_LENGTH + JSON_KEY_LENGTH;
-		int end = start + jsonClassBytes.length;
-
-		byte[] b = getChunk(message, new Chunk(start, end));
-
-		return Arrays.equals(b, jsonClassBytes);
+	public static boolean isTextOnlyMessage(byte[] message) {
+		return isTextChunk(message) && !isJsonMessage(message) && !isXmlMessage(message);
 	}
 
 	/**
@@ -311,6 +298,35 @@ public class MediaStreamerUtils {
 	 */
 	public static int getJsonClassHash(byte[] message) {
 		int start = DEFAULT_HEADER_LENGTH + JSON_KEY_LENGTH;
+		int end = start + 4;
+
+		return getIntegerChunk(getChunk(message, new Chunk(start, end)));
+	}
+
+	/**
+	 * Checks if is xml message.
+	 *
+	 * @param message
+	 *          the message
+	 * @return true, if checks if is xml message
+	 */
+	public static boolean isXmlMessage(byte[] message) {
+		if (message == null || message.length <= DEFAULT_HEADER_LENGTH + XML_KEY_LENGTH) return false;
+
+		byte[] b = getChunk(message, XML_KEY_CHUNK);
+
+		return Arrays.equals(b, DefaultXmlChunkProcessor.XML_KEY_BYTES);
+	}
+
+	/**
+	 * Gets the xml class hash.
+	 *
+	 * @param message
+	 *          the message
+	 * @return the xml class hash
+	 */
+	public static int getXmlClassHash(byte[] message) {
+		int start = DEFAULT_HEADER_LENGTH + XML_KEY_LENGTH;
 		int end = start + 4;
 
 		return getIntegerChunk(getChunk(message, new Chunk(start, end)));

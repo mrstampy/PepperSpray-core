@@ -21,16 +21,16 @@
 package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
+import com.github.mrstampy.pprspray.core.streamer.text.DefaultXmlChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class TextMediaHandler.
+ * The Class JsonMediaHandler.
  */
-public class TextMediaHandler extends AbstractInboundMediaHandler<DefaultTextChunk> {
+public class XmlMediaHandler extends AbstractInboundMediaHandler<DefaultXmlChunk> {
 
-	private static final long serialVersionUID = -1716123926356955368L;
+	private static final long serialVersionUID = -2924726176067175463L;
 
 	/*
 	 * (non-Javadoc)
@@ -40,7 +40,18 @@ public class TextMediaHandler extends AbstractInboundMediaHandler<DefaultTextChu
 	 */
 	@Override
 	public boolean canHandleMessage(byte[] message) {
-		return MediaStreamerUtils.isTextOnlyMessage(message);
+		return super.canHandleMessage(message) && MediaStreamerUtils.isXmlMessage(message);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
+	 * getExecutionOrder()
+	 */
+	@Override
+	public int getExecutionOrder() {
+		return DEFAULT_EXECUTION_ORDER / 2;
 	}
 
 	/*
@@ -50,8 +61,8 @@ public class TextMediaHandler extends AbstractInboundMediaHandler<DefaultTextChu
 	 * createChunk(byte[])
 	 */
 	@Override
-	protected DefaultTextChunk createChunk(byte[] message) {
-		return new DefaultTextChunk(message);
+	protected DefaultXmlChunk createChunk(byte[] message) {
+		return new DefaultXmlChunk(message);
 	}
 
 	/*
