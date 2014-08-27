@@ -40,7 +40,7 @@ public class WebcamReceiver extends AbstractMediaReceiver<DefaultWebcamChunk> {
 	 *          the media hash
 	 */
 	public WebcamReceiver(int mediaHash) {
-		super(MediaStreamType.TEXT, mediaHash);
+		super(MediaStreamType.VIDEO, mediaHash);
 	}
 
 	/*
