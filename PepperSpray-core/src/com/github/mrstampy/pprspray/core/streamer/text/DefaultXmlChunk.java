@@ -20,18 +20,13 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
-import java.io.Serializable;
-
-import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class DefaultXmlChunk.
  */
-public class DefaultXmlChunk extends DefaultTextChunk {
+public class DefaultXmlChunk extends AbstractMetaTextChunk {
 
-	private static final long serialVersionUID = 1173299761378273183L;
-	private int xmlClassNameHash;
+	private static final long serialVersionUID = 7824045936232960070L;
 
 	/**
 	 * The Constructor.
@@ -40,57 +35,7 @@ public class DefaultXmlChunk extends DefaultTextChunk {
 	 *          the message
 	 */
 	public DefaultXmlChunk(byte[] message) {
-		super(message);
-
-		extractXmlClassNameHash(message);
-	}
-
-	private void extractXmlClassNameHash(byte[] message) {
-		setXmlClassNameHash(MediaStreamerUtils.getXmlClassHash(message));
-	}
-
-	/**
-	 * Returns true if {@link #getXmlClassNameHash()} references a class object of
-	 * which the XML in {@link #getData()} is a representation.
-	 *
-	 * @return true, if checks for xml class
-	 * @see Class#getName()
-	 */
-	public boolean hasXmlClass() {
-		return NoXmlClass.class.getName().hashCode() != getXmlClassNameHash();
-	}
-
-	/**
-	 * Gets the xml class name hash.
-	 *
-	 * @return the xml class name hash
-	 */
-	public int getXmlClassNameHash() {
-		return xmlClassNameHash;
-	}
-
-	/**
-	 * Sets the xml class name hash.
-	 *
-	 * @param xmlClassNameHash
-	 *          the xml class name hash
-	 */
-	public void setXmlClassNameHash(int xmlClassNameHash) {
-		this.xmlClassNameHash = xmlClassNameHash;
-	}
-
-	/**
-	 * Object whose class signals that the JSON in
-	 * {@link DefaultXmlChunk#getData()} is to be dealt with as a string only.
-	 * 
-	 * @author burton
-	 * @see DefaultXmlChunk#hasXmlClass()
-	 *
-	 */
-	public static final class NoXmlClass implements Serializable {
-
-		private static final long serialVersionUID = -1903763731003959794L;
-
+		super(message, DefaultXmlChunkProcessor.XML_KEY_BYTES);
 	}
 
 }

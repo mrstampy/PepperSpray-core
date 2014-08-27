@@ -20,15 +20,11 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
-import io.netty.buffer.ByteBuf;
-
-import com.github.mrstampy.kitchensync.stream.Streamer;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class DefaultJsonChunkProcessor.
  */
-public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
+public class DefaultJsonChunkProcessor extends AbstractMetaTextChunkProcessor {
 
 	/** The Constant JSON_KEY. */
 	public static final String JSON_KEY = "JSON:";
@@ -36,14 +32,11 @@ public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
 	/** The Constant JSON_KEY_BYTES. */
 	public static final byte[] JSON_KEY_BYTES = JSON_KEY.getBytes();
 
-	private Class<?> jsonClass;
-	private int jsonClassNameHash;
-
 	/**
 	 * The Constructor.
 	 */
 	public DefaultJsonChunkProcessor() {
-		this(DefaultJsonChunk.NoJsonClass.class);
+		super(JSON_KEY_BYTES);
 	}
 
 	/**
@@ -53,74 +46,7 @@ public class DefaultJsonChunkProcessor extends DefaultTextChunkProcessor {
 	 *          the json class
 	 */
 	public DefaultJsonChunkProcessor(Class<?> jsonClass) {
-		setJsonClass(jsonClass);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor
-	 * #sizeInBytes()
-	 */
-	@Override
-	public int sizeInBytes() {
-		return super.sizeInBytes() + JSON_KEY_BYTES.length + 4;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor
-	 * #writeHeader(com.github.mrstampy.kitchensync.stream.Streamer,
-	 * io.netty.buffer.ByteBuf, int)
-	 */
-	protected void writeHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
-		super.writeHeader(streamer, buf, headerLength);
-
-		buf.writeBytes(JSON_KEY_BYTES);
-		buf.writeInt(getJsonClassNameHash());
-	}
-
-	/**
-	 * Gets the json class.
-	 *
-	 * @return the json class
-	 */
-	public Class<?> getJsonClass() {
-		return jsonClass;
-	}
-
-	/**
-	 * Sets the json class.
-	 *
-	 * @param jsonClass
-	 *          the json class
-	 */
-	public void setJsonClass(Class<?> jsonClass) {
-		this.jsonClass = jsonClass;
-
-		setJsonClassNameHash(jsonClass.getName().hashCode());
-	}
-
-	/**
-	 * Gets the json class name hash.
-	 *
-	 * @return the json class name hash
-	 */
-	public int getJsonClassNameHash() {
-		return jsonClassNameHash;
-	}
-
-	/**
-	 * Sets the json class name hash.
-	 *
-	 * @param jsonClassHash
-	 *          the json class name hash
-	 */
-	public void setJsonClassNameHash(int jsonClassHash) {
-		this.jsonClassNameHash = jsonClassHash;
+		super(JSON_KEY_BYTES, jsonClass);
 	}
 
 }

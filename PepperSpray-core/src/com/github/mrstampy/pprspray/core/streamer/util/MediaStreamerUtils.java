@@ -282,22 +282,28 @@ public class MediaStreamerUtils {
 		return Arrays.equals(b, DefaultJsonChunkProcessor.JSON_KEY_BYTES);
 	}
 
+	/**
+	 * Checks if is text only message.
+	 *
+	 * @param message
+	 *          the message
+	 * @return true, if checks if is text only message
+	 */
 	public static boolean isTextOnlyMessage(byte[] message) {
 		return isTextChunk(message) && !isJsonMessage(message) && !isXmlMessage(message);
 	}
 
 	/**
-	 * Returns the hash of the name of the class representation relevant to this
-	 * JSON message.
+	 * Gets the marshalling class hash.
 	 *
 	 * @param message
 	 *          the message
-	 * @return the json class hash
-	 * @see DefaultJsonChunkProcessor#setJsonClassNameHash(int)
-	 * @see Class#getName()
+	 * @param keyLength
+	 *          the key length
+	 * @return the marshalling class hash
 	 */
-	public static int getJsonClassHash(byte[] message) {
-		int start = DEFAULT_HEADER_LENGTH + JSON_KEY_LENGTH;
+	public static int getMarshallingClassHash(byte[] message, int keyLength) {
+		int start = DEFAULT_HEADER_LENGTH + keyLength;
 		int end = start + 4;
 
 		return getIntegerChunk(getChunk(message, new Chunk(start, end)));
@@ -316,20 +322,6 @@ public class MediaStreamerUtils {
 		byte[] b = getChunk(message, XML_KEY_CHUNK);
 
 		return Arrays.equals(b, DefaultXmlChunkProcessor.XML_KEY_BYTES);
-	}
-
-	/**
-	 * Gets the xml class hash.
-	 *
-	 * @param message
-	 *          the message
-	 * @return the xml class hash
-	 */
-	public static int getXmlClassHash(byte[] message) {
-		int start = DEFAULT_HEADER_LENGTH + XML_KEY_LENGTH;
-		int end = start + 4;
-
-		return getIntegerChunk(getChunk(message, new Chunk(start, end)));
 	}
 
 	/**

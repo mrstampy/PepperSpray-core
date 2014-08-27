@@ -20,18 +20,13 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
-import java.io.Serializable;
-
-import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class DefaultJsonChunk.
  */
-public class DefaultJsonChunk extends DefaultTextChunk {
+public class DefaultJsonChunk extends AbstractMetaTextChunk {
 
-	private static final long serialVersionUID = 1173299761378273183L;
-	private int jsonClassNameHash;
+	private static final long serialVersionUID = 7489148292079908867L;
 
 	/**
 	 * The Constructor.
@@ -40,57 +35,7 @@ public class DefaultJsonChunk extends DefaultTextChunk {
 	 *          the message
 	 */
 	public DefaultJsonChunk(byte[] message) {
-		super(message);
-
-		extractJsonClassNameHash(message);
-	}
-
-	private void extractJsonClassNameHash(byte[] message) {
-		setJsonClassNameHash(MediaStreamerUtils.getJsonClassHash(message));
-	}
-
-	/**
-	 * Returns true if {@link #getJsonClassNameHash()} references a class object
-	 * of which the JSON in {@link #getData()} is a representation.
-	 *
-	 * @return true, if checks for json class
-	 * @see Class#getName()
-	 */
-	public boolean hasJsonClass() {
-		return NoJsonClass.class.getName().hashCode() != getJsonClassNameHash();
-	}
-
-	/**
-	 * Gets the json class name hash.
-	 *
-	 * @return the json class name hash
-	 */
-	public int getJsonClassNameHash() {
-		return jsonClassNameHash;
-	}
-
-	/**
-	 * Sets the json class name hash.
-	 *
-	 * @param jsonClassNameHash
-	 *          the json class name hash
-	 */
-	public void setJsonClassNameHash(int jsonClassNameHash) {
-		this.jsonClassNameHash = jsonClassNameHash;
-	}
-
-	/**
-	 * Object whose class signals that the JSON in
-	 * {@link DefaultJsonChunk#getData()} is to be dealt with as a string only.
-	 * 
-	 * @author burton
-	 * @see DefaultJsonChunk#hasJsonClass()
-	 *
-	 */
-	public static final class NoJsonClass implements Serializable {
-
-		private static final long serialVersionUID = 2573394575308524643L;
-
+		super(message, DefaultJsonChunkProcessor.JSON_KEY_BYTES);
 	}
 
 }
