@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
@@ -327,6 +329,16 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 */
 	public void setReceiver(InetSocketAddress receiver) {
 		this.receiver = receiver;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }

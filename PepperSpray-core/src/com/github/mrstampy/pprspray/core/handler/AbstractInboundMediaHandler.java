@@ -99,6 +99,8 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 					chunk.setSender(sender);
 					chunk.setReceiver(channel.localAddress());
 
+					if (log.isTraceEnabled()) log.trace("Received chunk {}", chunk);
+
 					ChunkEventBus.post(chunk);
 				} catch (Exception e) {
 					log.error("Unexpected exception", e);

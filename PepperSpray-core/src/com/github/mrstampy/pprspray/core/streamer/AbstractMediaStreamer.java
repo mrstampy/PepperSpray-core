@@ -274,12 +274,14 @@ public abstract class AbstractMediaStreamer {
 				notifyAccepted.set(chunk.isAccepted());
 
 				if (notifyAccepted()) {
-					log.debug("Negotiations with {} for media hash {} successful", getDestination(), getMediaHash());
+					log.debug("Negotiations with {} for type {}, media hash {} successful", getDestination(), getType(),
+							getMediaHash());
 
 					notifyNegotiationSuccessful();
 					start();
 				} else {
-					log.debug("Negotiations with {} for media hash {} unsuccessful", getDestination(), getMediaHash());
+					log.debug("Negotiations with {} for type {}, media hash {} unsuccessful", getDestination(), getType(),
+							getMediaHash());
 
 					notifyNegotiationFailed();
 				}
