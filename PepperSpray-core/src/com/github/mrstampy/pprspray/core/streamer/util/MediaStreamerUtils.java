@@ -26,6 +26,7 @@ import io.netty.buffer.Unpooled;
 import java.util.Arrays;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.text.AbstractMetaTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunkProcessor;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultXmlChunkProcessor;
@@ -50,6 +51,19 @@ public class MediaStreamerUtils {
 
 	/** The Constant SEQUENCE_CHUNK. */
 	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, DEFAULT_HEADER_LENGTH);
+
+	/**
+	 * Creates the marshalling class name hash.
+	 *
+	 * @param clazz
+	 *          the clazz
+	 * @return the int
+	 */
+	public static int createMarshallingClassNameHash(Class<?> clazz) {
+		if (clazz == null) return AbstractMetaTextChunk.NO_MARSHALLING_CLASS;
+
+		return clazz.getName().hashCode();
+	}
 
 	/**
 	 * Checks if is binary chunk.

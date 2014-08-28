@@ -25,6 +25,7 @@ import io.netty.buffer.ByteBuf;
 import com.github.mrstampy.kitchensync.stream.Streamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,7 +44,7 @@ public class AbstractMetaTextChunkProcessor extends AbstractMediaChunkProcessor 
 	 *          the header key
 	 */
 	protected AbstractMetaTextChunkProcessor(byte[] headerKey) {
-		this(headerKey, AbstractMetaTextChunk.NoHeaderClass.class);
+		this(headerKey, null);
 	}
 
 	/**
@@ -58,7 +59,7 @@ public class AbstractMetaTextChunkProcessor extends AbstractMediaChunkProcessor 
 		super(MediaStreamType.TEXT);
 		this.headerKey = headerKey;
 		this.marshallingClass = marshallingClass;
-		this.marshallingClassHash = marshallingClass.getName().hashCode();
+		this.marshallingClassHash = MediaStreamerUtils.createMarshallingClassNameHash(marshallingClass);
 	}
 
 	/*

@@ -20,8 +20,6 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
-import java.io.Serializable;
-
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
@@ -29,6 +27,9 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
  * The Class AbstractMetaTextChunk.
  */
 public class AbstractMetaTextChunk extends DefaultTextChunk {
+
+	/** The Constant NO_MARSHALLING_CLASS. */
+	public static final int NO_MARSHALLING_CLASS = -1;
 
 	private static final long serialVersionUID = -2552087464356592783L;
 
@@ -60,7 +61,7 @@ public class AbstractMetaTextChunk extends DefaultTextChunk {
 	 * @return true, if checks for marshalling class
 	 */
 	public boolean hasMarshallingClass() {
-		return NoHeaderClass.class.getName().hashCode() != getMarshallingClassNameHash();
+		return NO_MARSHALLING_CLASS == getMarshallingClassNameHash();
 	}
 
 	/**
@@ -70,15 +71,6 @@ public class AbstractMetaTextChunk extends DefaultTextChunk {
 	 */
 	public int getMarshallingClassNameHash() {
 		return marshallingClassNameHash;
-	}
-
-	/**
-	 * The Class NoHeaderClass.
-	 */
-	public static final class NoHeaderClass implements Serializable {
-
-		private static final long serialVersionUID = -6657083817265347390L;
-
 	}
 
 }
