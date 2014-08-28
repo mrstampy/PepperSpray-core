@@ -23,9 +23,14 @@ package com.github.mrstampy.pprspray.core.streamer.util;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.net.InetSocketAddress;
 import java.util.Arrays;
 
+import com.github.mrstampy.kitchensync.netty.channel.DefaultChannelRegistry;
+import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 import com.github.mrstampy.pprspray.core.streamer.text.AbstractMetaTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunkProcessor;
@@ -63,6 +68,56 @@ public class MediaStreamerUtils {
 		if (clazz == null) return AbstractMetaTextChunk.NO_MARSHALLING_CLASS;
 
 		return clazz.getName().hashCode();
+	}
+
+	/**
+	 * Send termination event.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @param local
+	 *          the local
+	 * @param remote
+	 *          the remote
+	 */
+	public static void sendTerminationEvent(int mediaHash, InetSocketAddress local, InetSocketAddress remote) {
+		KiSyChannel channel = getChannel(local);
+
+		sendTerminationEvent(mediaHash, channel, remote);
+	}
+
+	/**
+	 * Send termination event.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @param channel
+	 *          the channel
+	 * @param remote
+	 *          the remote
+	 */
+	public static void sendTerminationEvent(int mediaHash, KiSyChannel channel, InetSocketAddress remote) {
+		if (channel == null) return;
+
+		MediaFooterMessage mfm = new MediaFooterMessage(MediaStreamType.NEGOTIATION, mediaHash);
+		MediaFooter footer = new MediaFooter(mfm);
+
+		byte[] terminate = footer.createFooter();
+		channel.send(terminate, remote);
+	}
+
+	/**
+	 * Gets the channel.
+	 *
+	 * @param local
+	 *          the local
+	 * @return the channel
+	 */
+	public static KiSyChannel getChannel(InetSocketAddress local) {
+		KiSyChannel channel = DefaultChannelRegistry.INSTANCE.getChannel(local.getPort());
+		if (channel == null) channel = DefaultChannelRegistry.INSTANCE.getMulticastChannel(local);
+
+		return channel;
 	}
 
 	/**

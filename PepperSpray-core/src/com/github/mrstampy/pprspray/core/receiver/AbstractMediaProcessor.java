@@ -20,6 +20,7 @@
  */
 package com.github.mrstampy.pprspray.core.receiver;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -28,38 +29,50 @@ import org.slf4j.LoggerFactory;
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMediaProcessor.
  */
-public abstract class AbstractMediaProcessor {
+public abstract class AbstractMediaProcessor implements MediaProcessor {
 	private static final Logger log = LoggerFactory.getLogger(AbstractMediaProcessor.class);
 
 	private int mediaHash;
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 
+	private InetSocketAddress local;
+	private InetSocketAddress remote;
+
 	/**
 	 * The Constructor.
 	 *
 	 * @param mediaHash
 	 *          the media hash
+	 * @param local
+	 *          the local
+	 * @param remote
+	 *          the remote
 	 */
-	protected AbstractMediaProcessor(int mediaHash) {
+	protected AbstractMediaProcessor(int mediaHash, InetSocketAddress local, InetSocketAddress remote) {
 		this.mediaHash = mediaHash;
+		this.local = local;
+		this.remote = remote;
 
 		ReceiverEventBus.register(this);
 		MediaEventBus.register(this);
 	}
 
-	/**
-	 * Media event.
-	 *
-	 * @param event
-	 *          the event
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.MediaProcessor#mediaEvent(com
+	 * .github.mrstampy.pprspray.core.receiver.MediaEvent)
 	 */
+	@Override
 	@Subscribe
 	public void mediaEvent(MediaEvent event) {
 		if (!event.isApplicable(MediaStreamType.AUDIO, getMediaHash())) return;
@@ -81,12 +94,14 @@ public abstract class AbstractMediaProcessor {
 	 */
 	protected abstract void mediaEventImpl(MediaEvent event) throws Exception;
 
-	/**
-	 * Receiver event.
-	 *
-	 * @param event
-	 *          the event
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.MediaProcessor#receiverEvent
+	 * (com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent)
 	 */
+	@Override
 	@Subscribe
 	public void receiverEvent(ReceiverEvent event) {
 		if (!event.isApplicable(getMediaHash())) return;
@@ -106,11 +121,12 @@ public abstract class AbstractMediaProcessor {
 		}
 	}
 
-	/**
-	 * Checks if is open.
-	 *
-	 * @return true, if checks if is open
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.MediaProcessor#isOpen()
 	 */
+	@Override
 	public boolean isOpen() {
 		return open.get();
 	}
@@ -125,11 +141,12 @@ public abstract class AbstractMediaProcessor {
 		open.set(b);
 	}
 
-	/**
-	 * Open.
-	 *
-	 * @return true, if open
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.MediaProcessor#open()
 	 */
+	@Override
 	public boolean open() {
 		return isOpen() ? true : openImpl();
 	}
@@ -141,21 +158,27 @@ public abstract class AbstractMediaProcessor {
 	 */
 	protected abstract boolean openImpl();
 
-	/**
-	 * Destroy.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.MediaProcessor#destroy()
 	 */
+	@Override
 	public void destroy() {
 		close();
 
 		MediaEventBus.unregister(this);
 		ReceiverEventBus.unregister(this);
+
+		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getLocal(), getRemote());
 	}
 
-	/**
-	 * Close.
-	 *
-	 * @return true, if close
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.MediaProcessor#close()
 	 */
+	@Override
 	public boolean close() {
 		return !isOpen() ? true : closeImpl();
 	}
@@ -167,12 +190,31 @@ public abstract class AbstractMediaProcessor {
 	 */
 	protected abstract boolean closeImpl();
 
-	/**
-	 * Gets the media hash.
-	 *
-	 * @return the media hash
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.MediaProcessor#getMediaHash()
 	 */
 	public int getMediaHash() {
 		return mediaHash;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.MediaProcessor#getLocal()
+	 */
+	public InetSocketAddress getLocal() {
+		return local;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.MediaProcessor#getRemote()
+	 */
+	public InetSocketAddress getRemote() {
+		return remote;
 	}
 }

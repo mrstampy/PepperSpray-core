@@ -20,6 +20,8 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.audio;
 
+import java.net.InetSocketAddress;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineEvent;
@@ -49,13 +51,18 @@ public class DefaultAudioProcessor extends AbstractMediaProcessor {
 	 *
 	 * @param mediaHash
 	 *          the media hash
+	 * @param local
+	 *          the local
+	 * @param remote
+	 *          the remote
 	 * @param audioFormat
 	 *          the audio format
 	 * @param mixerInfo
 	 *          the mixer info
 	 */
-	public DefaultAudioProcessor(int mediaHash, AudioFormat audioFormat, Mixer.Info mixerInfo) {
-		super(mediaHash);
+	public DefaultAudioProcessor(int mediaHash, InetSocketAddress local, InetSocketAddress remote,
+			AudioFormat audioFormat, Mixer.Info mixerInfo) {
+		super(mediaHash, local, remote);
 
 		setAudioFormat(audioFormat);
 		setMixerInfo(mixerInfo);

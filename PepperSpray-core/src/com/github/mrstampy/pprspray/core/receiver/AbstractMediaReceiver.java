@@ -133,9 +133,35 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 */
 	@Subscribe
 	public void endOfMessage(MediaFooterMessage eom) {
-		if (!eom.isApplicable(getType(), getMediaHash())) return;
+		if (!isApplicable(eom)) return;
 
-		endOfMessageImpl(eom);
+		if (isTerminateMessage(eom)) {
+			destroy();
+		} else {
+			endOfMessageImpl(eom);
+		}
+	}
+
+	/**
+	 * Checks if is applicable.
+	 *
+	 * @param eom
+	 *          the eom
+	 * @return true, if checks if is applicable
+	 */
+	protected boolean isApplicable(MediaFooterMessage eom) {
+		return isTerminateMessage(eom) || eom.isApplicable(getType(), getMediaHash());
+	}
+
+	/**
+	 * Checks if is terminate message.
+	 *
+	 * @param eom
+	 *          the eom
+	 * @return true, if checks if is terminate message
+	 */
+	protected boolean isTerminateMessage(MediaFooterMessage eom) {
+		return eom.isApplicable(MediaStreamType.NEGOTIATION, getMediaHash());
 	}
 
 	/**

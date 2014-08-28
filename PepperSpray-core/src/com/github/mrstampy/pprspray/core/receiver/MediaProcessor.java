@@ -18,52 +18,78 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.streamer.negotiation;
+package com.github.mrstampy.pprspray.core.receiver;
 
-import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
-import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
-import com.google.common.eventbus.Subscribe;
+import java.net.InetSocketAddress;
+
+import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AbstractNegotiationSubscriber.
+ * The Interface MediaProcessor.
  */
-public abstract class AbstractNegotiationSubscriber {
+public interface MediaProcessor {
 
 	/**
-	 * Negotiation requested.
+	 * Media event.
 	 *
 	 * @param event
 	 *          the event
 	 */
-	@Subscribe
-	public void negotiationRequested(NegotiationChunk event) {
-		negotiationRequestedImpl(event);
-	}
+	void mediaEvent(MediaEvent event);
 
 	/**
-	 * Gets the channel.
-	 *
-	 * @param event
-	 *          the event
-	 * @return the channel
-	 */
-	protected KiSyChannel getChannel(NegotiationChunk event) {
-		KiSyChannel channel = MediaStreamerUtils.getChannel(event.getReceiver());
-
-		if (channel == null) {
-			throw new IllegalStateException("Cannot locate channel for port " + event.getChannelPort() + " or address "
-					+ event.getReceiver());
-		}
-
-		return channel;
-	}
-
-	/**
-	 * Negotiation requested impl.
+	 * Receiver event.
 	 *
 	 * @param event
 	 *          the event
 	 */
-	protected abstract void negotiationRequestedImpl(NegotiationChunk event);
+	void receiverEvent(ReceiverEvent event);
+
+	/**
+	 * Checks if is open.
+	 *
+	 * @return true, if checks if is open
+	 */
+	boolean isOpen();
+
+	/**
+	 * Open.
+	 *
+	 * @return true, if open
+	 */
+	boolean open();
+
+	/**
+	 * Destroy.
+	 */
+	void destroy();
+
+	/**
+	 * Close.
+	 *
+	 * @return true, if close
+	 */
+	boolean close();
+
+	/**
+	 * Gets the media hash.
+	 *
+	 * @return the media hash
+	 */
+	int getMediaHash();
+
+	/**
+	 * Gets the local.
+	 *
+	 * @return the local
+	 */
+	InetSocketAddress getLocal();
+
+	/**
+	 * Gets the remote.
+	 *
+	 * @return the remote
+	 */
+	InetSocketAddress getRemote();
 }

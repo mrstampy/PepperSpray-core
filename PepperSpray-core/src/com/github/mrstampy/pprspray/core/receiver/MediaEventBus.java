@@ -20,6 +20,11 @@
  */
 package com.github.mrstampy.pprspray.core.receiver;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.google.common.eventbus.EventBus;
 
 // TODO: Auto-generated Javadoc
@@ -28,6 +33,7 @@ import com.google.common.eventbus.EventBus;
  */
 public class MediaEventBus {
 
+	private static final Map<Integer, MediaProcessor> mediaProcessors = new ConcurrentHashMap<>();
 	private static final EventBus BUS = new EventBus("Media Event Bus");
 
 	/**
@@ -46,8 +52,9 @@ public class MediaEventBus {
 	 * @param o
 	 *          the o
 	 */
-	public static void register(Object o) {
+	public static void register(MediaProcessor o) {
 		BUS.register(o);
+		mediaProcessors.put(o.getMediaHash(), o);
 	}
 
 	/**
@@ -56,8 +63,55 @@ public class MediaEventBus {
 	 * @param o
 	 *          the o
 	 */
-	public static void unregister(Object o) {
+	public static void unregister(MediaProcessor o) {
+		if (o == null) return;
 		BUS.unregister(o);
+		mediaProcessors.remove(o.getMediaHash());
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @return the media processor
+	 */
+	public static MediaProcessor get(int mediaHash) {
+		return mediaProcessors.get(mediaHash);
+	}
+
+	/**
+	 * Contains.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @return true, if contains
+	 */
+	public static boolean contains(int mediaHash) {
+		return mediaProcessors.containsKey(mediaHash);
+	}
+
+	/**
+	 * Removes the.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 */
+	public static void remove(int mediaHash) {
+		MediaProcessor mp = mediaProcessors.remove(mediaHash);
+		if (mp == null) return;
+
+		mp.destroy();
+	}
+
+	/**
+	 * Clear.
+	 */
+	public static void clear() {
+		List<MediaProcessor> list = new ArrayList<>(mediaProcessors.values());
+		for (MediaProcessor mp : list) {
+			mp.destroy();
+		}
 	}
 
 	private MediaEventBus() {

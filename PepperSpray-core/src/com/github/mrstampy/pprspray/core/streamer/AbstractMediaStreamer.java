@@ -47,12 +47,15 @@ import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEvent;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventType;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AbstractNegotiationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessageUtils;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
+import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -118,6 +121,38 @@ public abstract class AbstractMediaStreamer {
 		this.type = type;
 
 		initStreamer();
+
+		ChunkEventBus.register(this);
+	}
+
+	/**
+	 * End of message.
+	 *
+	 * @param eom
+	 *          the eom
+	 * @see ChunkEventBus#register(Object)
+	 */
+	@Subscribe
+	public void terminate(MediaFooterMessage eom) {
+		if (!eom.isApplicable(MediaStreamType.NEGOTIATION, getMediaHash())) return;
+
+		closeImpl();
+	}
+
+	/**
+	 * Close.
+	 */
+	public void close() {
+		closeImpl();
+		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getChannel(), getDestination());
+	}
+
+	/**
+	 * Close impl.
+	 */
+	protected void closeImpl() {
+		stop();
+		ChunkEventBus.unregister(this);
 	}
 
 	private void initStreamer() {

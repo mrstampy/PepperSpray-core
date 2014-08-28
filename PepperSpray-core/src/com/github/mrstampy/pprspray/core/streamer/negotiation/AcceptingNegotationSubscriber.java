@@ -27,7 +27,14 @@ import javax.sound.sampled.Mixer;
 
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.receiver.MediaEventBus;
+import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
+import com.github.mrstampy.pprspray.core.receiver.audio.AudioReceiver;
 import com.github.mrstampy.pprspray.core.receiver.audio.DefaultAudioProcessor;
+import com.github.mrstampy.pprspray.core.receiver.binary.BinaryReceiver;
+import com.github.mrstampy.pprspray.core.receiver.file.FileReceiver;
+import com.github.mrstampy.pprspray.core.receiver.text.TextReceiver;
+import com.github.mrstampy.pprspray.core.receiver.webcam.WebcamReceiver;
+import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -65,11 +72,21 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 
 		createReceiver(event.getRequestedType(), event.getMediaHash());
 
+		registerMediaProcessor(event);
+
 		ByteBuf ack = NegotiationMessageUtils.getNegotiationAckMessage(event.getMediaHash(), true);
 
 		channel.send(ack.array(), event.getSender());
+	}
 
-		Object o = getMediaProcessor(event);
+	/**
+	 * Register media processor.
+	 *
+	 * @param event
+	 *          the event
+	 */
+	protected void registerMediaProcessor(NegotiationChunk event) {
+		MediaProcessor o = getMediaProcessor(event);
 
 		if (o == null) return;
 
@@ -83,12 +100,43 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	 *          the event
 	 * @return the media processor
 	 */
-	protected Object getMediaProcessor(NegotiationChunk event) {
+	protected MediaProcessor getMediaProcessor(NegotiationChunk event) {
 		switch (event.getRequestedType()) {
 		case AUDIO:
-			return new DefaultAudioProcessor(event.getMediaHash(), audioFormat, mixerInfo);
+			return new DefaultAudioProcessor(event.getMediaHash(), event.getReceiver(), event.getSender(), audioFormat,
+					mixerInfo);
 		default:
 			return null;
+		}
+	}
+
+	/**
+	 * Creates the receiver.
+	 *
+	 * @param requestedType
+	 *          the requested type
+	 * @param mediaHash
+	 *          the media hash
+	 */
+	protected void createReceiver(MediaStreamType requestedType, int mediaHash) {
+		switch (requestedType) {
+		case AUDIO:
+			new AudioReceiver(mediaHash);
+			break;
+		case BINARY:
+			new BinaryReceiver(mediaHash);
+			break;
+		case FILE:
+			new FileReceiver(mediaHash);
+			break;
+		case TEXT:
+			new TextReceiver(mediaHash);
+			break;
+		case VIDEO:
+			new WebcamReceiver(mediaHash);
+			break;
+		default:
+			break;
 		}
 	}
 
