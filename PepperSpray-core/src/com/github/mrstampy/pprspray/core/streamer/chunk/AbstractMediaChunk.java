@@ -47,8 +47,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	private byte[] customHeaderChunk;
 
 	private int channelPort;
-	private InetSocketAddress sender;
-	private InetSocketAddress receiver;
+	private InetSocketAddress remote;
+	private InetSocketAddress local;
 
 	/**
 	 * Constructor assumes that the message supplied is of the correct media type,
@@ -279,8 +279,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 *
 	 * @return the sender
 	 */
-	public InetSocketAddress getSender() {
-		return sender;
+	public InetSocketAddress getRemote() {
+		return remote;
 	}
 
 	/**
@@ -289,8 +289,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 * @param sender
 	 *          the sender
 	 */
-	public void setSender(InetSocketAddress sender) {
-		this.sender = sender;
+	public void setRemote(InetSocketAddress sender) {
+		this.remote = sender;
 	}
 
 	/**
@@ -317,8 +317,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 *
 	 * @return the receiver
 	 */
-	public InetSocketAddress getReceiver() {
-		return receiver;
+	public InetSocketAddress getLocal() {
+		return local;
 	}
 
 	/**
@@ -327,8 +327,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 * @param receiver
 	 *          the receiver
 	 */
-	public void setReceiver(InetSocketAddress receiver) {
-		this.receiver = receiver;
+	public void setLocal(InetSocketAddress receiver) {
+		this.local = receiver;
 	}
 
 	/*

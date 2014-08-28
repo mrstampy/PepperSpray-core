@@ -70,7 +70,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	 */
 	@Override
 	protected void negotiationRequestedImpl(NegotiationChunk event) {
-		KiSyChannel channel = MediaStreamerUtils.getChannel(event.getReceiver());
+		KiSyChannel channel = MediaStreamerUtils.getChannel(event.getLocal());
 
 		createReceiver(event.getRequestedType(), event.getMediaHash());
 
@@ -78,7 +78,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 
 		ByteBuf ack = NegotiationMessageUtils.getNegotiationAckMessage(event.getMediaHash(), true);
 
-		channel.send(ack.array(), event.getSender());
+		channel.send(ack.array(), event.getRemote());
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	protected MediaProcessor getMediaProcessor(NegotiationChunk event) {
 		switch (event.getRequestedType()) {
 		case AUDIO:
-			return new DefaultAudioProcessor(event.getMediaHash(), event.getReceiver(), event.getSender(), audioFormat,
+			return new DefaultAudioProcessor(event.getMediaHash(), event.getLocal(), event.getRemote(), audioFormat,
 					mixerInfo);
 		default:
 			return null;

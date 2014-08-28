@@ -96,8 +96,8 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 					AMC chunk = createChunk(message);
 
 					chunk.setChannelPort(channel.getPort());
-					chunk.setSender(sender);
-					chunk.setReceiver(channel.localAddress());
+					chunk.setRemote(sender);
+					chunk.setLocal(channel.localAddress());
 
 					if (log.isTraceEnabled()) log.trace("Received chunk {}", chunk);
 
