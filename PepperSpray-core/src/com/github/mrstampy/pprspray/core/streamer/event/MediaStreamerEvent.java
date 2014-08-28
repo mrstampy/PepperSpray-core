@@ -20,9 +20,6 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.event;
 
-import java.net.InetSocketAddress;
-
-import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 
 // TODO: Auto-generated Javadoc
@@ -33,8 +30,6 @@ public class MediaStreamerEvent {
 
 	private AbstractMediaStreamer source;
 	private MediaStreamerEventType type;
-	private KiSyChannel channel;
-	private InetSocketAddress destination;
 
 	/**
 	 * The Constructor.
@@ -47,8 +42,6 @@ public class MediaStreamerEvent {
 	public MediaStreamerEvent(AbstractMediaStreamer source, MediaStreamerEventType type) {
 		this.source = source;
 		this.type = type;
-		this.channel = source.getChannel();
-		this.destination = source.getDestination();
 	}
 
 	/**
@@ -67,24 +60,6 @@ public class MediaStreamerEvent {
 	 */
 	public MediaStreamerEventType getType() {
 		return type;
-	}
-
-	/**
-	 * Gets the channel.
-	 *
-	 * @return the channel
-	 */
-	public KiSyChannel getChannel() {
-		return channel;
-	}
-
-	/**
-	 * Gets the destination.
-	 *
-	 * @return the destination
-	 */
-	public InetSocketAddress getDestination() {
-		return destination;
 	}
 
 }
