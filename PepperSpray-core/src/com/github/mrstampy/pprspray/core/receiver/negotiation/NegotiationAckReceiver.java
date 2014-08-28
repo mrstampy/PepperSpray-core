@@ -58,7 +58,7 @@ public abstract class NegotiationAckReceiver extends AbstractMediaReceiver<Negot
 			public void call() {
 				failed();
 			}
-		}, 5, TimeUnit.SECONDS);
+		}, 30, TimeUnit.SECONDS);
 	}
 
 	/**

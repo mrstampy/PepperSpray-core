@@ -96,6 +96,8 @@ public abstract class AbstractMediaStreamer {
 
 	private MediaStreamType type;
 
+	private boolean autoNegotiate = true;
+
 	/**
 	 * The Constructor.
 	 *
@@ -170,8 +172,10 @@ public abstract class AbstractMediaStreamer {
 
 		if (notifyAccepted()) {
 			start();
-		} else {
+		} else if (isAutoNegotiate()) {
 			negotiate();
+		} else {
+			throw new IllegalStateException("Cannot connect media streamer, notifyAccepted() is false");
 		}
 	}
 
@@ -232,6 +236,19 @@ public abstract class AbstractMediaStreamer {
 	}
 
 	/**
+	 * To be set manually when {@link #isAutoNegotiate()} is false, prior to
+	 * calling {@link #connect()}.
+	 *
+	 * @param accepted
+	 *          the notify accepted
+	 */
+	public void setNotifyAccepted(boolean accepted) {
+		if (isAutoNegotiate()) log.warn("Auto negotiation is on.  Setting notify accepted to {}", accepted);
+
+		notifyAccepted.set(accepted);
+	}
+
+	/**
 	 * Sends a
 	 * {@link NegotiationMessageUtils#getNegotiationMessage(int, MediaStreamType)}
 	 * to the destinations and awaits acknowledgement. If affirmative
@@ -271,7 +288,7 @@ public abstract class AbstractMediaStreamer {
 			protected void ackReceived(NegotiationAckChunk chunk) {
 				notifying.set(false);
 
-				notifyAccepted.set(chunk.isAccepted());
+				setNotifyAccepted(chunk.isAccepted());
 
 				if (notifyAccepted()) {
 					log.debug("Negotiations with {} for type {}, media hash {} successful", getDestination(), getType(),
@@ -603,6 +620,35 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public MediaStreamType getType() {
 		return type;
+	}
+
+	/**
+	 * If true then any invocation of {@link #connect()} when
+	 * {@link #notifyAccepted()} is false will send a
+	 * {@link NegotiationMessageUtils#getNegotiationMessage(int, MediaStreamType)}
+	 * to the {@link #getDestination()} and await a successful
+	 * {@link NegotiationChunk} response to begin streaming.<br>
+	 * <br>
+	 * 
+	 * If false then the encapsulating application must negotiate the
+	 * {@link #getMediaHash()} with the {@link #getDestination()} and
+	 * {@link #setNotifyAccepted(boolean)} appropriately prior to calling
+	 * {@link #connect()}.
+	 *
+	 * @return true, if checks if is auto negotiate
+	 */
+	public boolean isAutoNegotiate() {
+		return autoNegotiate;
+	}
+
+	/**
+	 * Sets the auto negotiate.
+	 *
+	 * @param autoNegotiate
+	 *          the auto negotiate
+	 */
+	public void setAutoNegotiate(boolean autoNegotiate) {
+		this.autoNegotiate = autoNegotiate;
 	}
 
 }
