@@ -55,6 +55,7 @@ import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChun
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessageUtils;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -140,7 +141,7 @@ public abstract class AbstractMediaStreamer {
 
 		log.debug("Received receiver termination for type {}, hash {} from {}", getType(), getMediaHash(), getDestination());
 
-		destroy();
+		destroyImpl();
 	}
 
 	private void initStreamer() {
@@ -178,6 +179,14 @@ public abstract class AbstractMediaStreamer {
 	 * Destroy.
 	 */
 	public void destroy() {
+		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getChannel().localAddress(), getDestination());
+		destroyImpl();
+	}
+
+	/**
+	 * Destroy impl.
+	 */
+	protected void destroyImpl() {
 		if (isStreaming()) stop();
 
 		streamer.cancel();
