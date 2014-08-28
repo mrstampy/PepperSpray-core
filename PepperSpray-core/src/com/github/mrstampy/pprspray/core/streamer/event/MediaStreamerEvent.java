@@ -47,26 +47,8 @@ public class MediaStreamerEvent {
 	public MediaStreamerEvent(AbstractMediaStreamer source, MediaStreamerEventType type) {
 		this.source = source;
 		this.type = type;
-	}
-
-	/**
-	 * The Constructor.
-	 *
-	 * @param source
-	 *          the source
-	 * @param type
-	 *          the type
-	 * @param channel
-	 *          the channel
-	 * @param destination
-	 *          the destination
-	 */
-	public MediaStreamerEvent(AbstractMediaStreamer source, MediaStreamerEventType type, KiSyChannel channel,
-			InetSocketAddress destination) {
-		this(source, type);
-
-		this.channel = channel;
-		this.destination = destination;
+		this.channel = source.getChannel();
+		this.destination = source.getDestination();
 	}
 
 	/**

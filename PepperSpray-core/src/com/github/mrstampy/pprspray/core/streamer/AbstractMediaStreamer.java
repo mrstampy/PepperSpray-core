@@ -146,7 +146,7 @@ public abstract class AbstractMediaStreamer {
 
 	private void initStreamer() {
 		try {
-			streamer = createStreamer(channel, destination);
+			streamer = createStreamer();
 		} catch (Exception e) {
 			log.error("Unexpected exception", e);
 			throw new IllegalStateException("Cannot initialize streamer", e);
@@ -346,8 +346,8 @@ public abstract class AbstractMediaStreamer {
 		notifyStop();
 	}
 
-	private ByteArrayStreamer createStreamer(KiSyChannel channel, InetSocketAddress destination) throws Exception {
-		ByteArrayStreamer bas = new ByteArrayStreamer(channel, destination, getStreamerPipeSize());
+	private ByteArrayStreamer createStreamer() throws Exception {
+		ByteArrayStreamer bas = new ByteArrayStreamer(getChannel(), getDestination(), getStreamerPipeSize());
 
 		bas.setEomOnFinish(true);
 		bas.setProcessChunk(true);
@@ -361,7 +361,7 @@ public abstract class AbstractMediaStreamer {
 		bas.setThrottle(getThrottle());
 		bas.setConcurrentThreads(getConcurrentThreads());
 
-		notifyAdd(channel, destination);
+		notifyAdd();
 
 		return bas;
 	}
@@ -375,9 +375,9 @@ public abstract class AbstractMediaStreamer {
 		return ackRequired;
 	}
 
-	private void notifyAdd(KiSyChannel channel, InetSocketAddress dest) {
-		log.debug("Adding Media Streamer for channel {} and destination {}", channel.localAddress(), dest);
-		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.DESTINATION_ADDED, channel, dest));
+	private void notifyAdd() {
+		log.debug("Adding Media Streamer for channel {} and destination {}", getChannel().localAddress(), getDestination());
+		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.DESTINATION_ADDED));
 	}
 
 	private void notifyStart() {
@@ -657,7 +657,7 @@ public abstract class AbstractMediaStreamer {
 	 * {@link #notifyAccepted()} is false will send a
 	 * {@link NegotiationMessageUtils#getNegotiationMessage(int, MediaStreamType)}
 	 * to the {@link #getDestination()} and await a successful
-	 * {@link NegotiationChunk} response to begin streaming.<br>
+	 * {@link NegotiationAckChunk} response to begin streaming.<br>
 	 * <br>
 	 * 
 	 * If false then the encapsulating application must negotiate the
