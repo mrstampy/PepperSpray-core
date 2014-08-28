@@ -89,7 +89,7 @@ public abstract class AbstractMediaStreamer {
 	private int throttle = 0;
 	private int chunksPerSecond = -1;
 	private int streamerPipeSize;
-	private int concurrentThreads;
+	private int concurrentThreads = 2;
 
 	private String description;
 
@@ -201,7 +201,6 @@ public abstract class AbstractMediaStreamer {
 	public void connect() {
 		if (notifying()) return;
 		if (isStreaming()) return;
-		if (!isStreamable()) throw new IllegalStateException("Media streamer cannot be opened");
 
 		if (notifyAccepted()) {
 			start();
@@ -301,40 +300,9 @@ public abstract class AbstractMediaStreamer {
 
 		ByteBuf buf = NegotiationMessageUtils.getNegotiationMessage(getMediaHash(), getType());
 
-		ChunkEventBus.register(getNegotiationAckReceiver());
+		ChunkEventBus.register(new AckReceiver(getMediaHash()));
 
 		getChannel().send(buf.array(), getDestination());
-	}
-
-	/**
-	 * Gets the negotiation ack receiver.
-	 *
-	 * @return the negotiation ack receiver
-	 */
-	protected NegotiationAckReceiver getNegotiationAckReceiver() {
-		return new NegotiationAckReceiver(getMediaHash()) {
-
-			@Override
-			protected void ackReceived(NegotiationAckChunk chunk) {
-				notifying.set(false);
-
-				setNotifyAccepted(chunk.isAccepted());
-
-				if (notifyAccepted()) {
-					log.debug("Negotiations with {} for type {}, media hash {} successful", getDestination(), getType(),
-							getMediaHash());
-
-					notifyNegotiationSuccessful();
-					start();
-				} else {
-					log.debug("Negotiations with {} for type {}, media hash {} unsuccessful", getDestination(), getType(),
-							getMediaHash());
-
-					notifyNegotiationFailed();
-				}
-			}
-
-		};
 	}
 
 	/**
@@ -693,6 +661,34 @@ public abstract class AbstractMediaStreamer {
 
 	private void unregisterForChunks() {
 		ChunkEventBus.unregister(this);
+	}
+	
+	public class AckReceiver extends NegotiationAckReceiver {
+
+		public AckReceiver(int mediaHash) {
+			super(mediaHash);
+		}
+
+		@Override
+		protected void ackReceived(NegotiationAckChunk chunk) {
+			notifying.set(false);
+
+			setNotifyAccepted(chunk.isAccepted());
+
+			if (notifyAccepted()) {
+				log.debug("Negotiations with {} for type {}, media hash {} successful", getDestination(), getType(),
+						getMediaHash());
+
+				notifyNegotiationSuccessful();
+				start();
+			} else {
+				log.debug("Negotiations with {} for type {}, media hash {} unsuccessful", getDestination(), getType(),
+						getMediaHash());
+
+				notifyNegotiationFailed();
+			}
+		}
+		
 	}
 
 }

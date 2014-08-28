@@ -102,6 +102,23 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	}
 
 	/**
+	 * The Constructor.
+	 *
+	 * @param channel
+	 *          the channel
+	 * @param destination
+	 *          the destination
+	 * @param audioFormat
+	 *          the audio format
+	 * @throws LineUnavailableException
+	 *           the line unavailable exception
+	 */
+	public AudioStreamer(KiSyChannel channel, InetSocketAddress destination, AudioFormat audioFormat)
+			throws LineUnavailableException {
+		this(channel, destination, audioFormat, null);
+	}
+
+	/**
 	 * Inits the.
 	 *
 	 * @param audioFormat
@@ -137,6 +154,13 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
 	 */
 	protected void start() {
+		try {
+			dataLine.open();
+		} catch (LineUnavailableException e) {
+			log.error("Unexpected exception", e);
+			throw new IllegalStateException("Cannot open line", e);
+		}
+
 		dataLine.start();
 		log.debug("Starting audio streaming for format {}, info {}", audioFormat, mixerInfo);
 		startMonitoring();

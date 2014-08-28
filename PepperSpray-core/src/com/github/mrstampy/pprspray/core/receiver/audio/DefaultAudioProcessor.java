@@ -108,6 +108,7 @@ public class DefaultAudioProcessor extends AbstractMediaProcessor {
 			});
 
 			dataLine.open(getAudioFormat());
+			dataLine.start();
 
 			return true;
 		} catch (Exception e) {

@@ -51,6 +51,16 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	 *
 	 * @param audioFormat
 	 *          the audio format
+	 */
+	public AcceptingNegotationSubscriber(AudioFormat audioFormat) {
+		this(audioFormat, null);
+	}
+
+	/**
+	 * The Constructor.
+	 *
+	 * @param audioFormat
+	 *          the audio format
 	 * @param mixerInfo
 	 *          the mixer info
 	 */

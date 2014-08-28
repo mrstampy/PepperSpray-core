@@ -42,9 +42,9 @@ public class NegotiationMessageUtils {
 	 * @return the negotiation message
 	 */
 	public static ByteBuf getNegotiationMessage(int mediaHash, MediaStreamType requestedType) {
-		int headerLength = MediaStreamerUtils.DEFAULT_HEADER_LENGTH + 4;
+		int headerLength = MediaStreamerUtils.DEFAULT_HEADER_LENGTH;
 
-		ByteBuf buf = Unpooled.buffer(headerLength);
+		ByteBuf buf = Unpooled.buffer(headerLength + 4);
 
 		MediaStreamerUtils.writeHeader(buf, MediaStreamType.NEGOTIATION, headerLength, mediaHash, 0);
 
