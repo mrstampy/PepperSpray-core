@@ -21,6 +21,8 @@
 package com.github.mrstampy.pprspray.core.streamer;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
@@ -54,7 +56,6 @@ import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChun
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessageUtils;
-import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -123,6 +124,8 @@ public abstract class AbstractMediaStreamer {
 		initStreamer();
 
 		ChunkEventBus.register(this);
+
+		addChannelCloseListener();
 	}
 
 	/**
@@ -136,23 +139,7 @@ public abstract class AbstractMediaStreamer {
 	public void terminate(MediaFooterMessage eom) {
 		if (!eom.isApplicable(MediaStreamType.NEGOTIATION, getMediaHash())) return;
 
-		closeImpl();
-	}
-
-	/**
-	 * Close.
-	 */
-	public void close() {
-		closeImpl();
-		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getChannel(), getDestination());
-	}
-
-	/**
-	 * Close impl.
-	 */
-	protected void closeImpl() {
-		stop();
-		ChunkEventBus.unregister(this);
+		destroy();
 	}
 
 	private void initStreamer() {
@@ -193,6 +180,7 @@ public abstract class AbstractMediaStreamer {
 		if (isStreaming()) stop();
 
 		streamer.cancel();
+		unregisterForChunks();
 		notifyDestroyed();
 	}
 
@@ -684,6 +672,20 @@ public abstract class AbstractMediaStreamer {
 	 */
 	public void setAutoNegotiate(boolean autoNegotiate) {
 		this.autoNegotiate = autoNegotiate;
+	}
+
+	private void addChannelCloseListener() {
+		getChannel().getChannel().closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
+
+			@Override
+			public void operationComplete(ChannelFuture future) throws Exception {
+				destroy();
+			}
+		});
+	}
+
+	private void unregisterForChunks() {
+		ChunkEventBus.unregister(this);
 	}
 
 }
