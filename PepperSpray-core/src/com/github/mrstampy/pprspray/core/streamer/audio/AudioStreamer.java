@@ -136,7 +136,7 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	 * @see
 	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
 	 */
-	public void start() {
+	protected void start() {
 		dataLine.start();
 		log.debug("Starting audio streaming for format {}, info {}", audioFormat, mixerInfo);
 		startMonitoring();

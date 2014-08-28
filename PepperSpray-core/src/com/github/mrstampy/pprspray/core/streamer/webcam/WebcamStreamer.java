@@ -76,7 +76,7 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 	 * @see
 	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
 	 */
-	public void start() {
+	protected void start() {
 		if (isStreaming()) return;
 
 		webcam.open();
