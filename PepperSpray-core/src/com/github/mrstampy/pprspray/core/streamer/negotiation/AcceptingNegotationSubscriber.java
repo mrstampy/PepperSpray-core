@@ -35,6 +35,7 @@ import com.github.mrstampy.pprspray.core.receiver.file.FileReceiver;
 import com.github.mrstampy.pprspray.core.receiver.text.TextReceiver;
 import com.github.mrstampy.pprspray.core.receiver.webcam.WebcamReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,6 +55,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	 *          the mixer info
 	 */
 	public AcceptingNegotationSubscriber(AudioFormat audioFormat, Mixer.Info mixerInfo) {
+		super();
 		this.audioFormat = audioFormat;
 		this.mixerInfo = mixerInfo;
 	}
@@ -68,7 +70,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	 */
 	@Override
 	protected void negotiationRequestedImpl(NegotiationChunk event) {
-		KiSyChannel channel = getChannel(event);
+		KiSyChannel channel = MediaStreamerUtils.getChannel(event.getReceiver());
 
 		createReceiver(event.getRequestedType(), event.getMediaHash());
 

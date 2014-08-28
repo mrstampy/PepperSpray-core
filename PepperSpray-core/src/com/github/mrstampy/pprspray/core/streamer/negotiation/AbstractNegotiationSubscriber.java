@@ -20,8 +20,6 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.negotiation;
 
-import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
-import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -30,6 +28,42 @@ import com.google.common.eventbus.Subscribe;
  */
 public abstract class AbstractNegotiationSubscriber {
 
+	private boolean registered;
+
+	/**
+	 * The Constructor.
+	 */
+	protected AbstractNegotiationSubscriber() {
+		register();
+	}
+
+	/**
+	 * Checks if is registered.
+	 *
+	 * @return true, if checks if is registered
+	 */
+	public boolean isRegistered() {
+		return registered;
+	}
+
+	/**
+	 * Register.
+	 */
+	public void register() {
+		if (isRegistered()) return;
+		NegotiationEventBus.register(this);
+		registered = true;
+	}
+
+	/**
+	 * Unregister.
+	 */
+	public void unregister() {
+		if (!isRegistered()) return;
+		NegotiationEventBus.unregister(this);
+		registered = false;
+	}
+
 	/**
 	 * Negotiation requested.
 	 *
@@ -37,26 +71,8 @@ public abstract class AbstractNegotiationSubscriber {
 	 *          the event
 	 */
 	@Subscribe
-	public void negotiationRequested(NegotiationChunk event) {
+	public final void negotiationRequested(NegotiationChunk event) {
 		negotiationRequestedImpl(event);
-	}
-
-	/**
-	 * Gets the channel.
-	 *
-	 * @param event
-	 *          the event
-	 * @return the channel
-	 */
-	protected KiSyChannel getChannel(NegotiationChunk event) {
-		KiSyChannel channel = MediaStreamerUtils.getChannel(event.getReceiver());
-
-		if (channel == null) {
-			throw new IllegalStateException("Cannot locate channel for port " + event.getChannelPort() + " or address "
-					+ event.getReceiver());
-		}
-
-		return channel;
 	}
 
 	/**
