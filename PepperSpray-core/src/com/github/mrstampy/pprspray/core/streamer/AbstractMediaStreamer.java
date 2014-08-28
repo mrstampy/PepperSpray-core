@@ -179,7 +179,7 @@ public abstract class AbstractMediaStreamer {
 	 * Destroy.
 	 */
 	public void destroy() {
-		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getChannel().localAddress(), getDestination());
+		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getChannel(), getDestination());
 		destroyImpl();
 	}
 
