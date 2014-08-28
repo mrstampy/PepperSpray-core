@@ -196,13 +196,20 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		if (available < 0) stop();
 		if (available == 0) return;
 
-		if (buf.writerIndex() + available > buf.capacity()) buf.clear();
+		discardSomeIfFull(available);
 
 		byte[] b = new byte[available];
 
 		dataLine.read(b, 0, b.length);
-
 		buf.writeBytes(b);
+	}
+
+	private void discardSomeIfFull(int available) {
+		int remaining = buf.writableBytes() - available;
+		if (remaining >= 0) return;
+
+		buf.readerIndex(remaining * -2);
+		buf.discardReadBytes();
 	}
 
 	/*
