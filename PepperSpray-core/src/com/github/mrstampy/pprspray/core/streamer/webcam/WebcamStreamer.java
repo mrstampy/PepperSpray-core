@@ -155,7 +155,7 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		return open.get();
 	}
 
-	private void phooCamClosed() {
+	private void camClosed() {
 		open.set(false);
 		stop();
 	}
@@ -194,7 +194,7 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		 */
 		@Override
 		public void webcamClosed(WebcamEvent we) {
-			phooCamClosed();
+			camClosed();
 		}
 
 		/*
@@ -206,7 +206,7 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		 */
 		@Override
 		public void webcamDisposed(WebcamEvent we) {
-			phooCamClosed();
+			camClosed();
 		}
 
 	}
