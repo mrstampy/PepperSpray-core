@@ -38,5 +38,14 @@ public enum MediaStreamerEventType {
 	
 	/** The destination added. */
 	DESTINATION_ADDED,
+	
+	/** The negotiating. */
+	NEGOTIATING,
+	
+	/** The negotiation successful. */
+	NEGOTIATION_SUCCESSFUL,
+
+	/** The negotiation failed. */
+	NEGOTIATION_FAILED;
 	//@formatter:on
 }

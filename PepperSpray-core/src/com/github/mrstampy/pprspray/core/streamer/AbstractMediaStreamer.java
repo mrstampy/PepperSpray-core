@@ -199,7 +199,7 @@ public abstract class AbstractMediaStreamer {
 	}
 
 	/**
-	 * Returns true if this streamer is awaiting negotiation confirmation.
+	 * Returns true if this media streamer is awaiting negotiation confirmation.
 	 *
 	 * @return true, if notifying
 	 * @see NegotiationEventBus
@@ -246,11 +246,26 @@ public abstract class AbstractMediaStreamer {
 	 * @see AcceptingNegotationSubscriber
 	 */
 	protected void negotiate() {
+		log.debug("Negotiating with {} for media hash {}", getDestination(), getMediaHash());
+
 		notifying.set(true);
+
+		notifyNegotiating();
 
 		ByteBuf buf = NegotiationMessageUtils.getNegotiationMessage(getMediaHash(), getType());
 
-		ChunkEventBus.register(new NegotiationAckReceiver(getMediaHash()) {
+		ChunkEventBus.register(getNegotiationAckReceiver());
+
+		getChannel().send(buf.array(), getDestination());
+	}
+
+	/**
+	 * Gets the negotiation ack receiver.
+	 *
+	 * @return the negotiation ack receiver
+	 */
+	protected NegotiationAckReceiver getNegotiationAckReceiver() {
+		return new NegotiationAckReceiver(getMediaHash()) {
 
 			@Override
 			protected void ackReceived(NegotiationAckChunk chunk) {
@@ -259,27 +274,18 @@ public abstract class AbstractMediaStreamer {
 				notifyAccepted.set(chunk.isAccepted());
 
 				if (notifyAccepted()) {
+					log.debug("Negotiations with {} for media hash {} successful", getDestination(), getMediaHash());
+
+					notifyNegotiationSuccessful();
 					start();
 				} else {
-					negotiationFailed(chunk);
+					log.debug("Negotiations with {} for media hash {} unsuccessful", getDestination(), getMediaHash());
+
+					notifyNegotiationFailed();
 				}
 			}
 
-		});
-
-		getChannel().send(buf.array(), getDestination());
-	}
-
-	/**
-	 * Blank impl (no action) when negotiation has failed. Override as necessary.
-	 *
-	 * @param chunk
-	 *          the chunk
-	 * @see #negotiate()
-	 * @see NegotiationAckReceiver
-	 */
-	protected void negotiationFailed(NegotiationAckChunk chunk) {
-
+		};
 	}
 
 	/**
@@ -326,18 +332,30 @@ public abstract class AbstractMediaStreamer {
 	}
 
 	private void notifyStart() {
-		log.debug("Started");
+		log.debug("Started streamer, type {}, hash {} for {}", getType(), getMediaHash(), getDestination());
 		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.STARTED));
 	}
 
 	private void notifyStop() {
-		log.debug("Stopped");
+		log.debug("Stopped streamer, type {}, hash {} for {}", getType(), getMediaHash(), getDestination());
 		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.STOPPED));
 	}
 
 	private void notifyDestroyed() {
-		log.debug("Destroyed");
+		log.debug("Destroyed streamer, type {}, hash {} for {}", getType(), getMediaHash(), getDestination());
 		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.DESTROYED));
+	}
+
+	private void notifyNegotiationFailed() {
+		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.NEGOTIATION_FAILED));
+	}
+
+	private void notifyNegotiationSuccessful() {
+		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.NEGOTIATION_SUCCESSFUL));
+	}
+
+	private void notifyNegotiating() {
+		MediaStreamerEventBus.post(new MediaStreamerEvent(this, MediaStreamerEventType.NEGOTIATING));
 	}
 
 	/**
