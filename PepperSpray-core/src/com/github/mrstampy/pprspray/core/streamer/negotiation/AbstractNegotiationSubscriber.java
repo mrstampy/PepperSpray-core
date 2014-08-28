@@ -20,6 +20,9 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.negotiation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -27,6 +30,7 @@ import com.google.common.eventbus.Subscribe;
  * The Class AbstractNegotiationSubscriber.
  */
 public abstract class AbstractNegotiationSubscriber {
+	private static final Logger log = LoggerFactory.getLogger(AcceptingNegotationSubscriber.class);
 
 	private boolean registered;
 
@@ -72,7 +76,11 @@ public abstract class AbstractNegotiationSubscriber {
 	 */
 	@Subscribe
 	public final void negotiationRequested(NegotiationChunk event) {
-		negotiationRequestedImpl(event);
+		try {
+			negotiationRequestedImpl(event);
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+		}
 	}
 
 	/**

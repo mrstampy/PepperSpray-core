@@ -141,7 +141,11 @@ public abstract class AbstractMediaStreamer {
 
 		log.debug("Received receiver termination for type {}, hash {} from {}", getType(), getMediaHash(), getDestination());
 
-		destroyImpl();
+		try {
+			destroyImpl();
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+		}
 	}
 
 	private void initStreamer() {
@@ -662,7 +666,7 @@ public abstract class AbstractMediaStreamer {
 	private void unregisterForChunks() {
 		ChunkEventBus.unregister(this);
 	}
-	
+
 	public class AckReceiver extends NegotiationAckReceiver {
 
 		public AckReceiver(int mediaHash) {
@@ -688,7 +692,7 @@ public abstract class AbstractMediaStreamer {
 				notifyNegotiationFailed();
 			}
 		}
-		
+
 	}
 
 }

@@ -95,9 +95,13 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 */
 	@Subscribe
 	public void receive(AMC chunk) {
-		if (!chunk.isApplicable(getMediaHash())) return;
+		try {
+			if (!chunk.isApplicable(getType(), getMediaHash())) return;
 
-		receiveImpl(chunk);
+			receiveImpl(chunk);
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+		}
 	}
 
 	/**
@@ -135,11 +139,15 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	public void endOfMessage(MediaFooterMessage eom) {
 		if (!isApplicable(eom)) return;
 
-		if (eom.isTerminateMessage(getMediaHash())) {
-			log.debug("Received streamer termination for type {}, hash {}", getType(), getMediaHash());
-			destroy();
-		} else {
-			endOfMessageImpl(eom);
+		try {
+			if (eom.isTerminateMessage(getMediaHash())) {
+				log.debug("Received streamer termination for type {}, hash {}", getType(), getMediaHash());
+				destroy();
+			} else {
+				endOfMessageImpl(eom);
+			}
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
 		}
 	}
 

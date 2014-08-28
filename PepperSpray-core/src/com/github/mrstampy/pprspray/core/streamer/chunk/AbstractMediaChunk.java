@@ -152,8 +152,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 *          the media hash
 	 * @return true, if checks if is applicable
 	 */
-	public boolean isApplicable(int mediaHash) {
-		return mediaHash == getMediaHash();
+	public boolean isApplicable(MediaStreamType type, int mediaHash) {
+		return mediaHash == getMediaHash() && type == getMediaStreamType();
 	}
 
 	/**
