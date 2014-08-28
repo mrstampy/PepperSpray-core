@@ -135,7 +135,8 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	public void endOfMessage(MediaFooterMessage eom) {
 		if (!isApplicable(eom)) return;
 
-		if (isTerminateMessage(eom)) {
+		if (eom.isTerminateMessage(getMediaHash())) {
+			log.debug("Received streamer termination for type {}, hash {}", getType(), getMediaHash());
 			destroy();
 		} else {
 			endOfMessageImpl(eom);
@@ -150,18 +151,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * @return true, if checks if is applicable
 	 */
 	protected boolean isApplicable(MediaFooterMessage eom) {
-		return isTerminateMessage(eom) || eom.isApplicable(getType(), getMediaHash());
-	}
-
-	/**
-	 * Checks if is terminate message.
-	 *
-	 * @param eom
-	 *          the eom
-	 * @return true, if checks if is terminate message
-	 */
-	protected boolean isTerminateMessage(MediaFooterMessage eom) {
-		return eom.isApplicable(MediaStreamType.NEGOTIATION, getMediaHash());
+		return eom.isTerminateMessage(getMediaHash()) || eom.isApplicable(getType(), getMediaHash());
 	}
 
 	/**

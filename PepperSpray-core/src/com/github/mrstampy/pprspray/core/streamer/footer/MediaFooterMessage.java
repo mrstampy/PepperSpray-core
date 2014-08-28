@@ -92,6 +92,17 @@ public class MediaFooterMessage implements Serializable {
 	}
 
 	/**
+	 * Checks if is terminate message.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 * @return true, if checks if is terminate message
+	 */
+	public boolean isTerminateMessage(int mediaHash) {
+		return isApplicable(MediaStreamType.NEGOTIATION, mediaHash);
+	}
+
+	/**
 	 * Gets the media hash.
 	 *
 	 * @return the media hash

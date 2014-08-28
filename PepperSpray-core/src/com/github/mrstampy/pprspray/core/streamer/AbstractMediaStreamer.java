@@ -137,7 +137,9 @@ public abstract class AbstractMediaStreamer {
 	 */
 	@Subscribe
 	public void terminate(MediaFooterMessage eom) {
-		if (!eom.isApplicable(MediaStreamType.NEGOTIATION, getMediaHash())) return;
+		if (!eom.isTerminateMessage(getMediaHash())) return;
+
+		log.debug("Received receiver termination for type {}, hash {} from {}", getType(), getMediaHash(), getDestination());
 
 		destroy();
 	}
