@@ -43,7 +43,6 @@ import com.github.mrstampy.kitchensync.stream.footer.Footer;
 import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
 import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationAckReceiver;
-import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationReceiver;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEvent;
@@ -234,7 +233,6 @@ public abstract class AbstractMediaStreamer {
 	 * @see NegotiationEventBus
 	 * @see NegotiationChunk
 	 * @see NegotiationAckChunk
-	 * @see NegotiationReceiver
 	 * @see NegotiationAckReceiver
 	 * @see NegotiationHandler
 	 * @see NegotiationAckHandler
@@ -251,7 +249,6 @@ public abstract class AbstractMediaStreamer {
 	 * @see NegotiationEventBus
 	 * @see NegotiationChunk
 	 * @see NegotiationAckChunk
-	 * @see NegotiationReceiver
 	 * @see NegotiationAckReceiver
 	 * @see NegotiationHandler
 	 * @see NegotiationAckHandler
@@ -283,7 +280,6 @@ public abstract class AbstractMediaStreamer {
 	 * @see NegotiationChunk
 	 * @see NegotiationAckChunk
 	 * @see NegotiationAckReceiver
-	 * @see NegotiationReceiver
 	 * @see AbstractNegotiationSubscriber
 	 * @see AcceptingNegotationSubscriber
 	 */

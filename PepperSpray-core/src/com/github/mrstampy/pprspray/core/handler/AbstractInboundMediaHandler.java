@@ -101,12 +101,22 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 
 					if (log.isTraceEnabled()) log.trace("Received chunk {}", chunk);
 
-					ChunkEventBus.post(chunk);
+					post(chunk);
 				} catch (Exception e) {
 					log.error("Unexpected exception", e);
 				}
 			}
 		});
+	}
+
+	/**
+	 * Post.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 */
+	protected void post(AMC chunk) {
+		ChunkEventBus.post(chunk);
 	}
 
 	/**

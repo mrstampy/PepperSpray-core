@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
-import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationReceiver;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
@@ -47,15 +46,6 @@ public class ChunkEventBus {
 	private static final EventBus BUS = new EventBus("Chunk Arrival Event Bus");
 
 	private static Map<Integer, AbstractMediaReceiver<?>> receivers = new ConcurrentHashMap<Integer, AbstractMediaReceiver<?>>();
-
-	static {
-		init();
-	}
-
-	private static void init() {
-		// for all negotiation requests
-		new NegotiationReceiver();
-	}
 
 	/**
 	 * Post.
@@ -235,8 +225,6 @@ public class ChunkEventBus {
 		}
 
 		receivers.clear();
-
-		init();
 	}
 
 	/**

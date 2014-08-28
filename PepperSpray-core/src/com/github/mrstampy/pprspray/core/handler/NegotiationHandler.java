@@ -22,6 +22,7 @@ package com.github.mrstampy.pprspray.core.handler;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -40,6 +41,17 @@ public class NegotiationHandler extends AbstractInboundMediaHandler<NegotiationC
 	@Override
 	protected NegotiationChunk createChunk(byte[] message) {
 		return new NegotiationChunk(message);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#post
+	 * (com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk)
+	 */
+	protected void post(NegotiationChunk chunk) {
+		NegotiationEventBus.post(chunk);
 	}
 
 	/*
