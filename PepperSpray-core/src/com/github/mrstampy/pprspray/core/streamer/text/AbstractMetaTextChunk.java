@@ -30,7 +30,7 @@ public class AbstractMetaTextChunk extends DefaultTextChunk {
 
 	/** The Constant NO_MARSHALLING_CLASS. */
 	public static final int NO_MARSHALLING_CLASS = -1;
-	
+
 	private static final long serialVersionUID = 3660882521469296336L;
 
 	private int marshallingClassNameHash;

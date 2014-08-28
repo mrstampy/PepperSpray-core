@@ -22,13 +22,34 @@ package com.github.mrstampy.pprspray.core.streamer.negotiation;
 
 import io.netty.buffer.ByteBuf;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.Mixer;
+
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
+import com.github.mrstampy.pprspray.core.receiver.MediaEventBus;
+import com.github.mrstampy.pprspray.core.receiver.audio.DefaultAudioProcessor;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AcceptingNegotationSubscriber.
  */
 public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber {
+
+	private AudioFormat audioFormat;
+	private Mixer.Info mixerInfo;
+
+	/**
+	 * The Constructor.
+	 *
+	 * @param audioFormat
+	 *          the audio format
+	 * @param mixerInfo
+	 *          the mixer info
+	 */
+	public AcceptingNegotationSubscriber(AudioFormat audioFormat, Mixer.Info mixerInfo) {
+		this.audioFormat = audioFormat;
+		this.mixerInfo = mixerInfo;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -47,6 +68,28 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 		ByteBuf ack = NegotiationMessageUtils.getNegotiationAckMessage(event.getMediaHash(), true);
 
 		channel.send(ack.array(), event.getSender());
+
+		Object o = getMediaProcessor(event);
+
+		if (o == null) return;
+
+		MediaEventBus.register(o);
+	}
+
+	/**
+	 * Gets the media processor.
+	 *
+	 * @param event
+	 *          the event
+	 * @return the media processor
+	 */
+	protected Object getMediaProcessor(NegotiationChunk event) {
+		switch (event.getRequestedType()) {
+		case AUDIO:
+			return new DefaultAudioProcessor(event.getMediaHash(), audioFormat, mixerInfo);
+		default:
+			return null;
+		}
 	}
 
 }

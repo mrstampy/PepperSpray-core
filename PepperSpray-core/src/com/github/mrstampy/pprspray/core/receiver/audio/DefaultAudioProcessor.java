@@ -20,8 +20,6 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.audio;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineEvent;
@@ -32,26 +30,19 @@ import javax.sound.sampled.SourceDataLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.mrstampy.pprspray.core.receiver.AbstractMediaProcessor;
 import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
-import com.github.mrstampy.pprspray.core.receiver.MediaEventBus;
-import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
-import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
-import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DefaultAudioProcessor.
  */
-public class DefaultAudioProcessor {
+public class DefaultAudioProcessor extends AbstractMediaProcessor {
 	private static final Logger log = LoggerFactory.getLogger(DefaultAudioProcessor.class);
 
 	private AudioFormat audioFormat;
 	private Mixer.Info mixerInfo;
 	private SourceDataLine dataLine;
-	private int mediaHash;
-
-	private AtomicBoolean open = new AtomicBoolean(false);
 
 	/**
 	 * The Constructor.
@@ -64,49 +55,20 @@ public class DefaultAudioProcessor {
 	 *          the mixer info
 	 */
 	public DefaultAudioProcessor(int mediaHash, AudioFormat audioFormat, Mixer.Info mixerInfo) {
-		setMediaHash(mediaHash);
+		super(mediaHash);
+
 		setAudioFormat(audioFormat);
 		setMixerInfo(mixerInfo);
-
-		ReceiverEventBus.register(this);
-		MediaEventBus.register(this);
 	}
 
-	/**
-	 * Receiver event.
-	 *
-	 * @param event
-	 *          the event
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.receiver.AbstractMediaProcessor#
+	 * mediaEventImpl(com.github.mrstampy.pprspray.core.receiver.MediaEvent)
 	 */
-	@Subscribe
-	public void receiverEvent(ReceiverEvent event) {
-		if (!event.isApplicable(getMediaHash())) return;
-
-		switch (event.getType()) {
-		case CLOSE:
-			close();
-			break;
-		case DESTROY:
-			destroy();
-			break;
-		case OPEN:
-			open();
-			break;
-		default:
-			break;
-		}
-	}
-
-	/**
-	 * Audio event.
-	 *
-	 * @param event
-	 *          the event
-	 */
-	@Subscribe
-	public void audioEvent(MediaEvent event) {
-		if (!event.isApplicable(MediaStreamType.AUDIO, getMediaHash())) return;
-
+	@Override
+	protected void mediaEventImpl(MediaEvent event) throws Exception {
 		if (!isOpen()) open();
 
 		try {
@@ -116,12 +78,15 @@ public class DefaultAudioProcessor {
 		}
 	}
 
-	/**
-	 * Open.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaProcessor#openImpl
+	 * ()
 	 */
-	public void open() {
-		if (isOpen()) return;
-
+	@Override
+	protected boolean openImpl() {
 		try {
 			closeDataLine();
 
@@ -131,45 +96,35 @@ public class DefaultAudioProcessor {
 
 				@Override
 				public void update(LineEvent event) {
-					open.set(event.getType() == LineEvent.Type.START);
+					setOpen(event.getType() == LineEvent.Type.START);
 				}
 			});
 
 			dataLine.open(getAudioFormat());
+
+			return true;
 		} catch (Exception e) {
-			log.error("Could not open", e);
+			log.error("Could not open audio processor for {}", getMediaHash(), e);
 		}
+
+		return false;
 	}
 
-	/**
-	 * Checks if is open.
-	 *
-	 * @return true, if checks if is open
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaProcessor#closeImpl
+	 * ()
 	 */
-	public boolean isOpen() {
-		return open.get();
-	}
-
-	/**
-	 * Close.
-	 */
-	public void close() {
-		if (!isOpen()) return;
+	@Override
+	protected boolean closeImpl() {
 		closeDataLine();
+		return true;
 	}
 
 	private void closeDataLine() {
 		if (dataLine != null) dataLine.close();
-	}
-
-	/**
-	 * Destroy.
-	 */
-	public void destroy() {
-		close();
-
-		MediaEventBus.unregister(this);
-		ReceiverEventBus.unregister(this);
 	}
 
 	/**
@@ -208,25 +163,6 @@ public class DefaultAudioProcessor {
 	 */
 	protected void setMixerInfo(Mixer.Info mixerInfo) {
 		this.mixerInfo = mixerInfo;
-	}
-
-	/**
-	 * Gets the media hash.
-	 *
-	 * @return the media hash
-	 */
-	public int getMediaHash() {
-		return mediaHash;
-	}
-
-	/**
-	 * Sets the media hash.
-	 *
-	 * @param mediaHash
-	 *          the media hash
-	 */
-	protected void setMediaHash(int mediaHash) {
-		this.mediaHash = mediaHash;
 	}
 
 }
