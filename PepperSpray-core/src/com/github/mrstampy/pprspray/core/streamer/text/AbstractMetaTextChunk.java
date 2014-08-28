@@ -61,7 +61,7 @@ public class AbstractMetaTextChunk extends DefaultTextChunk {
 	 * @return true, if checks for marshalling class
 	 */
 	public boolean hasMarshallingClass() {
-		return NO_MARSHALLING_CLASS == getMarshallingClassNameHash();
+		return NO_MARSHALLING_CLASS != getMarshallingClassNameHash();
 	}
 
 	/**
