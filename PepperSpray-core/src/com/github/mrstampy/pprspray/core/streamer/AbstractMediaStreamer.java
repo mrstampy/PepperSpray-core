@@ -686,7 +686,7 @@ public abstract class AbstractMediaStreamer {
 
 			@Override
 			public void operationComplete(ChannelFuture future) throws Exception {
-				destroy();
+				destroyImpl();
 			}
 		});
 	}
