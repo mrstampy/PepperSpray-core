@@ -56,9 +56,7 @@ public class DefaultWebcamChunkProcessor extends AbstractMediaChunkProcessor {
 	protected int createMediaHash() {
 		//@formatter:off
 		return new HashCodeBuilder()
-				.append(webcam.getViewSize().width)
-				.append(webcam.getViewSize().height)
-				.append(webcam.getName())
+				.append(webcam)
 				.toHashCode();
 		//@formatter:on
 	}
