@@ -404,19 +404,6 @@ public abstract class AbstractMediaStreamer {
 	 *           the exception
 	 */
 	protected void sendData(byte[] data) throws Exception {
-		streamImpl(getMediaChunkProcessor().process(streamer, data));
-		streamer.sendEndOfMessage();
-	}
-
-	/**
-	 * Stream impl.
-	 *
-	 * @param data
-	 *          the data
-	 * @throws Exception
-	 *           the exception
-	 */
-	protected void streamImpl(byte[] data) throws Exception {
 		ChannelFuture cf = streamer.stream(data);
 		cf.await();
 	}
