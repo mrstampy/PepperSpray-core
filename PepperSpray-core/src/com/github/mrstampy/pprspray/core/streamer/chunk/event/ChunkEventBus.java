@@ -22,6 +22,7 @@ package com.github.mrstampy.pprspray.core.streamer.chunk.event;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
@@ -34,7 +35,7 @@ import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
-import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -43,7 +44,7 @@ import com.google.common.eventbus.Subscribe;
  */
 public class ChunkEventBus {
 
-	private static final EventBus BUS = new EventBus("Chunk Arrival Event Bus");
+	private static final AsyncEventBus BUS = new AsyncEventBus("Chunk Arrival Event Bus", Executors.newCachedThreadPool());
 
 	private static Map<Integer, AbstractMediaReceiver<?>> receivers = new ConcurrentHashMap<Integer, AbstractMediaReceiver<?>>();
 
