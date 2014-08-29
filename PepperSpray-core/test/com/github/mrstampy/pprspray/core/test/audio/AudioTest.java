@@ -18,9 +18,8 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.test;
+package com.github.mrstampy.pprspray.core.test.audio;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.LineUnavailableException;
 
 import com.github.mrstampy.kitchensync.message.inbound.ByteArrayInboundMessageManager;
@@ -29,38 +28,67 @@ import com.github.mrstampy.pprspray.core.handler.AudioMediaHandler;
 import com.github.mrstampy.pprspray.core.handler.MediaFooterHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
+import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
 import com.github.mrstampy.pprspray.core.streamer.audio.AudioStreamer;
-import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
-import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
+import com.github.mrstampy.pprspray.core.test.TestNegotiationSubscriber;
 import com.github.mrstampy.pprspray.core.test.channel.ByteArrayChannel;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AudioTest.
+ * This is the first system test class of the PepperSpray-core framework. It has
+ * been used to remove wrinkles in the code and demonstrate the concepts of this
+ * framework.<br>
+ * <br>
+ * 
+ * This class starts by creating 2 {@link KiSyChannel}s and an
+ * {@link AudioStreamer} to stream audio from channel1 to channel2. Auto
+ * negotiation is on, so when {@link AudioStreamer#connect()} is invoked a
+ * {@link NegotiationChunk} message is sent to channel2. The
+ * {@link TestNegotiationSubscriber} creates and registers the necessary objects
+ * to receive and process the audio stream and sends an acknowledgement back to
+ * channel1, which is awaiting the response. When received audio is streamed
+ * from channel1 to channel2.<br>
+ * <br>
+ * 
+ * The {@link LoggingAudioProcessor} created by the
+ * {@link TestNegotiationSubscriber} writes events received on channel2 to the
+ * log at debug level.<br>
+ * <br>
  */
 public class AudioTest {
-
-	private static final AudioFormat AUDIO_FORMAT = new AudioFormat(22000, 16, 2, true, true);
 
 	private KiSyChannel channel1;
 	private KiSyChannel channel2;
 	private AudioStreamer audioStreamer;
 
-	private void initChannels() throws LineUnavailableException {
-		ChunkEventBus.register(new LoggingChunkReceiver());
+	private void execute() throws LineUnavailableException {
+		// enable this to see the chunks arrive on channel2
+		// ChunkEventBus.register(new LoggingChunkReceiver());
+
 		channel1 = initChannel();
 		channel2 = initChannel();
 
 		initInboundManager();
 		initNegotiationEventBus();
 
-		audioStreamer = new AudioStreamer(channel1, channel2.localAddress(), AUDIO_FORMAT);
+		audioStreamer = new AudioStreamer(channel1, channel2.localAddress(), TestNegotiationSubscriber.AUDIO_FORMAT);
 
 		audioStreamer.connect();
 	}
 
-	private void initInboundManager() {
+	/**
+	 * These are the classes which deal with inbound messages.
+	 * 
+	 * @see AudioMediaHandler
+	 * @see NegotiationHandler
+	 * @see NegotiationAckHandler
+	 * @see MediaFooterHandler
+	 * @see ByteArrayInboundMessageManager
+	 */
+	protected void initInboundManager() {
 		//@formatter:off
 		ByteArrayInboundMessageManager.INSTANCE.addMessageHandlers(
 				new AudioMediaHandler(),
@@ -78,8 +106,16 @@ public class AudioTest {
 		return channel;
 	}
 
-	private void initNegotiationEventBus() {
-		NegotiationEventBus.register(new AcceptingNegotationSubscriber(AUDIO_FORMAT));
+	/**
+	 * This sets the class used to respond to {@link NegotiationChunk} messages.
+	 * It needs to set up {@link MediaProcessor}s and
+	 * {@link AbstractMediaReceiver}s appropriately. It is a key concept of the
+	 * framework.
+	 * 
+	 * @see NegotiationEventBus
+	 */
+	protected void initNegotiationEventBus() {
+		NegotiationEventBus.register(new TestNegotiationSubscriber());
 	}
 
 	/**
@@ -91,7 +127,7 @@ public class AudioTest {
 	 *           the exception
 	 */
 	public static void main(String[] args) throws Exception {
-		new AudioTest().initChannels();
+		new AudioTest().execute();
 	}
 
 }
