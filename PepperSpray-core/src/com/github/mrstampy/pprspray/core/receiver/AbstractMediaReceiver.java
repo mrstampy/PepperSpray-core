@@ -96,12 +96,25 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	@Subscribe
 	public void receive(AMC chunk) {
 		try {
-			if (!chunk.isApplicable(getType(), getMediaHash())) return;
+			boolean applicable = isApplicable(chunk);
+
+			if (!applicable) return;
 
 			receiveImpl(chunk);
 		} catch (Exception e) {
 			log.error("Unexpected exception", e);
 		}
+	}
+
+	/**
+	 * Checks if is applicable.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 * @return true, if checks if is applicable
+	 */
+	protected boolean isApplicable(AMC chunk) {
+		return !(chunk instanceof MediaFooterChunk) && chunk.isApplicable(getType(), getMediaHash());
 	}
 
 	/**
@@ -159,6 +172,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * @return true, if checks if is applicable
 	 */
 	protected boolean isApplicable(MediaFooterChunk eom) {
+		log.debug("Checking {}, {} against {}, {}", eom.getMediaStreamType(), eom.getMediaHash(), getType(), getMediaHash());
 		return eom.isTerminateMessage(getMediaHash()) || eom.isApplicable(getType(), getMediaHash());
 	}
 

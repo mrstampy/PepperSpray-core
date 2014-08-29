@@ -67,7 +67,7 @@ public class MediaFooter implements Footer {
 	 */
 	@Override
 	public byte[] createFooter() {
-		if(footer == null) footer = buildFooter();
+		if (footer == null) footer = buildFooter();
 
 		return footer;
 	}

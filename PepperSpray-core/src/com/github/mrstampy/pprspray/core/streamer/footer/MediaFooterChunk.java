@@ -20,6 +20,11 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.footer;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
+import java.util.Arrays;
+
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
@@ -40,6 +45,20 @@ public class MediaFooterChunk extends AbstractMediaChunk {
 	 */
 	public MediaFooterChunk(byte[] message) {
 		super(message, null);
+	}
+
+	/**
+	 * Extract media hash.
+	 *
+	 * @param message
+	 *          the message
+	 */
+	protected void extractMediaHash(byte[] message) {
+		byte[] hash = Arrays.copyOfRange(message, 4, 8);
+
+		ByteBuf buf = Unpooled.copiedBuffer(hash);
+
+		setMediaHash(buf.getInt(0));
 	}
 
 	/**

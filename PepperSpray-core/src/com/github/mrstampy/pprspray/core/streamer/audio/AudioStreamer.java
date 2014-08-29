@@ -312,7 +312,7 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 		setMediaChunkProcessor(dacp);
 
-		setMediaFooter(new MediaFooter(MediaStreamType.AUDIO, dacp.getMediaHash()));
+		setMediaFooter(new MediaFooter(MediaStreamType.AUDIO, getMediaHash()));
 	}
 
 	/**

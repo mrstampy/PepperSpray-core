@@ -35,6 +35,8 @@ public class DefaultAudioChunkProcessor extends AbstractMediaChunkProcessor {
 
 	private AudioFormat audioFormat;
 
+	private int mediaHash = -1;
+
 	/**
 	 * The Constructor.
 	 *
@@ -67,6 +69,12 @@ public class DefaultAudioChunkProcessor extends AbstractMediaChunkProcessor {
 	 */
 	@Override
 	protected int createMediaHash() {
+		if (mediaHash == -1) mediaHash = buildHash();
+
+		return mediaHash;
+	}
+
+	private int buildHash() {
 		//@formatter:off
 		return new HashCodeBuilder()
 				.append(audioFormat.getChannels())

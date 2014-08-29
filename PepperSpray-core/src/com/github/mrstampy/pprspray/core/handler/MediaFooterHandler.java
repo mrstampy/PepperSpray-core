@@ -26,11 +26,11 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class FileMediaHandler.
+ * The Class MediaFooterHandler.
  */
-public class InboundEomMediaHandler extends AbstractInboundMediaHandler<MediaFooterChunk> {
+public class MediaFooterHandler extends AbstractInboundMediaHandler<MediaFooterChunk> {
 
-	private static final long serialVersionUID = -2092069884261330398L;
+	private static final long serialVersionUID = -5025938581722268497L;
 
 	/*
 	 * (non-Javadoc)
@@ -41,7 +41,9 @@ public class InboundEomMediaHandler extends AbstractInboundMediaHandler<MediaFoo
 	 */
 	@Override
 	public boolean canHandleMessage(byte[] message) {
-		return MediaStreamerUtils.getMediaStreamTypeAsFooter(message) != null;
+		boolean applicable = MediaStreamerUtils.getMediaStreamTypeAsFooter(message) != null;
+
+		return applicable;
 	}
 
 	/*
