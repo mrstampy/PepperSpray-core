@@ -31,6 +31,7 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MediaFooter creates the end of message message which signals the
  * remote {@link AbstractMediaReceiver} to reconstitute and process the data

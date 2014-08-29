@@ -25,7 +25,6 @@ import javax.sound.sampled.AudioFormat;
 import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
-import com.github.mrstampy.pprspray.core.test.audio.LoggingAudioProcessor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,12 +51,7 @@ public class TestNegotiationSubscriber extends AcceptingNegotationSubscriber {
 	 * .core.streamer.negotiation.NegotiationChunk)
 	 */
 	protected MediaProcessor getMediaProcessor(NegotiationChunk event) {
-		switch (event.getRequestedType()) {
-		case AUDIO:
-			return new LoggingAudioProcessor();
-		default:
-			return null;
-		}
+		return new LoggingProcessor();
 	}
 
 }

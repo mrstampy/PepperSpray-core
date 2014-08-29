@@ -58,6 +58,7 @@ import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessage
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
+// TODO: Auto-generated Javadoc
 /**
  * AbstractMediaStreamer contains common methods and properties for the creation
  * of media streamers. Invocations of connect() will, if

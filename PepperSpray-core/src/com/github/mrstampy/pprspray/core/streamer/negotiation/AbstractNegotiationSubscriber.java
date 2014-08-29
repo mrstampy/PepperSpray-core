@@ -32,6 +32,7 @@ import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.google.common.eventbus.Subscribe;
 
+// TODO: Auto-generated Javadoc
 /**
  * Subclasses when {@link #isRegistered()} on the {@link NegotiationEventBus}
  * determine how to respond to {@link NegotiationChunk}s - requests to begin

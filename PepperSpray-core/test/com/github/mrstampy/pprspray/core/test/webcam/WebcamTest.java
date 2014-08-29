@@ -18,74 +18,66 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.test.audio;
-
-import javax.sound.sampled.LineUnavailableException;
+package com.github.mrstampy.pprspray.core.test.webcam;
 
 import com.github.mrstampy.kitchensync.message.inbound.ByteArrayInboundMessageManager;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
-import com.github.mrstampy.pprspray.core.handler.AudioMediaHandler;
 import com.github.mrstampy.pprspray.core.handler.MediaFooterHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
-import com.github.mrstampy.pprspray.core.streamer.audio.AudioStreamer;
-import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioTransformer;
+import com.github.mrstampy.pprspray.core.handler.WebcamMediaHandler;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
+import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamImageTransformer;
+import com.github.mrstampy.pprspray.core.streamer.webcam.WebcamStreamer;
 import com.github.mrstampy.pprspray.core.test.AbstractTest;
 import com.github.mrstampy.pprspray.core.test.LoggingProcessor;
 import com.github.mrstampy.pprspray.core.test.TestNegotiationSubscriber;
+import com.github.sarxos.webcam.Webcam;
 
 // TODO: Auto-generated Javadoc
 /**
- * This is the first system test class of the PepperSpray-core framework. It has
- * been used to remove wrinkles in the code and demonstrate the concepts of this
- * framework.<br>
- * <br>
- * 
  * This class starts by creating 2 {@link KiSyChannel}s and an
- * {@link AudioStreamer} to stream audio from channel1 to channel2. Auto
- * negotiation is on, so when {@link AudioStreamer#connect()} is invoked a
- * {@link NegotiationChunk} message is sent to channel2. The
- * {@link TestNegotiationSubscriber} creates and registers the necessary objects
- * to receive and process the audio stream and sends an acknowledgement back to
- * channel1, which is awaiting the response. When received audio is streamed
- * from channel1 to channel2.<br>
+ * {@link WebcamStreamer} to stream images captured by the computer's webcam
+ * from channel1 to channel2. Auto negotiation is on, so when
+ * {@link WebcamStreamer#connect()} is invoked a {@link NegotiationChunk}
+ * message is sent to channel2. The {@link TestNegotiationSubscriber} creates
+ * and registers the necessary objects to receive and process the image stream
+ * and sends an acknowledgement back to channel1, which is awaiting the
+ * response. When received images are streamed from channel1 to channel2.<br>
  * <br>
  * 
  * The {@link LoggingProcessor} created by the {@link TestNegotiationSubscriber}
  * writes events received on channel2 to the log at debug level.<br>
  * <br>
  * 
- * @see DefaultAudioTransformer
+ * @see DefaultWebcamImageTransformer
  */
-public class AudioTest extends AbstractTest {
-
-	private AudioStreamer audioStreamer;
+public class WebcamTest extends AbstractTest {
+	private WebcamStreamer streamer;
 
 	/**
 	 * The Constructor.
-	 *
-	 * @throws LineUnavailableException
-	 *           the line unavailable exception
 	 */
-	public AudioTest() throws LineUnavailableException {
+	public WebcamTest() {
 		super();
 
-		audioStreamer = new AudioStreamer(getChannel1(), getChannel2().localAddress(),
-				TestNegotiationSubscriber.AUDIO_FORMAT);
+		streamer = new WebcamStreamer(Webcam.getDefault(), getChannel1(), getChannel2().localAddress());
 	}
 
-	private void execute() throws LineUnavailableException {
+	/**
+	 * Stream.
+	 */
+	public void stream() {
 		// enable this to see the chunks arrive on channel2
 		// ChunkEventBus.register(new LoggingChunkReceiver());
 
-		audioStreamer.connect();
+		streamer.connect();
 	}
 
 	/**
 	 * These are the classes which deal with inbound messages.
 	 * 
-	 * @see AudioMediaHandler
+	 * @see WebcamMediaHandler
 	 * @see NegotiationHandler
 	 * @see NegotiationAckHandler
 	 * @see MediaFooterHandler
@@ -94,7 +86,7 @@ public class AudioTest extends AbstractTest {
 	protected void initInboundManager() {
 		//@formatter:off
 		ByteArrayInboundMessageManager.INSTANCE.addMessageHandlers(
-				new AudioMediaHandler(),
+				new WebcamMediaHandler(),
 				new NegotiationHandler(), 
 				new NegotiationAckHandler(),
 				new MediaFooterHandler());
@@ -106,11 +98,9 @@ public class AudioTest extends AbstractTest {
 	 *
 	 * @param args
 	 *          the args
-	 * @throws Exception
-	 *           the exception
 	 */
-	public static void main(String[] args) throws Exception {
-		new AudioTest().execute();
+	public static void main(String[] args) {
+		new WebcamTest().stream();
 	}
 
 }

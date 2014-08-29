@@ -18,7 +18,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.test.audio;
+package com.github.mrstampy.pprspray.core.test;
 
 import java.net.InetSocketAddress;
 
@@ -34,8 +34,8 @@ import com.google.common.eventbus.Subscribe;
 /**
  * The Class LoggingAudioProcessor.
  */
-public class LoggingAudioProcessor implements MediaProcessor {
-	private static final Logger log = LoggerFactory.getLogger(LoggingAudioProcessor.class);
+public class LoggingProcessor implements MediaProcessor {
+	private static final Logger log = LoggerFactory.getLogger(LoggingProcessor.class);
 
 	/*
 	 * (non-Javadoc)
