@@ -24,8 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.AsyncEventBus;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -34,7 +35,7 @@ import com.google.common.eventbus.EventBus;
 public class MediaEventBus {
 
 	private static final Map<Integer, MediaProcessor> mediaProcessors = new ConcurrentHashMap<>();
-	private static final EventBus BUS = new EventBus("Media Event Bus");
+	private static final AsyncEventBus BUS = new AsyncEventBus("Media Event Bus", Executors.newCachedThreadPool());
 
 	/**
 	 * Post.
