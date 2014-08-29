@@ -35,6 +35,7 @@ public class MediaFooter implements Footer {
 
 	private MediaStreamType type;
 	private int mediaHash;
+	private byte[] footer;
 
 	/**
 	 * The Constructor.
@@ -66,6 +67,12 @@ public class MediaFooter implements Footer {
 	 */
 	@Override
 	public byte[] createFooter() {
+		if(footer == null) footer = buildFooter();
+
+		return footer;
+	}
+
+	private byte[] buildFooter() {
 		ByteBuf buf = Unpooled.buffer(MediaStreamerUtils.FOOTER_LENGTH);
 
 		buf.writeBytes(getType().eomBytes());
