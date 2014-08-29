@@ -37,12 +37,16 @@ import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AbstractInboundMediaHandler.
+ * The Class AbstractInboundMediaHandler is the superclass for all
+ * {@link AbstractInboundKiSyHandler}s. It provides the structure to convert an
+ * array of bytes (an inbound message) to its appropriate
+ * {@link AbstractMediaChunk} implementation. The resulting object is then
+ * posted on the {@link ChunkEventBus}.
  *
  * @param <AMC>
  *          the generic type
+ * @see
  */
 public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk> extends
 		AbstractInboundKiSyHandler<byte[]> {

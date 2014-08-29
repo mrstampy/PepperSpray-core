@@ -24,12 +24,19 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import com.github.mrstampy.kitchensync.stream.footer.Footer;
+import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
+import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MediaFooter.
+ * The Class MediaFooter creates the end of message message which signals the
+ * remote {@link AbstractMediaReceiver} to reconstitute and process the data
+ * received in {@link AbstractMediaChunk}s into a {@link MediaEvent}.
+ * 
+ * @see AbstractMediaStreamer#setMediaFooter(Footer)
  */
 public class MediaFooter implements Footer {
 

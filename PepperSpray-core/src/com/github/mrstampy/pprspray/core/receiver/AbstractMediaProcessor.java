@@ -32,9 +32,18 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AbstractMediaProcessor.
+ * The Class AbstractMediaProcessor is a convenience superclass to receive and
+ * process events posted on the {@link MediaEventBus} by the corresponding
+ * {@link AbstractMediaReceiver} and to respond appropriately to events posted
+ * by the corresponding {@link AbstractMediaReceiver} on the
+ * {@link ReceiverEventBus}.<br>
+ * <br>
+ * 
+ * The {@link MediaEvent} received is a discrete chunk of data which has been
+ * preprocessed (decrypted perhaps?) and is ready for use.
+ * 
+ * @see MediaEvent
  */
 public abstract class AbstractMediaProcessor implements MediaProcessor {
 	private static final Logger log = LoggerFactory.getLogger(AbstractMediaProcessor.class);

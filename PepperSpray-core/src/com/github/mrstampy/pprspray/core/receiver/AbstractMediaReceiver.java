@@ -45,9 +45,11 @@ import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AbstractMediaReceiver.
+ * AbstractMediaReceivers aggregate {@link AbstractMediaChunk}s received on the
+ * {@link ChunkEventBus} and on end of message apply any transformations
+ * necessary to the chunks, creating a single byte array of the processed data
+ * and sending a {@link MediaEvent} to the {@link MediaEventBus}.
  *
  * @param <AMC>
  *          the generic type

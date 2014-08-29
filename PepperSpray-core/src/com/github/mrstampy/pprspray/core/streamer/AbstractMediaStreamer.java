@@ -58,9 +58,15 @@ import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessage
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AbstractMediaStreamer.
+ * AbstractMediaStreamer contains common methods and properties for the creation
+ * of media streamers. Invocations of connect() will, if
+ * {@link #isAutoNegotiate()}, negotiate with the remote site using a unique
+ * identifier and will start streaming upon confirmation. Manual negotiations
+ * will require a setting of {@link #setNotifyAccepted(boolean)} before
+ * streaming can start.
+ * 
+ * @see MediaStreamType
  */
 public abstract class AbstractMediaStreamer {
 	private static final Logger log = LoggerFactory.getLogger(AbstractMediaStreamer.class);

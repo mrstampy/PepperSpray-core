@@ -23,26 +23,33 @@ package com.github.mrstampy.pprspray.core.receiver;
 import java.net.InetSocketAddress;
 
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
+import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
+import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface MediaProcessor.
+ * The Interface MediaProcessor defines the methods to use received, processed
+ * media data. It must be registered on the {@link MediaEventBus} to receive the
+ * processed media and on the {@link ReceiverEventBus} to respond to state
+ * changes from its corresponding {@link AbstractMediaReceiver}.
+ * 
  */
 public interface MediaProcessor {
 
 	/**
-	 * Media event.
+	 * Media event. Annotate with {@link Subscribe}.
 	 *
 	 * @param event
 	 *          the event
+	 * @see MediaEventBus
 	 */
 	void mediaEvent(MediaEvent event);
 
 	/**
-	 * Receiver event.
+	 * Receiver event. Annotate with {@link Subscribe}.
 	 *
 	 * @param event
 	 *          the event
+	 * @see ReceiverEventBus
 	 */
 	void receiverEvent(ReceiverEvent event);
 

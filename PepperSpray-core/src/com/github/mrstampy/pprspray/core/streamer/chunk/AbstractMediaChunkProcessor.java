@@ -24,12 +24,15 @@ import io.netty.buffer.ByteBuf;
 
 import com.github.mrstampy.kitchensync.stream.Streamer;
 import com.github.mrstampy.kitchensync.stream.header.AbstractChunkProcessor;
+import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AbstractMediaChunkProcessor.
+ * The Class AbstractMediaChunkProcessor prepends the header to each chunk sent.
+ * 
+ * @see MediaStreamerUtils
+ * @see AbstractMediaStreamer#setMediaChunkProcessor(AbstractMediaChunkProcessor)
  */
 public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor {
 

@@ -26,12 +26,18 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AbstractMediaChunk.
+ * Abstract superclass representing {@link MediaStreamType} data. The
+ * {@link #getData()} is to be considered an unprocessed part of a larger
+ * message.
+ * 
+ * @see ChunkEventBus
+ * @see AbstractMediaReceiver
  */
 public abstract class AbstractMediaChunk implements Serializable, Comparable<AbstractMediaChunk> {
 
