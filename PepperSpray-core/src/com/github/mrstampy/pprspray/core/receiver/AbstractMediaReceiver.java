@@ -172,7 +172,6 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * @return true, if checks if is applicable
 	 */
 	protected boolean isApplicable(MediaFooterChunk eom) {
-		log.debug("Checking {}, {} against {}, {}", eom.getMediaStreamType(), eom.getMediaHash(), getType(), getMediaHash());
 		return eom.isTerminateMessage(getMediaHash()) || eom.isApplicable(getType(), getMediaHash());
 	}
 
