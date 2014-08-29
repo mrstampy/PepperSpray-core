@@ -42,7 +42,7 @@ import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventType;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -136,7 +136,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * @see ChunkEventBus#register(Object)
 	 */
 	@Subscribe
-	public void endOfMessage(MediaFooterMessage eom) {
+	public void endOfMessage(MediaFooterChunk eom) {
 		if (!isApplicable(eom)) return;
 
 		try {
@@ -158,7 +158,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 *          the eom
 	 * @return true, if checks if is applicable
 	 */
-	protected boolean isApplicable(MediaFooterMessage eom) {
+	protected boolean isApplicable(MediaFooterChunk eom) {
 		return eom.isTerminateMessage(getMediaHash()) || eom.isApplicable(getType(), getMediaHash());
 	}
 
@@ -168,7 +168,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * @param eom
 	 *          the eom
 	 */
-	protected abstract void endOfMessageImpl(MediaFooterMessage eom);
+	protected abstract void endOfMessageImpl(MediaFooterChunk eom);
 
 	/**
 	 * Finalize message.

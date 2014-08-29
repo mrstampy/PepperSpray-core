@@ -79,6 +79,7 @@ public class DefaultAudioProcessor extends AbstractMediaProcessor {
 		if (!isOpen()) open();
 
 		try {
+			log.debug("writing");
 			dataLine.write(event.getProcessed(), 0, event.getProcessed().length);
 		} catch (Exception e) {
 			log.error("Unexpected exception", e);

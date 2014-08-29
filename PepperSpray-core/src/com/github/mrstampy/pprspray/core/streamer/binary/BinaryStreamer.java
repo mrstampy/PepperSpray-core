@@ -30,7 +30,6 @@ import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -163,10 +162,9 @@ public class BinaryStreamer extends AbstractMediaStreamer {
 
 	private void initDefaultChunkProcessorAndFooter() {
 		DefaultBinaryChunkProcessor dbcp = new DefaultBinaryChunkProcessor();
-		MediaFooterMessage mfm = new MediaFooterMessage(MediaStreamType.BINARY, dbcp.getMediaHash());
 
 		setMediaChunkProcessor(dbcp);
-		setMediaFooter(new MediaFooter(mfm));
+		setMediaFooter(new MediaFooter(MediaStreamType.BINARY, dbcp.getMediaHash()));
 	}
 
 }

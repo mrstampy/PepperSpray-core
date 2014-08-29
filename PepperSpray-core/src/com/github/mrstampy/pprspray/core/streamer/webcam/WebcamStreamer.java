@@ -28,7 +28,6 @@ import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamEvent;
 import com.github.sarxos.webcam.WebcamListener;
@@ -162,10 +161,9 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 
 	private void initDefaultChunkProcessorAndFooter() {
 		DefaultWebcamChunkProcessor dwcp = new DefaultWebcamChunkProcessor(webcam);
-		MediaFooterMessage mfm = new MediaFooterMessage(MediaStreamType.VIDEO, dwcp.getMediaHash());
 
 		setMediaChunkProcessor(dwcp);
-		setMediaFooter(new MediaFooter(mfm));
+		setMediaFooter(new MediaFooter(MediaStreamType.VIDEO, dwcp.getMediaHash()));
 	}
 
 	/**

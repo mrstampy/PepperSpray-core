@@ -18,29 +18,46 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  */
-package com.github.mrstampy.pprspray.core.receiver.audio;
+package com.github.mrstampy.pprspray.core.receiver.footer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
-import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
+import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AudioReceiver.
+ * The Class MediaFooterReceiver.
  */
-public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
+public class MediaFooterReceiver extends AbstractMediaReceiver<MediaFooterChunk> {
+	private static final Logger log = LoggerFactory.getLogger(MediaFooterReceiver.class);
 
-	private static final DefaultAudioChunk[] MT = new DefaultAudioChunk[] {};
+	private static final MediaFooterChunk[] MT = new MediaFooterChunk[] {};
 
 	/**
 	 * The Constructor.
-	 *
-	 * @param mediaHash
-	 *          the media hash
 	 */
-	public AudioReceiver(int mediaHash) {
-		super(MediaStreamType.AUDIO, mediaHash);
+	public MediaFooterReceiver() {
+		super(null, -1);
+	}
+
+	/**
+	 * Receive.
+	 *
+	 * @param chunk
+	 *          the chunk
+	 * @see ChunkEventBus#register(Object)
+	 */
+	@Subscribe
+	public void receive(MediaFooterChunk chunk) {
+		try {
+			receiveImpl(chunk);
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+		}
 	}
 
 	/*
@@ -50,8 +67,9 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#receiveImpl
 	 * (com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk)
 	 */
-	protected void receiveImpl(DefaultAudioChunk chunk) {
-		add(chunk);
+	@Override
+	protected void receiveImpl(MediaFooterChunk chunk) {
+		ChunkEventBus.post(chunk);
 	}
 
 	/*
@@ -59,10 +77,10 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * 
 	 * @see com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#
 	 * endOfMessageImpl
-	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
+	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk)
 	 */
+	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-		finalizeMessage();
 	}
 
 	/*
@@ -73,7 +91,7 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * ()
 	 */
 	@Override
-	protected DefaultAudioChunk[] getEmptyArray() {
+	protected MediaFooterChunk[] getEmptyArray() {
 		return MT;
 	}
 

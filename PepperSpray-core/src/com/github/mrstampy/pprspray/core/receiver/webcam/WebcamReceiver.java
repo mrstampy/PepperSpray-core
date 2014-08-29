@@ -22,7 +22,7 @@ package com.github.mrstampy.pprspray.core.receiver.webcam;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
 
 // TODO: Auto-generated Javadoc
@@ -63,7 +63,7 @@ public class WebcamReceiver extends AbstractMediaReceiver<DefaultWebcamChunk> {
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
 	@Override
-	protected void endOfMessageImpl(MediaFooterMessage eom) {
+	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage();
 	}
 

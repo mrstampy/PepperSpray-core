@@ -20,21 +20,17 @@
  */
 package com.github.mrstampy.pprspray.core.handler;
 
-import java.net.InetSocketAddress;
-
-import com.github.mrstampy.kitchensync.message.inbound.AbstractInboundKiSyHandler;
-import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
-import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AbstractInboundMediaHandler.
+ * The Class FileMediaHandler.
  */
-public class InboundEomMediaHandler extends AbstractInboundKiSyHandler<byte[]> {
+public class InboundEomMediaHandler extends AbstractInboundMediaHandler<MediaFooterChunk> {
 
-	private static final long serialVersionUID = -575695328821545145L;
+	private static final long serialVersionUID = -2092069884261330398L;
 
 	/*
 	 * (non-Javadoc)
@@ -51,29 +47,24 @@ public class InboundEomMediaHandler extends AbstractInboundKiSyHandler<byte[]> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.github.mrstampy.kitchensync.message.inbound.KiSyInboundMesssageHandler
-	 * #getExecutionOrder()
+	 * @see com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#
+	 * createChunk(byte[])
 	 */
 	@Override
-	public int getExecutionOrder() {
-		return DEFAULT_EXECUTION_ORDER;
+	protected MediaFooterChunk createChunk(byte[] message) {
+		return new MediaFooterChunk(message);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.github.mrstampy.kitchensync.message.inbound.AbstractInboundKiSyHandler
-	 * #onReceive(java.lang.Object,
-	 * com.github.mrstampy.kitchensync.netty.channel.KiSyChannel,
-	 * java.net.InetSocketAddress)
+	 * com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler#getType
+	 * ()
 	 */
 	@Override
-	protected final void onReceive(byte[] message, KiSyChannel channel, InetSocketAddress sender) throws Exception {
-		MediaFooterMessage msg = new MediaFooterMessage(message);
-
-		ChunkEventBus.post(msg);
+	protected MediaStreamType getType() {
+		return MediaStreamType.FILE;
 	}
 
 }

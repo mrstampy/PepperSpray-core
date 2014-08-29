@@ -49,7 +49,6 @@ import com.github.mrstampy.kitchensync.util.KiSyUtils;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -58,7 +57,7 @@ import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 public class AudioStreamer extends AbstractMediaStreamer {
 	private static final Logger log = LoggerFactory.getLogger(AudioStreamer.class);
 
-	private static final int DEFAULT_AUDIO_CHUNK_SIZE = 10240;
+	private static final int DEFAULT_AUDIO_CHUNK_SIZE = 1024 * 10;
 	private static final int DEFAULT_AUDIO_PIPE_SIZE = 1024 * 2000;
 
 	private AudioFormat audioFormat;
@@ -68,12 +67,10 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	private int audioChunkSize;
 
 	private ByteBuf buf = Unpooled.buffer(10240, 1000 * 10240);
-	private AtomicBoolean dataReady = new AtomicBoolean(false);
 	private AtomicBoolean streamable = new AtomicBoolean(false);
 
-	private Scheduler scheduler = Schedulers.from(Executors.newFixedThreadPool(2));
+	private Scheduler scheduler = Schedulers.from(Executors.newFixedThreadPool(1));
 	private Subscription audioSub;
-	private Subscription monitorSub;
 
 	private AudioTransformer transformer;
 
@@ -154,6 +151,10 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	 * com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer#start()
 	 */
 	protected void start() {
+		buf.clear();
+		buf.readerIndex(0);
+		buf.writerIndex(0);
+
 		try {
 			dataLine.open();
 		} catch (LineUnavailableException e) {
@@ -163,7 +164,6 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 		dataLine.start();
 		log.debug("Starting audio streaming for format {}, info {}", audioFormat, mixerInfo);
-		startMonitoring();
 		startAudioReading();
 		super.start();
 	}
@@ -179,29 +179,10 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		log.debug("Stopping audio streaming for format {}, info {}", audioFormat, mixerInfo);
 		super.stop();
 		unsubscribe(audioSub);
-		unsubscribe(monitorSub);
 	}
 
 	private void unsubscribe(Subscription sub) {
 		if (sub != null) sub.unsubscribe();
-	}
-
-	private void startMonitoring() {
-		monitorSub = scheduler.createWorker().schedulePeriodically(new Action0() {
-
-			@Override
-			public void call() {
-				setDataReady();
-			}
-		}, 0, 3, TimeUnit.MILLISECONDS);
-	}
-
-	private void setDataReady() {
-		boolean ready = buf.writerIndex() >= getAudioChunkSize();
-
-		if (ready == dataReady.get()) return;
-
-		dataReady.set(ready);
 	}
 
 	private void startAudioReading() {
@@ -209,7 +190,7 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 			@Override
 			public void call() {
-				if (isStreamable()) readAudio();
+				if (isStreaming()) readAudio();
 			}
 		}, 0, 10, TimeUnit.MILLISECONDS);
 	}
@@ -229,11 +210,16 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	}
 
 	private void discardSomeIfFull(int available) {
-		int remaining = buf.writableBytes() - available;
-		if (remaining >= 0) return;
+		try {
+			int remaining = buf.writableBytes() - available;
+			if (remaining >= 0) return;
 
-		buf.readerIndex(remaining * -2);
-		buf.discardReadBytes();
+			buf.readerIndex(remaining);
+			buf.discardReadBytes();
+		} catch (IndexOutOfBoundsException ignore) {
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+		}
 	}
 
 	/*
@@ -256,13 +242,8 @@ public class AudioStreamer extends AbstractMediaStreamer {
 	 */
 	@Override
 	protected byte[] getBytes() {
-		// see startMonitoring, setDataReady
-		while (!dataReady.get() && isStreaming()) {
-			KiSyUtils.snooze(2);
-		}
+		awaitBytes();
 
-		// If the subscription is cancelled, will
-		// we ever reach here?
 		if (!isStreaming()) return null;
 
 		int size = getAudioChunkSize();
@@ -274,6 +255,16 @@ public class AudioStreamer extends AbstractMediaStreamer {
 		if (getTransformer() == null) throw new IllegalArgumentException("Transformer cannot be null");
 
 		return getTransformer().transform(b);
+	}
+
+	private void awaitBytes() {
+		int writer = buf.writerIndex();
+		int reader = buf.readerIndex();
+		while (isStreaming() && writer - reader < getAudioChunkSize()) {
+			KiSyUtils.snooze(2);
+			writer = buf.writerIndex();
+			reader = buf.readerIndex();
+		}
 	}
 
 	/**
@@ -321,9 +312,7 @@ public class AudioStreamer extends AbstractMediaStreamer {
 
 		setMediaChunkProcessor(dacp);
 
-		MediaFooterMessage mfm = new MediaFooterMessage(MediaStreamType.AUDIO, dacp.getMediaHash());
-
-		setMediaFooter(new MediaFooter(mfm));
+		setMediaFooter(new MediaFooter(MediaStreamType.AUDIO, dacp.getMediaHash()));
 	}
 
 	/**

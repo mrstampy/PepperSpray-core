@@ -28,7 +28,7 @@ import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.file.DefaultFileChunk;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
@@ -143,7 +143,7 @@ public class ChunkEventBus {
 	 * @param footerMessage
 	 *          the footer message
 	 */
-	public static void post(MediaFooterMessage footerMessage) {
+	public static void post(MediaFooterChunk footerMessage) {
 		BUS.post(footerMessage);
 	}
 

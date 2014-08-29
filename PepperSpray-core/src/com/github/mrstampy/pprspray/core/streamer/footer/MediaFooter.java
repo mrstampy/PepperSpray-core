@@ -24,6 +24,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import com.github.mrstampy.kitchensync.stream.footer.Footer;
+import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,16 +33,20 @@ import com.github.mrstampy.kitchensync.stream.footer.Footer;
  */
 public class MediaFooter implements Footer {
 
-	private MediaFooterMessage footerMessage;
+	private MediaStreamType type;
+	private int mediaHash;
 
 	/**
 	 * The Constructor.
 	 *
-	 * @param footerMessage
-	 *          the footer message
+	 * @param type
+	 *          the type
+	 * @param mediaHash
+	 *          the media hash
 	 */
-	public MediaFooter(MediaFooterMessage footerMessage) {
-		setFooterMessage(footerMessage);
+	public MediaFooter(MediaStreamType type, int mediaHash) {
+		this.type = type;
+		this.mediaHash = mediaHash;
 	}
 
 	/*
@@ -50,8 +56,7 @@ public class MediaFooter implements Footer {
 	 */
 	@Override
 	public boolean isFooter(byte[] message) {
-		return MediaFooterMessage.isMediaFooter(message, getFooterMessage().getMediaStreamType(), getFooterMessage()
-				.getMediaHash());
+		return MediaStreamerUtils.isMediaFooter(message, getType(), getMediaHash());
 	}
 
 	/*
@@ -61,10 +66,10 @@ public class MediaFooter implements Footer {
 	 */
 	@Override
 	public byte[] createFooter() {
-		ByteBuf buf = Unpooled.buffer(MediaFooterMessage.FOOTER_LENGTH);
+		ByteBuf buf = Unpooled.buffer(MediaStreamerUtils.FOOTER_LENGTH);
 
-		buf.writeBytes(getFooterMessage().getMediaStreamType().eomBytes());
-		buf.writeInt(getFooterMessage().getMediaHash());
+		buf.writeBytes(getType().eomBytes());
+		buf.writeInt(getMediaHash());
 
 		return buf.array();
 	}
@@ -79,22 +84,41 @@ public class MediaFooter implements Footer {
 	}
 
 	/**
-	 * Gets the footer message.
+	 * Gets the type.
 	 *
-	 * @return the footer message
+	 * @return the type
 	 */
-	public MediaFooterMessage getFooterMessage() {
-		return footerMessage;
+	public MediaStreamType getType() {
+		return type;
 	}
 
 	/**
-	 * Sets the footer message.
+	 * Sets the type.
 	 *
-	 * @param footerMessage
-	 *          the footer message
+	 * @param type
+	 *          the type
 	 */
-	public void setFooterMessage(MediaFooterMessage footerMessage) {
-		this.footerMessage = footerMessage;
+	public void setType(MediaStreamType type) {
+		this.type = type;
+	}
+
+	/**
+	 * Gets the media hash.
+	 *
+	 * @return the media hash
+	 */
+	public int getMediaHash() {
+		return mediaHash;
+	}
+
+	/**
+	 * Sets the media hash.
+	 *
+	 * @param mediaHash
+	 *          the media hash
+	 */
+	public void setMediaHash(int mediaHash) {
+		this.mediaHash = mediaHash;
 	}
 
 }

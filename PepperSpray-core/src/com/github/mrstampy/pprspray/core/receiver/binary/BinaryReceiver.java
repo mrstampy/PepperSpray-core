@@ -23,7 +23,7 @@ package com.github.mrstampy.pprspray.core.receiver.binary;
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -63,7 +63,7 @@ public class BinaryReceiver extends AbstractMediaReceiver<DefaultBinaryChunk> {
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
 	@Override
-	protected void endOfMessageImpl(MediaFooterMessage eom) {
+	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage();
 	}
 

@@ -29,7 +29,8 @@ import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessageUtils;
 
@@ -81,7 +82,8 @@ public abstract class NegotiationAckReceiver extends AbstractMediaReceiver<Negot
 	 */
 	@Override
 	protected void receiveImpl(NegotiationAckChunk chunk) {
-		destroy();
+		close();
+		ChunkEventBus.unregister(this);
 
 		ackReceived(chunk);
 	}
@@ -102,7 +104,7 @@ public abstract class NegotiationAckReceiver extends AbstractMediaReceiver<Negot
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
 	@Override
-	protected void endOfMessageImpl(MediaFooterMessage eom) {
+	protected void endOfMessageImpl(MediaFooterChunk eom) {
 	}
 
 	/*

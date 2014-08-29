@@ -30,7 +30,6 @@ import com.github.mrstampy.kitchensync.netty.channel.DefaultChannelRegistry;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
 import com.github.mrstampy.pprspray.core.streamer.text.AbstractMetaTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunkProcessor;
@@ -44,6 +43,9 @@ public class MediaStreamerUtils {
 
 	/** The Constant DEFAULT_HEADER_LENGTH. */
 	public static final int DEFAULT_HEADER_LENGTH = 18;
+
+	/** The Constant FOOTER_LENGTH. */
+	public static final int FOOTER_LENGTH = 8;
 
 	/** The Constant MEDIA_TYPE_CHUNK. */
 	protected static final Chunk MEDIA_TYPE_CHUNK = new Chunk(0, 4);
@@ -99,8 +101,7 @@ public class MediaStreamerUtils {
 	public static void sendTerminationEvent(int mediaHash, KiSyChannel channel, InetSocketAddress remote) {
 		if (channel == null) return;
 
-		MediaFooterMessage mfm = new MediaFooterMessage(MediaStreamType.NEGOTIATION, mediaHash);
-		MediaFooter footer = new MediaFooter(mfm);
+		MediaFooter footer = new MediaFooter(MediaStreamType.NEGOTIATION, mediaHash);
 
 		byte[] terminate = footer.createFooter();
 		channel.send(terminate, remote);
@@ -219,11 +220,31 @@ public class MediaStreamerUtils {
 	 * @return true, if checks if is media type
 	 */
 	public static boolean isMediaTypeFooter(byte[] message, MediaStreamType type) {
-		if (message == null || message.length < DEFAULT_HEADER_LENGTH) return false;
+		if (message == null || message.length < FOOTER_LENGTH) return false;
 
 		byte[] b = getChunk(message, MEDIA_TYPE_CHUNK);
 
 		return Arrays.equals(b, type.eomBytes());
+	}
+
+	/**
+	 * Checks if is media footer.
+	 *
+	 * @param message
+	 *          the message
+	 * @param type
+	 *          the type
+	 * @param mediaHash
+	 *          the media hash
+	 * @return true, if checks if is media footer
+	 */
+	public static boolean isMediaFooter(byte[] message, MediaStreamType type, int mediaHash) {
+		if (message == null || message.length != FOOTER_LENGTH) return false;
+
+		ByteBuf buf = Unpooled.buffer(8);
+		buf.writeBytes(message);
+
+		return Integer.MAX_VALUE - type.ordinal() == buf.getInt(0) && mediaHash == buf.getInt(4);
 	}
 
 	/**

@@ -22,7 +22,7 @@ package com.github.mrstampy.pprspray.core.receiver.text;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
 
 // TODO: Auto-generated Javadoc
@@ -63,7 +63,7 @@ public class TextReceiver extends AbstractMediaReceiver<DefaultTextChunk> {
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
 	@Override
-	protected void endOfMessageImpl(MediaFooterMessage eom) {
+	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage();
 	}
 

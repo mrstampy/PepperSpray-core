@@ -65,7 +65,7 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 		extractMediaHash(message);
 		extractSequence(message);
 		extractCustomHeaderChunk(message);
-		setData(Arrays.copyOfRange(message, getHeaderLength(), message.length));
+		if (message.length > getHeaderLength()) setData(Arrays.copyOfRange(message, getHeaderLength(), message.length));
 	}
 
 	/**
@@ -148,6 +148,8 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	/**
 	 * Checks if is applicable.
 	 *
+	 * @param type
+	 *          the type
 	 * @param mediaHash
 	 *          the media hash
 	 * @return true, if checks if is applicable

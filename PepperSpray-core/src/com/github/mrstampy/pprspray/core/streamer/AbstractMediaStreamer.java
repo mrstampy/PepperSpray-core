@@ -48,7 +48,7 @@ import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEvent;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventType;
-import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AbstractNegotiationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
@@ -136,7 +136,7 @@ public abstract class AbstractMediaStreamer {
 	 * @see ChunkEventBus#register(Object)
 	 */
 	@Subscribe
-	public void terminate(MediaFooterMessage eom) {
+	public void terminate(MediaFooterChunk eom) {
 		if (!eom.isTerminateMessage(getMediaHash())) return;
 
 		log.debug("Received receiver termination for type {}, hash {} from {}", getType(), getMediaHash(), getDestination());
@@ -228,7 +228,7 @@ public abstract class AbstractMediaStreamer {
 			@Override
 			public void call() {
 				try {
-					while (isStreamable()) {
+					while (isStreaming()) {
 						stream();
 					}
 				} finally {
@@ -383,20 +383,29 @@ public abstract class AbstractMediaStreamer {
 	 * Stream.
 	 */
 	protected void stream() {
-		byte[] data = getBytes();
-
-		if (data == null) return;
-
-		stream(data);
-	}
-
-	private void stream(byte[] bytes) {
 		try {
-			streamer.stream(bytes);
+			byte[] data = getBytes();
+
+			if (data == null) return;
+
+			sendData(data);
 		} catch (Exception e) {
 			log.error("Unexpected exception streaming from {} to {}", streamer.getChannel().localAddress(),
 					streamer.getDestination(), e);
 		}
+	}
+
+	/**
+	 * Send data.
+	 *
+	 * @param data
+	 *          the data
+	 * @throws Exception
+	 *           the exception
+	 */
+	protected void sendData(byte[] data) throws Exception {
+		streamer.stream(data);
+		getChannel().send(getMediaFooter().createFooter(), getDestination());
 	}
 
 	/**
@@ -667,7 +676,7 @@ public abstract class AbstractMediaStreamer {
 		ChunkEventBus.unregister(this);
 	}
 
-	public class AckReceiver extends NegotiationAckReceiver {
+	private class AckReceiver extends NegotiationAckReceiver {
 
 		public AckReceiver(int mediaHash) {
 			super(mediaHash);
@@ -677,11 +686,11 @@ public abstract class AbstractMediaStreamer {
 		protected void ackReceived(NegotiationAckChunk chunk) {
 			notifying.set(false);
 
-			setNotifyAccepted(chunk.isAccepted());
+			notifyAccepted.set(chunk.isAccepted());
 
 			if (notifyAccepted()) {
-				log.debug("Negotiations with {} for type {}, media hash {} successful", getDestination(), getType(),
-						getMediaHash());
+				log.debug("Negotiations with {} for type {}, media hash {} successful", getDestination(),
+						AbstractMediaStreamer.this.getType(), getMediaHash());
 
 				notifyNegotiationSuccessful();
 				start();
