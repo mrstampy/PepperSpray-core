@@ -30,6 +30,49 @@ import com.github.sarxos.webcam.util.ImageUtils;
  */
 public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 
+	//@formatter:off
+	/**
+	 * The Enum ImageFormat.
+	 */
+	public enum ImageFormat {
+		
+		/** The png. */
+		PNG,
+		
+		/** The gif. */
+		GIF,
+		
+		/** The jpg. */
+		JPG,
+		
+		/** The bmp. */
+		BMP,
+		
+		/** The wbmp. */
+		WBMP;
+	}
+	//@formatter:on
+
+	private ImageFormat imageFormat;
+
+	/**
+	 * The Constructor.
+	 */
+	public DefaultWebcamImageTransformer() {
+		this(ImageFormat.PNG);
+	}
+
+	/**
+	 * The Constructor.
+	 *
+	 * @param imageFormat
+	 *          the image format
+	 */
+	public DefaultWebcamImageTransformer(ImageFormat imageFormat) {
+		if (imageFormat == null) throw new IllegalArgumentException("ImageFormat must be specified");
+		this.imageFormat = imageFormat;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -39,7 +82,33 @@ public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 	 */
 	@Override
 	public byte[] transform(BufferedImage image) {
-		return ImageUtils.toByteArray(image, ImageUtils.FORMAT_PNG);
+		return ImageUtils.toByteArray(image, getImageFormatString());
+	}
+
+	private String getImageFormatString() {
+		switch (getImageFormat()) {
+		case BMP:
+			return ImageUtils.FORMAT_BMP;
+		case GIF:
+			return ImageUtils.FORMAT_GIF;
+		case JPG:
+			return ImageUtils.FORMAT_JPG;
+		case PNG:
+			return ImageUtils.FORMAT_PNG;
+		case WBMP:
+			return ImageUtils.FORMAT_WBMP;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets the image format.
+	 *
+	 * @return the image format
+	 */
+	public ImageFormat getImageFormat() {
+		return imageFormat;
 	}
 
 }
