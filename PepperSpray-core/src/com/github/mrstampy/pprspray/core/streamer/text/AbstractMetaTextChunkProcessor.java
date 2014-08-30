@@ -82,9 +82,7 @@ public class AbstractMetaTextChunkProcessor extends AbstractMediaChunkProcessor 
 	 * #writeHeader(com.github.mrstampy.kitchensync.stream.Streamer,
 	 * io.netty.buffer.ByteBuf, int)
 	 */
-	protected void writeHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
-		super.writeHeader(streamer, buf, headerLength);
-
+	protected void appendToHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
 		buf.writeBytes(headerKey);
 		buf.writeInt(getMarshallingClassHash());
 	}
