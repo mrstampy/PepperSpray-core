@@ -70,8 +70,8 @@ public class AbstractMetaTextChunkProcessor extends AbstractMediaChunkProcessor 
 	 * #sizeInBytes()
 	 */
 	@Override
-	public int sizeInBytes() {
-		return super.sizeInBytes() + headerKey.length + 4;
+	public int sizeInBytes(Streamer<?> streamer) {
+		return super.sizeInBytes(streamer) + headerKey.length + 4;
 	}
 
 	/*

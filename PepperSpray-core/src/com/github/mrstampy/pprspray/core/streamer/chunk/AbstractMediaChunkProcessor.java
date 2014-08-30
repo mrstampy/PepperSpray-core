@@ -57,7 +57,7 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 * com.github.mrstampy.kitchensync.stream.header.ChunkProcessor#sizeInBytes()
 	 */
 	@Override
-	public int sizeInBytes() {
+	public int sizeInBytes(Streamer<?> streamer) {
 		return MediaStreamerUtils.DEFAULT_HEADER_LENGTH;
 	}
 
@@ -93,19 +93,6 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 * @see #sizeInBytes(Streamer)
 	 */
 	protected void appendToHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
-	}
-
-	/**
-	 * Delegates to {@link #sizeInBytes()} by default. Override to set header size
-	 * dependent upon {@link Streamer} state ie. appending data to the header on
-	 * sequence 1 only.
-	 * 
-	 * @param streamer
-	 * @return
-	 * @see #appendToHeader(Streamer, ByteBuf, int)
-	 */
-	protected int sizeInBytes(Streamer<?> streamer) {
-		return sizeInBytes();
 	}
 
 	/**
