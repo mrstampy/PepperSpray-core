@@ -50,7 +50,8 @@ public class LoggingProcessor implements MediaProcessor {
 	/**
 	 * The Constructor.
 	 *
-	 * @param loggingTextSize the logging text size
+	 * @param loggingTextSize
+	 *          the logging text size
 	 */
 	public LoggingProcessor(int loggingTextSize) {
 		this.loggingTextSize = loggingTextSize;

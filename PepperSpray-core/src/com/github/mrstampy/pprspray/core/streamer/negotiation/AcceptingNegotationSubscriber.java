@@ -89,6 +89,18 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 		ByteBuf ack = NegotiationMessageUtils.getNegotiationAckMessage(event.getMediaHash(), true);
 
 		channel.send(ack.array(), event.getRemote());
+
+		sendNegotiationEvent(event);
+	}
+
+	/**
+	 * Send negotiation event.
+	 *
+	 * @param event
+	 *          the event
+	 */
+	protected void sendNegotiationEvent(NegotiationChunk event) {
+		NegotiationEventBus.post(new NegotiationEvent(event));
 	}
 
 	/**

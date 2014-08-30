@@ -20,57 +20,54 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.negotiation;
 
-import com.google.common.eventbus.EventBus;
-
 // TODO: Auto-generated Javadoc
 /**
- * The Class NegotiationEventBus.
+ * The Class NegotiationEvent.
  */
-public class NegotiationEventBus {
+public class NegotiationEvent {
 
-	private static final EventBus BUS = new EventBus("Negotiation Event Bus");
+	private boolean accepted;
+	private NegotiationChunk chunk;
 
 	/**
-	 * Post.
+	 * The Constructor.
 	 *
-	 * @param event
-	 *          the event
+	 * @param chunk
+	 *          the chunk
 	 */
-	public static void post(NegotiationChunk event) {
-		BUS.post(event);
+	public NegotiationEvent(NegotiationChunk chunk) {
+		this(true, chunk);
 	}
 
 	/**
-	 * Post.
+	 * The Constructor.
 	 *
-	 * @param event
-	 *          the event
+	 * @param accepted
+	 *          the accepted
+	 * @param chunk
+	 *          the chunk
 	 */
-	public static void post(NegotiationEvent event) {
-		BUS.post(event);
+	public NegotiationEvent(boolean accepted, NegotiationChunk chunk) {
+		this.accepted = accepted;
+		this.chunk = chunk;
 	}
 
 	/**
-	 * Register.
+	 * Checks if is accepted.
 	 *
-	 * @param o
-	 *          the o
+	 * @return true, if checks if is accepted
 	 */
-	public static void register(Object o) {
-		BUS.register(o);
+	public boolean isAccepted() {
+		return accepted;
 	}
 
 	/**
-	 * Unregister.
+	 * Gets the chunk.
 	 *
-	 * @param o
-	 *          the o
+	 * @return the chunk
 	 */
-	public static void unregister(Object o) {
-		BUS.unregister(o);
-	}
-
-	private NegotiationEventBus() {
+	public NegotiationChunk getChunk() {
+		return chunk;
 	}
 
 }
