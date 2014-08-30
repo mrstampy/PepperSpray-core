@@ -22,15 +22,21 @@ package com.github.mrstampy.pprspray.core.test;
 
 import javax.sound.sampled.AudioFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEvent;
+import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestNegotiationSubscriber.
  */
 public class TestNegotiationSubscriber extends AcceptingNegotationSubscriber {
+	private static final Logger log = LoggerFactory.getLogger(TestNegotiationSubscriber.class);
 
 	/** The Constant AUDIO_FORMAT. */
 	public static final AudioFormat AUDIO_FORMAT = new AudioFormat(22000, 16, 2, true, true);
@@ -40,6 +46,18 @@ public class TestNegotiationSubscriber extends AcceptingNegotationSubscriber {
 	 */
 	public TestNegotiationSubscriber() {
 		super(AUDIO_FORMAT);
+	}
+
+	/**
+	 * Negotiation.
+	 *
+	 * @param event
+	 *          the event
+	 */
+	@Subscribe
+	public void negotiation(NegotiationEvent event) {
+		log.debug("NegotiationEvent successful? {}, type {}, hash {}", event.isAccepted(), event.getChunk()
+				.getMediaStreamType(), event.getChunk().getMediaHash());
 	}
 
 	/*
