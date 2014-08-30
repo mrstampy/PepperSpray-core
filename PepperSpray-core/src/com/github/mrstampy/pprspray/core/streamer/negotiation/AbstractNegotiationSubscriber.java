@@ -87,6 +87,18 @@ public abstract class AbstractNegotiationSubscriber {
 	}
 
 	/**
+	 * Post negotiation event.
+	 *
+	 * @param accepted
+	 *          the accepted
+	 * @param event
+	 *          the event
+	 */
+	protected void postNegotiationEvent(boolean accepted, NegotiationChunk event) {
+		NegotiationEventBus.post(new NegotiationEvent(accepted, event));
+	}
+
+	/**
 	 * Negotiation requested.
 	 *
 	 * @param event

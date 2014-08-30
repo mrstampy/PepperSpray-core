@@ -90,17 +90,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 
 		channel.send(ack.array(), event.getRemote());
 
-		sendNegotiationEvent(event);
-	}
-
-	/**
-	 * Send negotiation event.
-	 *
-	 * @param event
-	 *          the event
-	 */
-	protected void sendNegotiationEvent(NegotiationChunk event) {
-		NegotiationEventBus.post(new NegotiationEvent(event));
+		postNegotiationEvent(true, event);
 	}
 
 	/**
