@@ -93,8 +93,6 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 * @see #sizeInBytes(Streamer)
 	 */
 	protected void appendToHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
