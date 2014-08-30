@@ -79,7 +79,7 @@ public class AbstractMetaTextChunkProcessor extends AbstractMediaChunkProcessor 
 	 * 
 	 * @see
 	 * com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor
-	 * #writeHeader(com.github.mrstampy.kitchensync.stream.Streamer,
+	 * #appendToHeader(com.github.mrstampy.kitchensync.stream.Streamer,
 	 * io.netty.buffer.ByteBuf, int)
 	 */
 	protected void appendToHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
