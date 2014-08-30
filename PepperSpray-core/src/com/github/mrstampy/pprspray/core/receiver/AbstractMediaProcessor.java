@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
-import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
@@ -85,7 +84,7 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 	@Override
 	@Subscribe
 	public void mediaEvent(MediaEvent event) {
-		if (!event.isApplicable(MediaStreamType.AUDIO, getMediaHash())) return;
+		if (!event.isApplicable(event.getType(), getMediaHash())) return;
 
 		try {
 			mediaEventImpl(event);
