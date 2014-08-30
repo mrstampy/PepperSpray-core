@@ -20,12 +20,20 @@
  */
 package com.github.mrstampy.pprspray.core.test;
 
+import com.github.mrstampy.kitchensync.message.inbound.AbstractInboundKiSyHandler;
 import com.github.mrstampy.kitchensync.message.inbound.ByteArrayInboundMessageManager;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
+import com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.AudioMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.BinaryMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.FileMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.JsonMediaHandler;
 import com.github.mrstampy.pprspray.core.handler.MediaFooterHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
+import com.github.mrstampy.pprspray.core.handler.TextMediaHandler;
 import com.github.mrstampy.pprspray.core.handler.WebcamMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.XmlMediaHandler;
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
 import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
@@ -34,7 +42,9 @@ import com.github.mrstampy.pprspray.core.test.channel.ByteArrayChannel;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AbstractTest.
+ * AbstractTest, common test initialization. Subclasses implement
+ * {@link #initInboundManager()} to set up the inbound handlers specific for the
+ * test type.
  */
 public abstract class AbstractTest {
 	private KiSyChannel channel1;
@@ -50,8 +60,16 @@ public abstract class AbstractTest {
 	}
 
 	/**
-	 * These are the classes which deal with inbound messages.
+	 * These are classes which deal with inbound messages.
 	 * 
+	 * @see AbstractInboundMediaHandler
+	 * @see AbstractInboundKiSyHandler
+	 * @see AudioMediaHandler
+	 * @see BinaryMediaHandler
+	 * @see FileMediaHandler
+	 * @see JsonMediaHandler
+	 * @see TextMediaHandler
+	 * @see XmlMediaHandler
 	 * @see WebcamMediaHandler
 	 * @see NegotiationHandler
 	 * @see NegotiationAckHandler
