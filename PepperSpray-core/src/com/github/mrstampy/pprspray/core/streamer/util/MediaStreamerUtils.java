@@ -67,9 +67,7 @@ public class MediaStreamerUtils {
 	 * @return the int
 	 */
 	public static int createMarshallingClassNameHash(Class<?> clazz) {
-		if (clazz == null) return AbstractMetaTextChunk.NO_MARSHALLING_CLASS;
-
-		return clazz.getName().hashCode();
+		return clazz == null ? AbstractMetaTextChunk.NO_MARSHALLING_CLASS : clazz.getName().hashCode();
 	}
 
 	/**
