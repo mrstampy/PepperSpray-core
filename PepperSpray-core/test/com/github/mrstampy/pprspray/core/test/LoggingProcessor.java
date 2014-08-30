@@ -22,6 +22,7 @@ package com.github.mrstampy.pprspray.core.test;
 
 import java.net.InetSocketAddress;
 
+import org.bouncycastle.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,24 @@ import com.google.common.eventbus.Subscribe;
 public class LoggingProcessor implements MediaProcessor {
 	private static final Logger log = LoggerFactory.getLogger(LoggingProcessor.class);
 
+	private int loggingTextSize;
+
+	/**
+	 * The Constructor.
+	 */
+	public LoggingProcessor() {
+		this(Integer.MAX_VALUE);
+	}
+
+	/**
+	 * The Constructor.
+	 *
+	 * @param loggingTextSize the logging text size
+	 */
+	public LoggingProcessor(int loggingTextSize) {
+		this.loggingTextSize = loggingTextSize;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,7 +66,27 @@ public class LoggingProcessor implements MediaProcessor {
 	@Override
 	@Subscribe
 	public void mediaEvent(MediaEvent event) {
-		log.debug("Media event {}, hash {}", event.getType(), event.getMediaHash());
+		log.debug("Media event {}, hash {} {}", event.getType(), event.getMediaHash(), createStringIfAppropriate(event));
+	}
+
+	private String createStringIfAppropriate(MediaEvent event) {
+		switch (event.getType()) {
+		case TEXT:
+			return getString(event.getProcessed());
+		default:
+			break;
+		}
+
+		return "";
+	}
+
+	private String getString(byte[] processed) {
+		int size = getLoggingTextSize();
+		//@formatter:off
+		return processed.length < size 
+				? new String(processed) 
+				: new String(Arrays.copyOfRange(processed, 0, size));
+		//@formatter:on
 	}
 
 	/*
@@ -131,6 +170,15 @@ public class LoggingProcessor implements MediaProcessor {
 	@Override
 	public InetSocketAddress getRemote() {
 		return null;
+	}
+
+	/**
+	 * Gets the logging text size.
+	 *
+	 * @return the logging text size
+	 */
+	public int getLoggingTextSize() {
+		return loggingTextSize;
 	}
 
 }
