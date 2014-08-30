@@ -69,14 +69,45 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 */
 	@Override
 	protected ByteBuf processImpl(Streamer<?> streamer, byte[] message) {
-		int headerLength = sizeInBytes();
+		int headerLength = sizeInBytes(streamer);
 
 		ByteBuf buf = createByteBuf(headerLength + message.length);
 
 		writeHeader(streamer, buf, headerLength);
+		appendToHeader(streamer, buf, headerLength);
 		buf.writeBytes(message);
 
 		return buf;
+	}
+
+	/**
+	 * Hook for subclasses to append data to the header if required. Default impl
+	 * does nothing.
+	 * 
+	 * @param streamer
+	 *          supplied for state information
+	 * @param buf
+	 *          the buffer containing the default header information
+	 * @param headerLength
+	 *          the total length this header is expected to be
+	 * @see #sizeInBytes(Streamer)
+	 */
+	protected void appendToHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Delegates to {@link #sizeInBytes()} by default. Override to set header size
+	 * dependent upon {@link Streamer} state ie. appending data to the header on
+	 * sequence 1 only.
+	 * 
+	 * @param streamer
+	 * @return
+	 * @see #appendToHeader(Streamer, ByteBuf, int)
+	 */
+	protected int sizeInBytes(Streamer<?> streamer) {
+		return sizeInBytes();
 	}
 
 	/**
