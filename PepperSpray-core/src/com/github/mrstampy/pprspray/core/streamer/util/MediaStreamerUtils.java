@@ -42,7 +42,7 @@ import com.github.mrstampy.pprspray.core.streamer.text.DefaultXmlChunkProcessor;
 public class MediaStreamerUtils {
 
 	/** The Constant DEFAULT_HEADER_LENGTH. */
-	public static final int DEFAULT_HEADER_LENGTH = 18;
+	public static final int DEFAULT_HEADER_LENGTH = 19;
 
 	/** The Constant FOOTER_LENGTH. */
 	public static final int FOOTER_LENGTH = 8;
@@ -57,7 +57,9 @@ public class MediaStreamerUtils {
 	protected static final Chunk MEDIA_HASH_CHUNK = new Chunk(6, 10);
 
 	/** The Constant SEQUENCE_CHUNK. */
-	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, DEFAULT_HEADER_LENGTH);
+	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, 18);
+
+	protected static final Chunk ACK_REQ_CHUNK = new Chunk(18, DEFAULT_HEADER_LENGTH);
 
 	/**
 	 * Creates the marshalling class name hash.
@@ -317,6 +319,10 @@ public class MediaStreamerUtils {
 		return getLongChunk(getChunk(message, SEQUENCE_CHUNK));
 	}
 
+	public static boolean isAckRequired(byte[] message) {
+		return Arrays.copyOfRange(message, ACK_REQ_CHUNK.start, ACK_REQ_CHUNK.end)[0] == 1;
+	}
+
 	/**
 	 * Gets the custom header chunk.
 	 *
@@ -470,11 +476,13 @@ public class MediaStreamerUtils {
 	 * @param sequence
 	 *          the sequence
 	 */
-	public static void writeHeader(ByteBuf buf, MediaStreamType type, int headerLength, int mediaHash, long sequence) {
+	public static void writeHeader(ByteBuf buf, MediaStreamType type, int headerLength, int mediaHash, long sequence,
+			boolean ackRequired) {
 		buf.writeBytes(type.ordinalBytes());
 		buf.writeShort(headerLength);
 		buf.writeInt(mediaHash);
 		buf.writeLong(sequence);
+		buf.writeBoolean(ackRequired);
 	}
 
 	/**

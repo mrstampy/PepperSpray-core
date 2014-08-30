@@ -46,7 +46,7 @@ public class NegotiationMessageUtils {
 
 		ByteBuf buf = Unpooled.buffer(headerLength + 4);
 
-		MediaStreamerUtils.writeHeader(buf, MediaStreamType.NEGOTIATION, headerLength, mediaHash, 0);
+		MediaStreamerUtils.writeHeader(buf, MediaStreamType.NEGOTIATION, headerLength, mediaHash, 0, false);
 
 		buf.writeBytes(requestedType.ordinalBytes());
 
@@ -67,7 +67,7 @@ public class NegotiationMessageUtils {
 
 		ByteBuf buf = Unpooled.buffer(headerLength + 1);
 
-		MediaStreamerUtils.writeHeader(buf, MediaStreamType.NEGOTIATION_ACK, headerLength, mediaHash, 0);
+		MediaStreamerUtils.writeHeader(buf, MediaStreamType.NEGOTIATION_ACK, headerLength, mediaHash, 0, false);
 
 		buf.writeBoolean(accepted);
 

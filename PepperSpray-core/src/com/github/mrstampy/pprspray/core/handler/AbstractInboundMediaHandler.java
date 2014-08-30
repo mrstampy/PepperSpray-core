@@ -32,6 +32,7 @@ import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.kitchensync.message.inbound.AbstractInboundKiSyHandler;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
+import com.github.mrstampy.kitchensync.stream.StreamerAckRegister;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
@@ -105,6 +106,8 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 					chunk.setLocal(channel.localAddress());
 
 					if (log.isTraceEnabled()) log.trace("Received chunk {}", chunk);
+					
+					if (chunk.isAckRequired()) sendAck(message, channel, sender);
 
 					post(chunk);
 				} catch (Exception e) {
@@ -112,6 +115,11 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 				}
 			}
 		});
+	}
+
+	protected void sendAck(byte[] message, final KiSyChannel channel, final InetSocketAddress sender) {
+		long sumOfBytes = StreamerAckRegister.convertToLong(message);
+		channel.send(StreamerAckRegister.createAckResponse(sumOfBytes), sender);
 	}
 
 	/**

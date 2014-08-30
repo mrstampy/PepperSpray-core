@@ -94,6 +94,9 @@ public class MediaFooterChunk extends AbstractMediaChunk {
 	 */
 	protected void extractSequence(byte[] message) {
 	}
+	
+	protected void extractAckRequired(byte[] message) {
+	}
 
 	/**
 	 * Checks if is terminate message.
