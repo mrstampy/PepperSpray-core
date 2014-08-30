@@ -31,7 +31,7 @@
     </publications>
 	
 	<dependencies>
-		<dependency org="com.github.mrstampy" name="KitchenSync-core" rev="2.3.3"/>
+		<dependency org="com.github.mrstampy" name="KitchenSync-core" rev="2.3.4"/>
 		
 		<dependency org="ch.qos.logback" name="logback-classic" rev="1.1.2" transitive="false" />
 		<dependency org="ch.qos.logback" name="logback-core" rev="1.1.2" transitive="false" />
