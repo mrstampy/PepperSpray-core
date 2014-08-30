@@ -106,8 +106,8 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 					chunk.setLocal(channel.localAddress());
 
 					if (log.isTraceEnabled()) log.trace("Received chunk {}", chunk);
-					
-					if (chunk.isAckRequired()) sendAck(message, channel, sender);
+
+					if (chunk.isAckRequired()) sendAck(message, channel, sender, chunk);
 
 					post(chunk);
 				} catch (Exception e) {
@@ -117,7 +117,15 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 		});
 	}
 
-	protected void sendAck(byte[] message, final KiSyChannel channel, final InetSocketAddress sender) {
+	/**
+	 * Send ack.
+	 *
+	 * @param message the message
+	 * @param channel the channel
+	 * @param sender the sender
+	 * @param chunk the chunk
+	 */
+	protected void sendAck(byte[] message, final KiSyChannel channel, final InetSocketAddress sender, AMC chunk) {
 		long sumOfBytes = StreamerAckRegister.convertToLong(message);
 		channel.send(StreamerAckRegister.createAckResponse(sumOfBytes), sender);
 	}

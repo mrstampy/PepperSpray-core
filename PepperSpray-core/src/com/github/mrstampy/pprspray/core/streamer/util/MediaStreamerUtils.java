@@ -59,6 +59,7 @@ public class MediaStreamerUtils {
 	/** The Constant SEQUENCE_CHUNK. */
 	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, 18);
 
+	/** The Constant ACK_REQ_CHUNK. */
 	protected static final Chunk ACK_REQ_CHUNK = new Chunk(18, DEFAULT_HEADER_LENGTH);
 
 	/**
@@ -319,6 +320,12 @@ public class MediaStreamerUtils {
 		return getLongChunk(getChunk(message, SEQUENCE_CHUNK));
 	}
 
+	/**
+	 * Checks if is ack required.
+	 *
+	 * @param message the message
+	 * @return true, if checks if is ack required
+	 */
 	public static boolean isAckRequired(byte[] message) {
 		return Arrays.copyOfRange(message, ACK_REQ_CHUNK.start, ACK_REQ_CHUNK.end)[0] == 1;
 	}
@@ -465,16 +472,12 @@ public class MediaStreamerUtils {
 	/**
 	 * Write header.
 	 *
-	 * @param buf
-	 *          the buf
-	 * @param type
-	 *          the type
-	 * @param headerLength
-	 *          the header length
-	 * @param mediaHash
-	 *          the media hash
-	 * @param sequence
-	 *          the sequence
+	 * @param buf          the buf
+	 * @param type          the type
+	 * @param headerLength          the header length
+	 * @param mediaHash          the media hash
+	 * @param sequence          the sequence
+	 * @param ackRequired the ack required
 	 */
 	public static void writeHeader(ByteBuf buf, MediaStreamType type, int headerLength, int mediaHash, long sequence,
 			boolean ackRequired) {

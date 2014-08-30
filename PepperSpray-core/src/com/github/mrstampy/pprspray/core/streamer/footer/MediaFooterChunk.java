@@ -95,6 +95,9 @@ public class MediaFooterChunk extends AbstractMediaChunk {
 	protected void extractSequence(byte[] message) {
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk#extractAckRequired(byte[])
+	 */
 	protected void extractAckRequired(byte[] message) {
 	}
 
