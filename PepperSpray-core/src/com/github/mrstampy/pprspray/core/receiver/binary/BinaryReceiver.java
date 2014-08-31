@@ -64,7 +64,7 @@ public class BinaryReceiver extends AbstractMediaReceiver<DefaultBinaryChunk> {
 	 */
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-		finalizeMessage();
+		finalizeMessage(eom);
 	}
 
 	/*

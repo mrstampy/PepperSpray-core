@@ -54,11 +54,19 @@ public class MediaFooterChunk extends AbstractMediaChunk {
 	 *          the message
 	 */
 	protected void extractMediaHash(byte[] message) {
-		byte[] hash = Arrays.copyOfRange(message, 4, 8);
+		setMediaHash(extractInt(message, 8, 12));
+	}
+
+	protected void extractMessageHash(byte[] message) {
+		setMessageHash(extractInt(message, 4, 8));
+	}
+
+	private int extractInt(byte[] message, int start, int end) {
+		byte[] hash = Arrays.copyOfRange(message, start, end);
 
 		ByteBuf buf = Unpooled.copiedBuffer(hash);
 
-		setMediaHash(buf.getInt(0));
+		return buf.getInt(0);
 	}
 
 	/**
@@ -83,7 +91,7 @@ public class MediaFooterChunk extends AbstractMediaChunk {
 	 *          the message
 	 */
 	protected void extractHeaderLength(byte[] message) {
-		setHeaderLength(8);
+		setHeaderLength(MediaStreamerUtils.FOOTER_LENGTH);
 	}
 
 	/**
@@ -94,9 +102,12 @@ public class MediaFooterChunk extends AbstractMediaChunk {
 	 */
 	protected void extractSequence(byte[] message) {
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk#extractAckRequired(byte[])
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk#
+	 * extractAckRequired(byte[])
 	 */
 	protected void extractAckRequired(byte[] message) {
 	}

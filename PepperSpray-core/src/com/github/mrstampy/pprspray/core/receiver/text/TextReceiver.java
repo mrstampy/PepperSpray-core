@@ -64,7 +64,7 @@ public class TextReceiver extends AbstractMediaReceiver<DefaultTextChunk> {
 	 */
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-		finalizeMessage();
+		finalizeMessage(eom);
 	}
 
 	/*

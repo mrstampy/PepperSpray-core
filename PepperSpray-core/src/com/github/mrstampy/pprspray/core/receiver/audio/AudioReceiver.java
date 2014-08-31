@@ -62,7 +62,7 @@ public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
 	 * (com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterMessage)
 	 */
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-		finalizeMessage();
+		finalizeMessage(eom);
 	}
 
 	/*

@@ -24,6 +24,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.net.InetSocketAddress;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 import com.github.mrstampy.kitchensync.netty.channel.DefaultChannelRegistry;
@@ -42,10 +43,10 @@ import com.github.mrstampy.pprspray.core.streamer.text.DefaultXmlChunkProcessor;
 public class MediaStreamerUtils {
 
 	/** The Constant DEFAULT_HEADER_LENGTH. */
-	public static final int DEFAULT_HEADER_LENGTH = 19;
+	public static final int DEFAULT_HEADER_LENGTH = 23;
 
 	/** The Constant FOOTER_LENGTH. */
-	public static final int FOOTER_LENGTH = 8;
+	public static final int FOOTER_LENGTH = 12;
 
 	/** The Constant MEDIA_TYPE_CHUNK. */
 	protected static final Chunk MEDIA_TYPE_CHUNK = new Chunk(0, 4);
@@ -54,13 +55,18 @@ public class MediaStreamerUtils {
 	protected static final Chunk HEADER_LENGTH_CHUNK = new Chunk(4, 6);
 
 	/** The Constant MEDIA_HASH_CHUNK. */
-	protected static final Chunk MEDIA_HASH_CHUNK = new Chunk(6, 10);
+	protected static final Chunk MESSAGE_HASH_CHUNK = new Chunk(6, 10);
+
+	/** The Constant MEDIA_HASH_CHUNK. */
+	protected static final Chunk MEDIA_HASH_CHUNK = new Chunk(10, 14);
 
 	/** The Constant SEQUENCE_CHUNK. */
-	protected static final Chunk SEQUENCE_CHUNK = new Chunk(10, 18);
+	protected static final Chunk SEQUENCE_CHUNK = new Chunk(14, 22);
 
 	/** The Constant ACK_REQ_CHUNK. */
-	protected static final Chunk ACK_REQ_CHUNK = new Chunk(18, DEFAULT_HEADER_LENGTH);
+	protected static final Chunk ACK_REQ_CHUNK = new Chunk(22, DEFAULT_HEADER_LENGTH);
+	
+	private static SecureRandom rand = new SecureRandom();
 
 	/**
 	 * Creates the marshalling class name hash.
@@ -299,6 +305,21 @@ public class MediaStreamerUtils {
 	}
 
 	/**
+	 * Gets the message hash.
+	 *
+	 * @param message
+	 *          the message
+	 * @return the media stream hash
+	 */
+	public static int getMessageHash(byte[] message) {
+		return getIntegerChunk(getChunk(message, MESSAGE_HASH_CHUNK));
+	}
+
+	public static int createMessageHash() {
+		return rand.nextInt(Integer.MAX_VALUE);
+	}
+
+	/**
 	 * Gets the media stream header length.
 	 *
 	 * @param message
@@ -323,7 +344,8 @@ public class MediaStreamerUtils {
 	/**
 	 * Checks if is ack required.
 	 *
-	 * @param message the message
+	 * @param message
+	 *          the message
 	 * @return true, if checks if is ack required
 	 */
 	public static boolean isAckRequired(byte[] message) {
@@ -472,17 +494,24 @@ public class MediaStreamerUtils {
 	/**
 	 * Write header.
 	 *
-	 * @param buf          the buf
-	 * @param type          the type
-	 * @param headerLength          the header length
-	 * @param mediaHash          the media hash
-	 * @param sequence          the sequence
-	 * @param ackRequired the ack required
+	 * @param buf
+	 *          the buf
+	 * @param type
+	 *          the type
+	 * @param headerLength
+	 *          the header length
+	 * @param mediaHash
+	 *          the media hash
+	 * @param sequence
+	 *          the sequence
+	 * @param ackRequired
+	 *          the ack required
 	 */
-	public static void writeHeader(ByteBuf buf, MediaStreamType type, int headerLength, int mediaHash, long sequence,
-			boolean ackRequired) {
+	public static void writeHeader(ByteBuf buf, MediaStreamType type, int headerLength, int messageHash, int mediaHash,
+			long sequence, boolean ackRequired) {
 		buf.writeBytes(type.ordinalBytes());
 		buf.writeShort(headerLength);
+		buf.writeInt(messageHash);
 		buf.writeInt(mediaHash);
 		buf.writeLong(sequence);
 		buf.writeBoolean(ackRequired);

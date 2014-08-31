@@ -39,6 +39,7 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 
 	private MediaStreamType mediaStreamType;
 	private int mediaHash = Integer.MIN_VALUE;
+	private int messageHash;
 
 	/**
 	 * The Constructor.
@@ -109,8 +110,8 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 * @see AbstractMediaChunk#extractCustomHeaderChunk(byte[])
 	 */
 	protected void writeHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
-		MediaStreamerUtils.writeHeader(buf, getMediaStreamType(), headerLength, getMediaHash(), streamer.getSequence(),
-				streamer.isAckRequired());
+		MediaStreamerUtils.writeHeader(buf, getMediaStreamType(), headerLength, getMessageHash(), getMediaHash(),
+				streamer.getSequence(), streamer.isAckRequired());
 	}
 
 	/**
@@ -148,6 +149,14 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 */
 	protected void setMediaStreamType(MediaStreamType mediaStreamType) {
 		this.mediaStreamType = mediaStreamType;
+	}
+
+	public int getMessageHash() {
+		return messageHash;
+	}
+
+	public void setMessageHash(int messageHash) {
+		this.messageHash = messageHash;
 	}
 
 }

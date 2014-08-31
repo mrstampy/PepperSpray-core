@@ -23,11 +23,12 @@ package com.github.mrstampy.pprspray.core.receiver;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,13 +66,10 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 
-	/** The chunks. */
-	protected ConcurrentSkipListSet<AMC> chunks = new ConcurrentSkipListSet<>();
+	protected Map<Integer, ConcurrentSkipListSet<AMC>> incoming = new ConcurrentHashMap<>();
 
 	/** The svc. */
 	protected Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
-
-	private Lock lock = new ReentrantLock();
 
 	/**
 	 * The Constructor.
@@ -135,13 +133,21 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 *          the chunk
 	 */
 	protected void add(AMC chunk) {
-		lock.lock();
-		try {
-			if (!isOpen()) open();
-			chunks.add(chunk);
-		} finally {
-			lock.unlock();
+		if (!isOpen()) open();
+		ConcurrentSkipListSet<AMC> set = getSet(chunk.getMessageHash());
+		log.trace("Adding sequence {} for message {}", chunk.getSequence(), chunk.getMessageHash());
+		set.add(chunk);
+	}
+
+	private ConcurrentSkipListSet<AMC> getSet(int messageHash) {
+		ConcurrentSkipListSet<AMC> set = incoming.get(messageHash);
+
+		if (set == null) {
+			set = new ConcurrentSkipListSet<>();
+			incoming.put(messageHash, set);
 		}
+
+		return set;
 	}
 
 	/**
@@ -160,6 +166,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 				log.debug("Received streamer termination for type {}, hash {}", getType(), getMediaHash());
 				destroy();
 			} else {
+				log.trace("Finalizing for message {}", eom.getMessageHash());
 				endOfMessageImpl(eom);
 			}
 		} catch (Exception e) {
@@ -189,30 +196,27 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	/**
 	 * Finalize message.
 	 */
-	protected void finalizeMessage() {
-		if (chunks.isEmpty()) return;
-
-		final AMC[] array = getCurrentAndClear();
+	protected void finalizeMessage(final MediaFooterChunk eom) {
+		if (!incoming.containsKey(eom.getMessageHash())) return;
 
 		svc.createWorker().schedule(new Action0() {
 
 			@Override
 			public void call() {
-				write(array);
+				finalizeMessage(eom.getMessageHash());
 			}
-		});
+		}, 5, TimeUnit.MILLISECONDS);
 
 	}
 
-	private AMC[] getCurrentAndClear() {
-		lock.lock();
-		try {
-			AMC[] array = chunks.toArray(getEmptyArray());
-			clear();
-			return array;
-		} finally {
-			lock.unlock();
-		}
+	private void finalizeMessage(int messageHash) {
+		ConcurrentSkipListSet<AMC> set = incoming.remove(messageHash);
+		
+		log.trace("Rehydrating {} for message hash {}", set.size(), messageHash);
+
+		AMC[] array = set.toArray(getEmptyArray());
+
+		write(array);
 	}
 
 	/**
@@ -226,7 +230,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * Clear.
 	 */
 	public void clear() {
-		chunks.clear();
+		incoming.clear();
 	}
 
 	/**
@@ -407,4 +411,5 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	public void setTransformer(MediaTransformer transformer) {
 		this.transformer = transformer;
 	}
+
 }

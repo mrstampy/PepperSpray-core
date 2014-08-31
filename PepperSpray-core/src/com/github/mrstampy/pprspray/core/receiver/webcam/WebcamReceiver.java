@@ -64,7 +64,7 @@ public class WebcamReceiver extends AbstractMediaReceiver<DefaultWebcamChunk> {
 	 */
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-		finalizeMessage();
+		finalizeMessage(eom);
 	}
 
 	/*

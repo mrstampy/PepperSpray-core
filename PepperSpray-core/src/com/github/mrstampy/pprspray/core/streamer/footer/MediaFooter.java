@@ -43,6 +43,7 @@ public class MediaFooter implements Footer {
 
 	private MediaStreamType type;
 	private int mediaHash;
+	private int messageHash;
 	private byte[] footer;
 
 	/**
@@ -84,6 +85,7 @@ public class MediaFooter implements Footer {
 		ByteBuf buf = Unpooled.buffer(MediaStreamerUtils.FOOTER_LENGTH);
 
 		buf.writeBytes(getType().eomBytes());
+		buf.writeInt(getMessageHash());
 		buf.writeInt(getMediaHash());
 
 		return buf.array();
@@ -134,6 +136,15 @@ public class MediaFooter implements Footer {
 	 */
 	public void setMediaHash(int mediaHash) {
 		this.mediaHash = mediaHash;
+	}
+
+	public int getMessageHash() {
+		return messageHash;
+	}
+
+	public void setMessageHash(int messageHash) {
+		this.messageHash = messageHash;
+		footer = null;
 	}
 
 }

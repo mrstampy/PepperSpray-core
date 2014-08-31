@@ -26,6 +26,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,7 +40,6 @@ import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.kitchensync.stream.ByteArrayStreamer;
-import com.github.mrstampy.kitchensync.stream.footer.Footer;
 import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
 import com.github.mrstampy.pprspray.core.receiver.negotiation.NegotiationAckReceiver;
@@ -48,6 +48,7 @@ import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEvent;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventBus;
 import com.github.mrstampy.pprspray.core.streamer.event.MediaStreamerEventType;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AbstractNegotiationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
@@ -86,7 +87,7 @@ public abstract class AbstractMediaStreamer {
 	private Subscription sub;
 
 	private AbstractMediaChunkProcessor mediaChunkProcessor;
-	private Footer mediaFooter;
+	private MediaFooter mediaFooter;
 
 	private int id = -1;
 
@@ -230,19 +231,22 @@ public abstract class AbstractMediaStreamer {
 		if (!streamer.isStreaming()) streamer.stream();
 		notifyStart();
 
-		sub = scheduler.createWorker().schedule(new Action0() {
+		sub = scheduler.createWorker().schedulePeriodically(new Action0() {
 
 			@Override
 			public void call() {
 				try {
-					while (isStreaming()) {
+					if (isStreaming()) {
 						stream();
+					} else {
+						unsubscribe();
 					}
-				} finally {
-					unsubscribe();
+				} catch (Exception e) {
+					log.error("Unexpected exception", e);
+					stop();
 				}
 			}
-		});
+		}, 0, 40, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -393,13 +397,22 @@ public abstract class AbstractMediaStreamer {
 		try {
 			byte[] data = getBytes();
 
-			if (data == null) return;
+			if (data == null || data.length == 0) return;
+
+			setMessageHash();
 
 			sendData(data);
 		} catch (Exception e) {
 			log.error("Unexpected exception streaming from {} to {}", streamer.getChannel().localAddress(),
 					streamer.getDestination(), e);
 		}
+	}
+
+	private void setMessageHash() {
+		int messageHash = MediaStreamerUtils.createMessageHash();
+		
+		getMediaChunkProcessor().setMessageHash(messageHash);
+		getMediaFooter().setMessageHash(messageHash);
 	}
 
 	/**
@@ -467,7 +480,7 @@ public abstract class AbstractMediaStreamer {
 	 *
 	 * @return the media footer
 	 */
-	public Footer getMediaFooter() {
+	public MediaFooter getMediaFooter() {
 		return mediaFooter;
 	}
 
@@ -477,7 +490,7 @@ public abstract class AbstractMediaStreamer {
 	 * @param mediaFooter
 	 *          the media footer
 	 */
-	public void setMediaFooter(Footer mediaFooter) {
+	public void setMediaFooter(MediaFooter mediaFooter) {
 		this.mediaFooter = mediaFooter;
 		streamer.setFooter(mediaFooter);
 	}

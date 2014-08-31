@@ -64,7 +64,7 @@ public class JsonReceiver extends AbstractMediaReceiver<DefaultJsonChunk> {
 	 */
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-		finalizeMessage();
+		finalizeMessage(eom);
 	}
 
 	/*

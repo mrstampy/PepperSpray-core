@@ -47,6 +47,7 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	private MediaStreamType mediaStreamType;
 	private int headerLength;
 	private int mediaHash;
+	private int messageHash;
 	private long sequence;
 	private boolean ackRequired;
 
@@ -70,11 +71,16 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	protected AbstractMediaChunk(byte[] message, MediaStreamType expected) {
 		extractMediaStreamType(message, expected);
 		extractHeaderLength(message);
+		extractMessageHash(message);
 		extractMediaHash(message);
 		extractSequence(message);
 		extractCustomHeaderChunk(message);
 		extractAckRequired(message);
 		if (message.length > getHeaderLength()) setData(Arrays.copyOfRange(message, getHeaderLength(), message.length));
+	}
+
+	protected void extractMessageHash(byte[] message) {
+		setMessageHash(MediaStreamerUtils.getMessageHash(message));
 	}
 
 	/**
@@ -377,6 +383,14 @@ public abstract class AbstractMediaChunk implements Serializable, Comparable<Abs
 	 */
 	public void setAckRequired(boolean ackRequired) {
 		this.ackRequired = ackRequired;
+	}
+
+	public int getMessageHash() {
+		return messageHash;
+	}
+
+	public void setMessageHash(int messageHash) {
+		this.messageHash = messageHash;
 	}
 
 }

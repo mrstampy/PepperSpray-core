@@ -38,7 +38,7 @@ import com.github.sarxos.webcam.WebcamListener;
  */
 public class WebcamStreamer extends AbstractMediaStreamer {
 
-	private static final int DEFAULT_VIDEO_PIPE_SIZE = 1024 * 4000;
+	private static final int DEFAULT_VIDEO_PIPE_SIZE = 1024 * 1000;
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 
@@ -139,7 +139,9 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 
 		if (getTransformer() == null) throw new IllegalStateException("Transformer cannot be null");
 
-		return getTransformer().transform(image);
+		byte[] b = getTransformer().transform(image);
+		
+		return b;
 	}
 
 	/*

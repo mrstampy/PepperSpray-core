@@ -64,7 +64,7 @@ public class XmlReceiver extends AbstractMediaReceiver<DefaultXmlChunk> {
 	 */
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-		finalizeMessage();
+		finalizeMessage(eom);
 	}
 
 	/*
