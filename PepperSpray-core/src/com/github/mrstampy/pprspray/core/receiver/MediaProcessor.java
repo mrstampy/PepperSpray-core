@@ -31,7 +31,7 @@ import com.google.common.eventbus.Subscribe;
  * The Interface MediaProcessor defines the methods to use received, processed
  * media data. It must be registered on the {@link MediaEventBus} to receive the
  * processed media and on the {@link ReceiverEventBus} to respond to state
- * changes from its corresponding {@link AbstractMediaReceiver}.
+ * changes from its corresponding {@link AbstractChunkReceiver}.
  * 
  */
 public interface MediaProcessor {

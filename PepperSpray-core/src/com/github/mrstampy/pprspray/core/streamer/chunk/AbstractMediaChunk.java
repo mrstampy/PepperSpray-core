@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
@@ -38,7 +38,7 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
  * message.
  * 
  * @see ChunkEventBus
- * @see AbstractMediaReceiver
+ * @see AbstractChunkReceiver
  */
 public abstract class AbstractMediaChunk implements Serializable, Comparable<AbstractMediaChunk> {
 

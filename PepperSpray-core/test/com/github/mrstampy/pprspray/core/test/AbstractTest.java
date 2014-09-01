@@ -34,7 +34,7 @@ import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
 import com.github.mrstampy.pprspray.core.handler.TextMediaHandler;
 import com.github.mrstampy.pprspray.core.handler.WebcamMediaHandler;
 import com.github.mrstampy.pprspray.core.handler.XmlMediaHandler;
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
@@ -102,7 +102,7 @@ public abstract class AbstractTest {
 	/**
 	 * This sets the class used to respond to {@link NegotiationChunk} messages.
 	 * It needs to set up {@link MediaProcessor}s and
-	 * {@link AbstractMediaReceiver}s appropriately. It is a key concept of the
+	 * {@link AbstractChunkReceiver}s appropriately. It is a key concept of the
 	 * framework.
 	 * 
 	 * @see NegotiationEventBus

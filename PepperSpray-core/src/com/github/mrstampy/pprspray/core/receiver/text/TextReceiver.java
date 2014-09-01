@@ -20,7 +20,7 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.text;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
@@ -29,7 +29,7 @@ import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
 /**
  * The Class TextReceiver.
  */
-public class TextReceiver extends AbstractMediaReceiver<DefaultTextChunk> {
+public class TextReceiver extends AbstractChunkReceiver<DefaultTextChunk> {
 
 	private static final DefaultTextChunk[] MT = new DefaultTextChunk[] {};
 

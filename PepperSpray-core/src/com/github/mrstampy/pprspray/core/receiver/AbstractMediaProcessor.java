@@ -35,8 +35,8 @@ import com.google.common.eventbus.Subscribe;
 /**
  * The Class AbstractMediaProcessor is a convenience superclass to receive and
  * process events posted on the {@link MediaEventBus} by the corresponding
- * {@link AbstractMediaReceiver} and to respond appropriately to events posted
- * by the corresponding {@link AbstractMediaReceiver} on the
+ * {@link AbstractChunkReceiver} and to respond appropriately to events posted
+ * by the corresponding {@link AbstractChunkReceiver} on the
  * {@link ReceiverEventBus}.<br>
  * <br>
  * 

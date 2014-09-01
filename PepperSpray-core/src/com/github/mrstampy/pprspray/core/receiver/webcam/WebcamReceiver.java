@@ -20,7 +20,7 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.webcam;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
@@ -29,7 +29,7 @@ import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
 /**
  * The Class WebcamReceiver.
  */
-public class WebcamReceiver extends AbstractMediaReceiver<DefaultWebcamChunk> {
+public class WebcamReceiver extends AbstractChunkReceiver<DefaultWebcamChunk> {
 
 	private static final DefaultWebcamChunk[] MT = new DefaultWebcamChunk[] {};
 

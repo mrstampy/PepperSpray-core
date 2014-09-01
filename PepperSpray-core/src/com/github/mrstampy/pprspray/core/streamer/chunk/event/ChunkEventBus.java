@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
@@ -46,7 +46,7 @@ public class ChunkEventBus {
 
 	private static final AsyncEventBus BUS = new AsyncEventBus("Chunk Arrival Event Bus", Executors.newCachedThreadPool());
 
-	private static Map<Integer, AbstractMediaReceiver<?>> receivers = new ConcurrentHashMap<Integer, AbstractMediaReceiver<?>>();
+	private static Map<Integer, AbstractChunkReceiver<?>> receivers = new ConcurrentHashMap<Integer, AbstractChunkReceiver<?>>();
 
 	/**
 	 * Post.
@@ -172,7 +172,7 @@ public class ChunkEventBus {
 	 * @param receiver
 	 *          the receiver
 	 */
-	public static void register(AbstractMediaReceiver<?> receiver) {
+	public static void register(AbstractChunkReceiver<?> receiver) {
 		BUS.register(receiver);
 
 		receivers.put(receiver.getMediaHash(), receiver);
@@ -185,7 +185,7 @@ public class ChunkEventBus {
 	 *          the media hash
 	 * @return the abstract media receiver<?>
 	 */
-	public static AbstractMediaReceiver<?> get(int mediaHash) {
+	public static AbstractChunkReceiver<?> get(int mediaHash) {
 		return receivers.get(mediaHash);
 	}
 
@@ -196,8 +196,8 @@ public class ChunkEventBus {
 	 *          the media hash
 	 * @return the abstract media receiver<?>
 	 */
-	public static AbstractMediaReceiver<?> remove(int mediaHash) {
-		AbstractMediaReceiver<?> receiver = receivers.remove(mediaHash);
+	public static AbstractChunkReceiver<?> remove(int mediaHash) {
+		AbstractChunkReceiver<?> receiver = receivers.remove(mediaHash);
 
 		if (receiver == null) return null;
 
@@ -221,7 +221,7 @@ public class ChunkEventBus {
 	 * Clear.
 	 */
 	public static void clear() {
-		for (AbstractMediaReceiver<?> receiver : receivers.values()) {
+		for (AbstractChunkReceiver<?> receiver : receivers.values()) {
 			receiver.destroy();
 		}
 

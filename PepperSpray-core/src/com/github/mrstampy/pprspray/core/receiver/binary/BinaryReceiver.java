@@ -20,7 +20,7 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.binary;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
@@ -29,7 +29,7 @@ import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 /**
  * The Class BinaryReceiver.
  */
-public class BinaryReceiver extends AbstractMediaReceiver<DefaultBinaryChunk> {
+public class BinaryReceiver extends AbstractChunkReceiver<DefaultBinaryChunk> {
 
 	private static final DefaultBinaryChunk[] MT = new DefaultBinaryChunk[] {};
 

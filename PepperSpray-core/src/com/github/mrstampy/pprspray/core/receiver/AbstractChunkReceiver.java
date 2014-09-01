@@ -56,8 +56,8 @@ import com.google.common.eventbus.Subscribe;
  * @param <AMC>
  *          the generic type
  */
-public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
-	private static final Logger log = LoggerFactory.getLogger(AbstractMediaReceiver.class);
+public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
+	private static final Logger log = LoggerFactory.getLogger(AbstractChunkReceiver.class);
 
 	private MediaStreamType type;
 	private int mediaHash;
@@ -79,7 +79,7 @@ public abstract class AbstractMediaReceiver<AMC extends AbstractMediaChunk> {
 	 * @param mediaHash
 	 *          the media hash
 	 */
-	protected AbstractMediaReceiver(MediaStreamType type, int mediaHash) {
+	protected AbstractChunkReceiver(MediaStreamType type, int mediaHash) {
 		setType(type);
 		setMediaHash(mediaHash);
 		setTransformer(new NoTransformTransformer());

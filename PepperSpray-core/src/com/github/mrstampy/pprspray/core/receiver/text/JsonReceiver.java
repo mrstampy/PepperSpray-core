@@ -20,7 +20,7 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.text;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
@@ -29,7 +29,7 @@ import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 /**
  * The Class JsonReceiver.
  */
-public class JsonReceiver extends AbstractMediaReceiver<DefaultJsonChunk> {
+public class JsonReceiver extends AbstractChunkReceiver<DefaultJsonChunk> {
 
 	private static final DefaultJsonChunk[] MT = new DefaultJsonChunk[] {};
 

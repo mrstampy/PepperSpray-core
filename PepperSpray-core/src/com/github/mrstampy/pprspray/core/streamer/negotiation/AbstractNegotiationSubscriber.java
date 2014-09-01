@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
 import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.receiver.MediaEventBus;
 import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
@@ -37,7 +37,7 @@ import com.google.common.eventbus.Subscribe;
  * Subclasses when {@link #isRegistered()} on the {@link NegotiationEventBus}
  * determine how to respond to {@link NegotiationChunk}s - requests to begin
  * streaming media of the specified type. If the negotiation is affirmative an
- * appropriate {@link AbstractMediaReceiver} and {@link MediaProcessor} must be
+ * appropriate {@link AbstractChunkReceiver} and {@link MediaProcessor} must be
  * created and registered on the corresponding event buses and a
  * {@link NegotiationAckChunk} message must be sent back to the requester.
  * 

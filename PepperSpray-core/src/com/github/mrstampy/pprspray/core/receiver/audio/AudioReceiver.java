@@ -20,7 +20,7 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.audio;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
@@ -29,7 +29,7 @@ import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 /**
  * The Class AudioReceiver.
  */
-public class AudioReceiver extends AbstractMediaReceiver<DefaultAudioChunk> {
+public class AudioReceiver extends AbstractChunkReceiver<DefaultAudioChunk> {
 
 	private static final DefaultAudioChunk[] MT = new DefaultAudioChunk[] {};
 

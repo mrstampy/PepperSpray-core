@@ -27,7 +27,7 @@ import rx.Scheduler;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
-import com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver;
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
@@ -38,7 +38,7 @@ import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessage
 /**
  * The Class NegotiationAckReceiver.
  */
-public abstract class NegotiationAckReceiver extends AbstractMediaReceiver<NegotiationAckChunk> {
+public abstract class NegotiationAckReceiver extends AbstractChunkReceiver<NegotiationAckChunk> {
 
 	private static final NegotiationAckChunk[] MT = new NegotiationAckChunk[] {};
 
