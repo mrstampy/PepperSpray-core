@@ -37,8 +37,6 @@
 		<dependency org="ch.qos.logback" name="logback-core" rev="1.1.2" transitive="false" />
 		
 		<dependency org="com.github.sarxos" name="webcam-capture" rev="0.3.9"/>
-		<dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.51"/>
-		<dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.51"/>
 		<dependency org="com.google.guava" name="guava" rev="17.0"/>
 	</dependencies>
 	

@@ -21,8 +21,8 @@
 package com.github.mrstampy.pprspray.core.test;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
-import org.bouncycastle.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
