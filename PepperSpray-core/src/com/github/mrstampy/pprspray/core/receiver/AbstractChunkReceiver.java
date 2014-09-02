@@ -72,8 +72,8 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	/** The svc. */
 	protected Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
 
-	private int finalizeAwaitValue = 10;
-	private TimeUnit finalizeUnits = TimeUnit.MILLISECONDS;
+	private int finalizeAwaitValue = 0;
+	private TimeUnit finalizeUnits = TimeUnit.SECONDS;
 
 	/**
 	 * The Constructor.

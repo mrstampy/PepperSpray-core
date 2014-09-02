@@ -134,6 +134,8 @@ public abstract class AbstractMediaStreamer {
 		ChunkEventBus.register(this);
 
 		addChannelCloseListener();
+		
+		setConcurrentThreads(1);
 	}
 
 	/**
@@ -246,7 +248,7 @@ public abstract class AbstractMediaStreamer {
 					stop();
 				}
 			}
-		}, 0, 40, TimeUnit.MILLISECONDS);
+		}, 0, 0, TimeUnit.SECONDS);
 	}
 
 	/**
