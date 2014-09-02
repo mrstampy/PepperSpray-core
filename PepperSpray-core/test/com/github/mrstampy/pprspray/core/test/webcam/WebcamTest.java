@@ -63,7 +63,7 @@ public class WebcamTest extends AbstractTest {
 
 		streamer = new WebcamStreamer(Webcam.getDefault(), getChannel1(), getChannel2().localAddress());
 		
-		streamer.setConcurrentThreads(4);
+		streamer.setConcurrentThreads(1);
 	}
 
 	/**
