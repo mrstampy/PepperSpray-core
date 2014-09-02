@@ -66,10 +66,14 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 
+	/** The incoming. */
 	protected Map<Integer, ConcurrentSkipListSet<AMC>> incoming = new ConcurrentHashMap<>();
 
 	/** The svc. */
 	protected Scheduler svc = Schedulers.from(Executors.newSingleThreadExecutor());
+
+	private int finalizeAwaitValue = 500;
+	private TimeUnit finalizeUnits = TimeUnit.MICROSECONDS;
 
 	/**
 	 * The Constructor.
@@ -195,6 +199,9 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 
 	/**
 	 * Finalize message.
+	 *
+	 * @param eom
+	 *          the eom
 	 */
 	protected void finalizeMessage(final MediaFooterChunk eom) {
 		if (!incoming.containsKey(eom.getMessageHash())) return;
@@ -205,13 +212,12 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 			public void call() {
 				finalizeMessage(eom.getMessageHash());
 			}
-		}, 5, TimeUnit.MILLISECONDS);
-
+		}, getFinalizeAwaitValue(), getFinalizeUnits());
 	}
 
 	private void finalizeMessage(int messageHash) {
 		ConcurrentSkipListSet<AMC> set = incoming.remove(messageHash);
-		
+
 		log.trace("Rehydrating {} for message hash {}", set.size(), messageHash);
 
 		AMC[] array = set.toArray(getEmptyArray());
@@ -410,6 +416,49 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	 */
 	public void setTransformer(MediaTransformer transformer) {
 		this.transformer = transformer;
+	}
+
+	/**
+	 * Gets the finalize await value.
+	 *
+	 * @return the finalize await value
+	 */
+	public int getFinalizeAwaitValue() {
+		return finalizeAwaitValue;
+	}
+
+	/**
+	 * Sets the finalize await value.
+	 *
+	 * @param finalizeAwaitValue
+	 *          the finalize await value
+	 */
+	public void setFinalizeAwaitValue(int finalizeAwaitValue) {
+		if (finalizeAwaitValue < 0) {
+			throw new IllegalArgumentException("Await value must be > 0, was " + finalizeAwaitValue);
+		}
+
+		this.finalizeAwaitValue = finalizeAwaitValue;
+	}
+
+	/**
+	 * Gets the finalize units.
+	 *
+	 * @return the finalize units
+	 */
+	public TimeUnit getFinalizeUnits() {
+		return finalizeUnits;
+	}
+
+	/**
+	 * Sets the finalize units.
+	 *
+	 * @param finalizeUnits
+	 *          the finalize units
+	 */
+	public void setFinalizeUnits(TimeUnit finalizeUnits) {
+		if (finalizeUnits == null) throw new IllegalArgumentException("Finalize units cannot be null");
+		this.finalizeUnits = finalizeUnits;
 	}
 
 }

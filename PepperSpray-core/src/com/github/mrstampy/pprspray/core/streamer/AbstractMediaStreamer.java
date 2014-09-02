@@ -399,7 +399,7 @@ public abstract class AbstractMediaStreamer {
 
 			if (data == null || data.length == 0) return;
 
-			setMessageHash();
+			setMessageHash(data);
 
 			sendData(data);
 		} catch (Exception e) {
@@ -408,8 +408,10 @@ public abstract class AbstractMediaStreamer {
 		}
 	}
 
-	private void setMessageHash() {
+	private void setMessageHash(byte[] data) {
 		int messageHash = MediaStreamerUtils.createMessageHash();
+		
+		log.trace("Setting message hash {} for data length {}", messageHash, data.length);
 		
 		getMediaChunkProcessor().setMessageHash(messageHash);
 		getMediaFooter().setMessageHash(messageHash);

@@ -29,6 +29,7 @@ import com.github.mrstampy.pprspray.core.receiver.MediaProcessor;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEvent;
+import com.github.mrstampy.pprspray.core.test.webcam.TestWebcamProcessor;
 import com.google.common.eventbus.Subscribe;
 
 // TODO: Auto-generated Javadoc
@@ -69,6 +70,13 @@ public class TestNegotiationSubscriber extends AcceptingNegotationSubscriber {
 	 * .core.streamer.negotiation.NegotiationChunk)
 	 */
 	protected MediaProcessor getMediaProcessor(NegotiationChunk event) {
+		switch(event.getRequestedType()) {
+		case VIDEO:
+			return new TestWebcamProcessor(event.getMediaHash(), event.getLocal(), event.getRemote());
+		default:
+			break;
+		}
+		
 		return new LoggingProcessor();
 	}
 

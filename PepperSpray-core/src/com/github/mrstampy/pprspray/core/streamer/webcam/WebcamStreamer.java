@@ -38,7 +38,7 @@ import com.github.sarxos.webcam.WebcamListener;
  */
 public class WebcamStreamer extends AbstractMediaStreamer {
 
-	private static final int DEFAULT_VIDEO_PIPE_SIZE = 1024 * 1000;
+	private static final int DEFAULT_VIDEO_PIPE_SIZE = 1024 * 150;
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 
