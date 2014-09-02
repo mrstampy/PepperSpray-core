@@ -1,5 +1,7 @@
 /*
- * KitchenSync-core Java Library Copyright (C) 2014 Burton Alexander
+ * PepperSpray-core, Encrypted Secure Communications Library
+ * 
+ * Copyright (C) 2014 Burton Alexander
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
