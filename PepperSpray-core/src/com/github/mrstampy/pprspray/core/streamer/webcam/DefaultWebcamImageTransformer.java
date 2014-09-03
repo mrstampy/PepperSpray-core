@@ -21,6 +21,13 @@
 package com.github.mrstampy.pprspray.core.streamer.webcam;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+
+import javax.imageio.ImageIO;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.sarxos.webcam.util.ImageUtils;
 
@@ -29,6 +36,7 @@ import com.github.sarxos.webcam.util.ImageUtils;
  * The Class DefaultWebcamImageTransformer.
  */
 public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
+	private static final Logger log = LoggerFactory.getLogger(DefaultWebcamImageTransformer.class);
 
 	//@formatter:off
 	/**
@@ -55,11 +63,16 @@ public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 
 	private ImageFormat imageFormat;
 
+	private BufferedOutputStream bufOut;
+	private ByteArrayOutputStream baos;
+
 	/**
 	 * The Constructor.
 	 */
 	public DefaultWebcamImageTransformer() {
 		this(ImageFormat.PNG);
+		baos = new ByteArrayOutputStream();
+		bufOut = new BufferedOutputStream(baos);
 	}
 
 	/**
@@ -82,7 +95,19 @@ public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 	 */
 	@Override
 	public byte[] transform(BufferedImage image) {
-		return ImageUtils.toByteArray(image, getImageFormatString());
+		try {
+			baos.reset();
+
+			ImageIO.write(image, getImageFormatString(), bufOut);
+
+			bufOut.flush();
+
+			return baos.toByteArray();
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+		}
+		
+		return null;
 	}
 
 	private String getImageFormatString() {
