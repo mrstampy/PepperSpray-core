@@ -73,6 +73,7 @@ public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 		this(ImageFormat.PNG);
 		baos = new ByteArrayOutputStream();
 		bufOut = new BufferedOutputStream(baos);
+		ImageIO.setUseCache(false);
 	}
 
 	/**
