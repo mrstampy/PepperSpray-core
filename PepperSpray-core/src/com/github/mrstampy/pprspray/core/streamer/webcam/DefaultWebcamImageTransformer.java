@@ -101,8 +101,6 @@ public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 
 			ImageIO.write(image, getImageFormatString(), bufOut);
 
-			bufOut.flush();
-
 			return baos.toByteArray();
 		} catch (Exception e) {
 			log.error("Unexpected exception", e);
