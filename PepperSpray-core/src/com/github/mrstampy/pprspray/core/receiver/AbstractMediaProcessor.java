@@ -158,7 +158,11 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 	 */
 	@Override
 	public boolean open() {
-		return isOpen() ? true : openImpl();
+		boolean open = isOpen() ? true : openImpl();
+		
+		setOpen(open);
+		
+		return open;
 	}
 
 	/**
@@ -195,7 +199,11 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 	 */
 	@Override
 	public boolean close() {
-		return !isOpen() ? true : closeImpl();
+		boolean close = !isOpen() ? true : closeImpl();
+		
+		setOpen(!close);
+		
+		return close;
 	}
 
 	/**
