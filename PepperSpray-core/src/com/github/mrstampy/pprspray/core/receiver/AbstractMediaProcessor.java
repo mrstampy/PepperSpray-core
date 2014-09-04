@@ -72,6 +72,7 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 
 		ReceiverEventBus.register(this);
 		MediaEventBus.register(this);
+		open.set(true);
 	}
 
 	/*
@@ -174,11 +175,16 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 	 */
 	@Override
 	public void destroy() {
-		close();
-
+		log.debug("Unregistering receiver for hash {}, local {}, remote {}", getMediaHash(), getLocal(), getRemote());
 		MediaEventBus.unregister(this);
 		ReceiverEventBus.unregister(this);
 
+		try {
+			close();
+		} catch (Exception e) {
+			log.error("Unexpected exception", e);
+		}
+		
 		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getLocal(), getRemote());
 	}
 

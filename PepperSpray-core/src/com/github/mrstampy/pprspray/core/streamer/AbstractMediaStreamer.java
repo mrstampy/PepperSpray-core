@@ -83,6 +83,8 @@ public abstract class AbstractMediaStreamer {
 	/** The notify accepted. */
 	protected AtomicBoolean notifyAccepted = new AtomicBoolean(false);
 
+	private AtomicBoolean destroyed = new AtomicBoolean(false);
+
 	private Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
 	private Subscription sub;
 
@@ -134,7 +136,7 @@ public abstract class AbstractMediaStreamer {
 		ChunkEventBus.register(this);
 
 		addChannelCloseListener();
-		
+
 		setConcurrentThreads(1);
 	}
 
@@ -193,6 +195,8 @@ public abstract class AbstractMediaStreamer {
 	 * Destroy.
 	 */
 	public void destroy() {
+		if (destroyed.get()) return;
+		destroyed.set(true);
 		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getChannel(), getDestination());
 		destroyImpl();
 	}
@@ -412,9 +416,9 @@ public abstract class AbstractMediaStreamer {
 
 	private void setMessageHash(byte[] data) {
 		int messageHash = MediaStreamerUtils.createMessageHash();
-		
+
 		log.trace("Setting message hash {} for data length {}", messageHash, data.length);
-		
+
 		getMediaChunkProcessor().setMessageHash(messageHash);
 		getMediaFooter().setMessageHash(messageHash);
 	}
@@ -697,7 +701,11 @@ public abstract class AbstractMediaStreamer {
 	}
 
 	private void unregisterForChunks() {
-		ChunkEventBus.unregister(this);
+		try {
+			ChunkEventBus.unregister(this);
+		} catch (Exception e) {
+			log.trace("Could not unregister", e);
+		}
 	}
 
 	private class AckReceiver extends NegotiationAckReceiver {

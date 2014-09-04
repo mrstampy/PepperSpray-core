@@ -22,6 +22,7 @@ package com.github.mrstampy.pprspray.core.streamer.util;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
 
 import java.net.InetSocketAddress;
 import java.security.SecureRandom;
@@ -111,7 +112,8 @@ public class MediaStreamerUtils {
 		MediaFooter footer = new MediaFooter(MediaStreamType.NEGOTIATION, mediaHash);
 
 		byte[] terminate = footer.createFooter();
-		channel.send(terminate, remote);
+		ChannelFuture cf = channel.send(terminate, remote);
+		cf.awaitUninterruptibly();
 	}
 
 	/**
