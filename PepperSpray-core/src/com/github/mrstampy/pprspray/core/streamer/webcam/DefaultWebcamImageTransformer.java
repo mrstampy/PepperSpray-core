@@ -96,6 +96,8 @@ public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 	 */
 	@Override
 	public byte[] transform(BufferedImage image) {
+		if(image == null) return null;
+		
 		try {
 			baos.reset();
 
