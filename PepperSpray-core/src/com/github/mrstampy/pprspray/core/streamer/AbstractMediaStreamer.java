@@ -731,6 +731,7 @@ public abstract class AbstractMediaStreamer {
 						getMediaHash());
 
 				notifyNegotiationFailed();
+				AbstractMediaStreamer.this.destroy();
 			}
 		}
 
