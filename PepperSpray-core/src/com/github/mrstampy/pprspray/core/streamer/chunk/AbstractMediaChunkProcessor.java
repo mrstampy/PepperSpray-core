@@ -151,10 +151,21 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 		this.mediaStreamType = mediaStreamType;
 	}
 
+	/**
+	 * Gets the message hash.
+	 *
+	 * @return the message hash
+	 */
 	public int getMessageHash() {
 		return messageHash;
 	}
 
+	/**
+	 * Sets the message hash.
+	 *
+	 * @param messageHash
+	 *          the message hash
+	 */
 	public void setMessageHash(int messageHash) {
 		this.messageHash = messageHash;
 	}

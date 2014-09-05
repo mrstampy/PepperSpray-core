@@ -66,7 +66,7 @@ public class MediaStreamerUtils {
 
 	/** The Constant ACK_REQ_CHUNK. */
 	protected static final Chunk ACK_REQ_CHUNK = new Chunk(22, DEFAULT_HEADER_LENGTH);
-	
+
 	private static SecureRandom rand = new SecureRandom();
 
 	/**
@@ -317,6 +317,11 @@ public class MediaStreamerUtils {
 		return getIntegerChunk(getChunk(message, MESSAGE_HASH_CHUNK));
 	}
 
+	/**
+	 * Creates the message hash.
+	 *
+	 * @return the int
+	 */
 	public static int createMessageHash() {
 		return rand.nextInt(Integer.MAX_VALUE);
 	}
@@ -502,6 +507,8 @@ public class MediaStreamerUtils {
 	 *          the type
 	 * @param headerLength
 	 *          the header length
+	 * @param messageHash
+	 *          the message hash
 	 * @param mediaHash
 	 *          the media hash
 	 * @param sequence

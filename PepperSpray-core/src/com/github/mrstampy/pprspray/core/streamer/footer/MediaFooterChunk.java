@@ -57,6 +57,12 @@ public class MediaFooterChunk extends AbstractMediaChunk {
 		setMediaHash(extractInt(message, 8, 12));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk#
+	 * extractMessageHash(byte[])
+	 */
 	protected void extractMessageHash(byte[] message) {
 		setMessageHash(extractInt(message, 4, 8));
 	}

@@ -159,9 +159,9 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 	@Override
 	public boolean open() {
 		boolean open = isOpen() ? true : openImpl();
-		
+
 		setOpen(open);
-		
+
 		return open;
 	}
 
@@ -188,7 +188,7 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 		} catch (Exception e) {
 			log.error("Unexpected exception", e);
 		}
-		
+
 		MediaStreamerUtils.sendTerminationEvent(getMediaHash(), getLocal(), getRemote());
 	}
 
@@ -200,9 +200,9 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 	@Override
 	public boolean close() {
 		boolean close = !isOpen() ? true : closeImpl();
-		
+
 		setOpen(!close);
-		
+
 		return close;
 	}
 

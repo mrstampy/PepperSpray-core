@@ -120,10 +120,14 @@ public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk
 	/**
 	 * Send ack.
 	 *
-	 * @param message the message
-	 * @param channel the channel
-	 * @param sender the sender
-	 * @param chunk the chunk
+	 * @param message
+	 *          the message
+	 * @param channel
+	 *          the channel
+	 * @param sender
+	 *          the sender
+	 * @param chunk
+	 *          the chunk
 	 */
 	protected void sendAck(byte[] message, final KiSyChannel channel, final InetSocketAddress sender, AMC chunk) {
 		long sumOfBytes = StreamerAckRegister.convertToLong(message);

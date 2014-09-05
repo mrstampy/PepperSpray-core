@@ -140,7 +140,7 @@ public class WebcamStreamer extends AbstractMediaStreamer {
 		if (getTransformer() == null) throw new IllegalStateException("Transformer cannot be null");
 
 		byte[] b = getTransformer().transform(image);
-		
+
 		return b;
 	}
 

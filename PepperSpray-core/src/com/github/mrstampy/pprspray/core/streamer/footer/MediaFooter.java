@@ -138,10 +138,21 @@ public class MediaFooter implements Footer {
 		this.mediaHash = mediaHash;
 	}
 
+	/**
+	 * Gets the message hash.
+	 *
+	 * @return the message hash
+	 */
 	public int getMessageHash() {
 		return messageHash;
 	}
 
+	/**
+	 * Sets the message hash.
+	 *
+	 * @param messageHash
+	 *          the message hash
+	 */
 	public void setMessageHash(int messageHash) {
 		this.messageHash = messageHash;
 		footer = null;

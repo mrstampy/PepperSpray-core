@@ -70,13 +70,13 @@ public class TestNegotiationSubscriber extends AcceptingNegotationSubscriber {
 	 * .core.streamer.negotiation.NegotiationChunk)
 	 */
 	protected MediaProcessor getMediaProcessor(NegotiationChunk event) {
-		switch(event.getRequestedType()) {
+		switch (event.getRequestedType()) {
 		case VIDEO:
 			return new TestWebcamProcessor(event.getMediaHash(), event.getLocal(), event.getRemote());
 		default:
 			break;
 		}
-		
+
 		return new LoggingProcessor();
 	}
 
