@@ -123,6 +123,15 @@ public interface PepperSprayDiscoveryService<INFO> {
 	List<INFO> getRegisteredPepperSprayServices(String identifier);
 
 	/**
+	 * Gets the registered pepper spray services.
+	 *
+	 * @param type
+	 *          the type
+	 * @return the registered pepper spray services
+	 */
+	List<INFO> getRegisteredPepperSprayServices(MediaStreamType type);
+
+	/**
 	 * Creates the service name.
 	 *
 	 * @param type
