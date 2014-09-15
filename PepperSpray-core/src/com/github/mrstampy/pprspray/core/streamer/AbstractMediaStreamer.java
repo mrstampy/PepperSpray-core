@@ -335,6 +335,15 @@ public abstract class AbstractMediaStreamer {
 		notifyStop();
 	}
 
+	/**
+	 * Gets the sequence.
+	 *
+	 * @return the sequence
+	 */
+	public long getSequence() {
+		return streamer.getSequence();
+	}
+
 	private ByteArrayStreamer createStreamer() throws Exception {
 		ByteArrayStreamer bas = new ByteArrayStreamer(getChannel(), getDestination(), getStreamerPipeSize());
 
@@ -409,8 +418,10 @@ public abstract class AbstractMediaStreamer {
 
 			sendData(data);
 		} catch (Exception e) {
-			log.error("Unexpected exception streaming from {} to {}", streamer.getChannel().localAddress(),
-					streamer.getDestination(), e);
+			log.error("Unexpected exception streaming from {} to {}",
+					streamer.getChannel().localAddress(),
+					streamer.getDestination(),
+					e);
 		}
 	}
 
@@ -721,13 +732,17 @@ public abstract class AbstractMediaStreamer {
 			notifyAccepted.set(chunk.isAccepted());
 
 			if (notifyAccepted()) {
-				log.debug("Negotiations with {} for type {}, media hash {} successful", getDestination(),
-						AbstractMediaStreamer.this.getType(), getMediaHash());
+				log.debug("Negotiations with {} for type {}, media hash {} successful",
+						getDestination(),
+						AbstractMediaStreamer.this.getType(),
+						getMediaHash());
 
 				notifyNegotiationSuccessful();
 				start();
 			} else {
-				log.debug("Negotiations with {} for type {}, media hash {} unsuccessful", getDestination(), getType(),
+				log.debug("Negotiations with {} for type {}, media hash {} unsuccessful",
+						getDestination(),
+						getType(),
 						getMediaHash());
 
 				notifyNegotiationFailed();

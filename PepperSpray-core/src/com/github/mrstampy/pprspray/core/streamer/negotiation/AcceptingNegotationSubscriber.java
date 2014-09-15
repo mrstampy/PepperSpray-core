@@ -34,7 +34,6 @@ import com.github.mrstampy.pprspray.core.receiver.binary.BinaryReceiver;
 import com.github.mrstampy.pprspray.core.receiver.file.FileReceiver;
 import com.github.mrstampy.pprspray.core.receiver.text.TextReceiver;
 import com.github.mrstampy.pprspray.core.receiver.webcam.WebcamReceiver;
-import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 // TODO: Auto-generated Javadoc
@@ -82,7 +81,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	protected void negotiationRequestedImpl(NegotiationChunk event) {
 		KiSyChannel channel = MediaStreamerUtils.getChannel(event.getLocal());
 
-		createReceiver(event.getRequestedType(), event.getMediaHash());
+		createReceiver(event);
 
 		registerMediaProcessor(event);
 
@@ -132,8 +131,10 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	 * @param mediaHash
 	 *          the media hash
 	 */
-	protected void createReceiver(MediaStreamType requestedType, int mediaHash) {
-		switch (requestedType) {
+	protected void createReceiver(NegotiationChunk event) {
+		int mediaHash = event.getMediaHash();
+		
+		switch (event.getRequestedType()) {
 		case AUDIO:
 			new AudioReceiver(mediaHash);
 			break;
