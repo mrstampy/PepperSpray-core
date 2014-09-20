@@ -21,17 +21,17 @@
 package com.github.mrstampy.pprspray.core.receiver.text;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
+import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultXmlChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class XmlReceiver.
+ * Instances are registered on the {@link ChunkEventBus} and aggregate
+ * {@link DefaultXmlChunk}s to {@link MediaEvent}s.
  */
 public class XmlReceiver extends AbstractChunkReceiver<DefaultXmlChunk> {
-
-	private static final DefaultXmlChunk[] MT = new DefaultXmlChunk[] {};
 
 	/**
 	 * The Constructor.
@@ -65,18 +65,6 @@ public class XmlReceiver extends AbstractChunkReceiver<DefaultXmlChunk> {
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage(eom);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#getEmptyArray
-	 * ()
-	 */
-	@Override
-	protected DefaultXmlChunk[] getEmptyArray() {
-		return MT;
 	}
 
 }

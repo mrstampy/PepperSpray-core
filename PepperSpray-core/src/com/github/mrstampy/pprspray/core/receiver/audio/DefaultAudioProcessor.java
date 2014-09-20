@@ -35,9 +35,14 @@ import org.slf4j.LoggerFactory;
 import com.github.mrstampy.pprspray.core.receiver.AbstractMediaProcessor;
 import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultAudioProcessor.
+ * The Class DefaultAudioProcessor attempts to write the audio data received to
+ * the local audio system. It is not a complete implementation and should be
+ * considered experimental.<br>
+ * <br>
+ * It is expected that an audio connection would stream an audio encoded stream
+ * ie. mp3, opus, ogg vorbis and a {@link AbstractMediaProcessor} implementation
+ * would be created to handle the reception of the data.
  */
 public class DefaultAudioProcessor extends AbstractMediaProcessor {
 	private static final Logger log = LoggerFactory.getLogger(DefaultAudioProcessor.class);

@@ -224,13 +224,6 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	}
 
 	/**
-	 * Gets the empty array.
-	 *
-	 * @return the empty array
-	 */
-	protected abstract AMC[] getEmptyArray();
-
-	/**
 	 * Clear.
 	 */
 	public void clear() {

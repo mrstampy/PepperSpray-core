@@ -21,17 +21,17 @@
 package com.github.mrstampy.pprspray.core.receiver.audio;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
+import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AudioReceiver.
+ * Instances are registered on the {@link ChunkEventBus} and aggregate
+ * {@link DefaultAudioChunk}s to {@link MediaEvent}s.
  */
 public class AudioReceiver extends AbstractChunkReceiver<DefaultAudioChunk> {
-
-	private static final DefaultAudioChunk[] MT = new DefaultAudioChunk[] {};
 
 	/**
 	 * The Constructor.
@@ -63,18 +63,6 @@ public class AudioReceiver extends AbstractChunkReceiver<DefaultAudioChunk> {
 	 */
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage(eom);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#getEmptyArray
-	 * ()
-	 */
-	@Override
-	protected DefaultAudioChunk[] getEmptyArray() {
-		return MT;
 	}
 
 }

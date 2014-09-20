@@ -21,17 +21,17 @@
 package com.github.mrstampy.pprspray.core.receiver.binary;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
+import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class BinaryReceiver.
+ * Instances are registered on the {@link ChunkEventBus} and aggregate
+ * {@link DefaultBinaryChunk}s to {@link MediaEvent}s.
  */
 public class BinaryReceiver extends AbstractChunkReceiver<DefaultBinaryChunk> {
-
-	private static final DefaultBinaryChunk[] MT = new DefaultBinaryChunk[] {};
 
 	/**
 	 * The Constructor.
@@ -65,18 +65,6 @@ public class BinaryReceiver extends AbstractChunkReceiver<DefaultBinaryChunk> {
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage(eom);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#getEmptyArray
-	 * ()
-	 */
-	@Override
-	protected DefaultBinaryChunk[] getEmptyArray() {
-		return MT;
 	}
 
 }

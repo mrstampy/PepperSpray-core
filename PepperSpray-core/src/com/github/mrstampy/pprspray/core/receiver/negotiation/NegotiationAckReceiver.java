@@ -31,21 +31,28 @@ import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.AbstractNegotiationSubscriber;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.AcceptingNegotationSubscriber;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationAckChunk;
+import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationMessageUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class NegotiationAckReceiver.
+ * This receiver supports a simple acknowledgement response to a request for a
+ * specific {@link MediaStreamType} connection.
+ * 
+ * @see AbstractNegotiationSubscriber
+ * @see AcceptingNegotationSubscriber
+ * @see NegotiationEventBus
  */
 public abstract class NegotiationAckReceiver extends AbstractChunkReceiver<NegotiationAckChunk> {
-
-	private static final NegotiationAckChunk[] MT = new NegotiationAckChunk[] {};
 
 	private static final Scheduler SVC = Schedulers.from(Executors.newCachedThreadPool());
 
 	/**
-	 * The Constructor.
+	 * The Constructor. Once created a 30 second timer is started after which the
+	 * {@link #failed()} method is invoked. If the receiver is still
+	 * {@link #isOpen()} the transaction is failed.
 	 *
 	 * @param mediaHash
 	 *          the media hash
@@ -63,7 +70,8 @@ public abstract class NegotiationAckReceiver extends AbstractChunkReceiver<Negot
 	}
 
 	/**
-	 * Failed.
+	 * Failed if {@link #isOpen()}, closed when
+	 * {@link #receive(NegotiationAckChunk)}.
 	 */
 	protected void failed() {
 		if (!isOpen()) return;
@@ -105,18 +113,6 @@ public abstract class NegotiationAckReceiver extends AbstractChunkReceiver<Negot
 	 */
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#getEmptyArray
-	 * ()
-	 */
-	@Override
-	protected NegotiationAckChunk[] getEmptyArray() {
-		return MT;
 	}
 
 }

@@ -31,8 +31,6 @@ import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
  */
 public class WebcamReceiver extends AbstractChunkReceiver<DefaultWebcamChunk> {
 
-	private static final DefaultWebcamChunk[] MT = new DefaultWebcamChunk[] {};
-
 	/**
 	 * The Constructor.
 	 *
@@ -65,18 +63,6 @@ public class WebcamReceiver extends AbstractChunkReceiver<DefaultWebcamChunk> {
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage(eom);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#getEmptyArray
-	 * ()
-	 */
-	@Override
-	protected DefaultWebcamChunk[] getEmptyArray() {
-		return MT;
 	}
 
 }

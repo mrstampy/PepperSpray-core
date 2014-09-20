@@ -21,17 +21,17 @@
 package com.github.mrstampy.pprspray.core.receiver.text;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
+import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultJsonChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class JsonReceiver.
+ * Instances are registered on the {@link ChunkEventBus} and aggregate
+ * {@link DefaultJsonChunk}s to {@link MediaEvent}s.
  */
 public class JsonReceiver extends AbstractChunkReceiver<DefaultJsonChunk> {
-
-	private static final DefaultJsonChunk[] MT = new DefaultJsonChunk[] {};
 
 	/**
 	 * The Constructor.
@@ -65,18 +65,6 @@ public class JsonReceiver extends AbstractChunkReceiver<DefaultJsonChunk> {
 	@Override
 	protected void endOfMessageImpl(MediaFooterChunk eom) {
 		finalizeMessage(eom);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.github.mrstampy.pprspray.core.receiver.AbstractMediaReceiver#getEmptyArray
-	 * ()
-	 */
-	@Override
-	protected DefaultJsonChunk[] getEmptyArray() {
-		return MT;
 	}
 
 }
