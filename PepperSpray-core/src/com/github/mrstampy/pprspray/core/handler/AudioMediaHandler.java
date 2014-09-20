@@ -23,7 +23,6 @@ package com.github.mrstampy.pprspray.core.handler;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AudioMediaHandler.
  */

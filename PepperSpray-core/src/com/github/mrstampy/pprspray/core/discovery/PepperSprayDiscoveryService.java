@@ -26,9 +26,9 @@ import java.util.List;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface PepperSprayDiscoveryService.
+ * The Interface PepperSprayDiscoveryService is implemented to provide the
+ * ability to find other clients in the network providing a specific service.
  *
  * @param <INFO>
  *          the generic type

@@ -24,7 +24,6 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationChunk;
 import com.github.mrstampy.pprspray.core.streamer.negotiation.NegotiationEventBus;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class NegotiationHandler.
  */

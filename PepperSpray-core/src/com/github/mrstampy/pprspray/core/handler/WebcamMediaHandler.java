@@ -23,7 +23,6 @@ package com.github.mrstampy.pprspray.core.handler;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class WebcamMediaHandler.
  */
