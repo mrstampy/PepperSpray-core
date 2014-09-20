@@ -20,9 +20,9 @@
  */
 package com.github.mrstampy.pprspray.core.receiver;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class NoTransformTransformer.
+ * The Class NoTransformTransformer is the default 'transformer', returning the
+ * array of bytes as it is received.
  */
 public class NoTransformTransformer implements MediaTransformer {
 

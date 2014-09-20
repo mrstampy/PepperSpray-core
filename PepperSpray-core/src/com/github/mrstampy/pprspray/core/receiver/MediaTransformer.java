@@ -20,9 +20,11 @@
  */
 package com.github.mrstampy.pprspray.core.receiver;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface MediaTransformer.
+ * Implement to transform the given byte array as required.
+ * 
+ * @see AbstractChunkReceiver#setTransformer(MediaTransformer)
+ * @see AbstractChunkReceiver#rehydrateAndTransform(java.util.Set)
  */
 public interface MediaTransformer {
 

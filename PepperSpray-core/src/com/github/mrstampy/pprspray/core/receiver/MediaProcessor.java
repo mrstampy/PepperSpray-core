@@ -26,7 +26,6 @@ import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEvent;
 import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface MediaProcessor defines the methods to use received, processed
  * media data. It must be registered on the {@link MediaEventBus} to receive the

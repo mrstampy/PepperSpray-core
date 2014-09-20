@@ -31,7 +31,6 @@ import com.github.mrstampy.pprspray.core.receiver.event.ReceiverEventBus;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMediaProcessor is a convenience superclass to receive and
  * process events posted on the {@link MediaEventBus} by the corresponding
@@ -95,12 +94,15 @@ public abstract class AbstractMediaProcessor implements MediaProcessor {
 	}
 
 	/**
-	 * Media event impl.
+	 * The {@link MediaEvent} object contains a discrete array of data received
+	 * from a remote connection for use by the implementation. At this point it
+	 * has been appropriately transformed (ie. decrypted) and can be used as-is.
 	 *
 	 * @param event
 	 *          the event
 	 * @throws Exception
 	 *           the exception
+	 * @see MediaEventBus
 	 */
 	protected abstract void mediaEventImpl(MediaEvent event) throws Exception;
 

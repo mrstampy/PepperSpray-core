@@ -26,11 +26,19 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
+import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.google.common.eventbus.AsyncEventBus;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MediaEventBus.
+ * The Class MediaEventBus contains references to active {@link MediaProcessor}
+ * s. The {@link AbstractChunkReceiver} invokes the {@link #post(MediaEvent)}
+ * method when the end of a discrete unit of data has been received (
+ * {@link AbstractChunkReceiver#endOfMessage(com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk)}
+ * ). The various {@link AbstractMediaChunk}s received are reconstituted and used
+ * to create the {@link MediaEvent} posted.
+ * 
+ * @see AbstractChunkReceiver
+ * @see MediaProcessor
  */
 public class MediaEventBus {
 

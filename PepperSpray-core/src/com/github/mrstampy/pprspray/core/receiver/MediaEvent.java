@@ -22,7 +22,6 @@ package com.github.mrstampy.pprspray.core.receiver;
 
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MediaEvent.
  */
@@ -38,9 +37,9 @@ public class MediaEvent {
 	 * @param type
 	 *          the type
 	 * @param mediaHash
-	 *          the media hash
+	 *          the media hash used to identify the source of the data
 	 * @param processed
-	 *          the processed
+	 *          the processed data
 	 */
 	public MediaEvent(MediaStreamType type, int mediaHash, byte[] processed) {
 		this.type = type;

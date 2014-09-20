@@ -24,6 +24,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
@@ -46,7 +47,6 @@ import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
  * AbstractMediaReceivers aggregate {@link AbstractMediaChunk}s received on the
  * {@link ChunkEventBus} and on end of message apply any transformations
@@ -123,7 +123,7 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	}
 
 	/**
-	 * Receive impl.
+	 * Implementation should invoke {@link #add(AbstractMediaChunk)}.
 	 *
 	 * @param chunk
 	 *          the chunk
@@ -131,7 +131,7 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	protected abstract void receiveImpl(AMC chunk);
 
 	/**
-	 * Adds the.
+	 * Adds the chunk.
 	 *
 	 * @param chunk
 	 *          the chunk
@@ -220,9 +220,7 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 
 		log.trace("Rehydrating {} for message hash {}", set.size(), messageHash);
 
-		AMC[] array = set.toArray(getEmptyArray());
-
-		write(array);
+		write(set);
 	}
 
 	/**
@@ -240,14 +238,16 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	}
 
 	/**
-	 * Write.
+	 * Writes the {@link AbstractMediaChunk}s in the ordered set as a
+	 * {@link MediaEvent} on the {@link MediaEventBus}. It is invoked indirectly
+	 * when a {@link MediaFooterChunk} has been received.
 	 *
 	 * @param array
 	 *          the array
 	 */
-	protected void write(AMC[] array) {
+	protected void write(Set<AMC> set) {
 		try {
-			byte[] b = rehydrateAndTransform(array);
+			byte[] b = rehydrateAndTransform(set);
 
 			if (hasTransformed(b)) MediaEventBus.post(new MediaEvent(getType(), getMediaHash(), b));
 		} catch (Exception e) {
@@ -268,11 +268,11 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	 * @return the byte[]
 	 * @see #setTransformer(MediaTransformer)
 	 */
-	protected byte[] rehydrateAndTransform(AMC[] array) {
-		int size = calcSize(array);
+	protected byte[] rehydrateAndTransform(Set<AMC> set) {
+		int size = calcSize(set);
 		ByteBuf buf = Unpooled.buffer(size);
 
-		for (AMC chunk : array) {
+		for (AMC chunk : set) {
 			buf.writeBytes(chunk.getData());
 		}
 
@@ -283,9 +283,9 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 		return getTransformer() == null ? rehydrated : getTransformer().transform(rehydrated, getMediaHash());
 	}
 
-	private int calcSize(AMC[] array) {
+	private int calcSize(Set<AMC> set) {
 		int size = 0;
-		for (AMC chunk : array) {
+		for (AMC chunk : set) {
 			size += chunk.getData().length;
 		}
 
@@ -428,7 +428,11 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	}
 
 	/**
-	 * Sets the finalize await value.
+	 * Sets the value used to wait after a {@link MediaFooterChunk} has been
+	 * received before posting the {@link MediaEvent} on the {@link MediaEventBus}
+	 * . Defaults to zero seconds. Potentially useful with high latency
+	 * connections to await all {@link AbstractMediaChunk}s before processing to a
+	 * {@link MediaEvent}.
 	 *
 	 * @param finalizeAwaitValue
 	 *          the finalize await value
@@ -451,7 +455,11 @@ public abstract class AbstractChunkReceiver<AMC extends AbstractMediaChunk> {
 	}
 
 	/**
-	 * Sets the finalize units.
+	 * Sets the units used to wait after a {@link MediaFooterChunk} has been
+	 * received before posting the {@link MediaEvent} on the {@link MediaEventBus}
+	 * . Defaults to zero seconds. Potentially useful with high latency
+	 * connections to await all {@link AbstractMediaChunk}s before processing to a
+	 * {@link MediaEvent}.
 	 *
 	 * @param finalizeUnits
 	 *          the finalize units
