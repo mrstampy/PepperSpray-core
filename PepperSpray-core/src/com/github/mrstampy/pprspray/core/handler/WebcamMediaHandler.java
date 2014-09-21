@@ -20,11 +20,14 @@
  */
 package com.github.mrstampy.pprspray.core.handler;
 
+import com.github.mrstampy.kitchensync.message.inbound.ByteArrayInboundMessageManager;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
 
 /**
  * The Class WebcamMediaHandler.
+ * 
+ * @see ByteArrayInboundMessageManager#addMessageHandlers(com.github.mrstampy.kitchensync.message.inbound.KiSyInboundMesssageHandler...)
  */
 public class WebcamMediaHandler extends AbstractInboundMediaHandler<DefaultWebcamChunk> {
 

@@ -20,12 +20,15 @@
  */
 package com.github.mrstampy.pprspray.core.handler;
 
+import com.github.mrstampy.kitchensync.message.inbound.ByteArrayInboundMessageManager;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.text.DefaultTextChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
 /**
  * The Class TextMediaHandler.
+ * 
+ * @see ByteArrayInboundMessageManager#addMessageHandlers(com.github.mrstampy.kitchensync.message.inbound.KiSyInboundMesssageHandler...)
  */
 public class TextMediaHandler extends AbstractInboundMediaHandler<DefaultTextChunk> {
 

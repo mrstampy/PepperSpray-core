@@ -31,6 +31,7 @@ import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.kitchensync.message.inbound.AbstractInboundKiSyHandler;
+import com.github.mrstampy.kitchensync.message.inbound.ByteArrayInboundMessageManager;
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.kitchensync.stream.StreamerAckRegister;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
@@ -47,7 +48,7 @@ import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
  *
  * @param <AMC>
  *          the generic type
- * @see
+ * @see ByteArrayInboundMessageManager#addMessageHandlers(com.github.mrstampy.kitchensync.message.inbound.KiSyInboundMesssageHandler...)
  */
 public abstract class AbstractInboundMediaHandler<AMC extends AbstractMediaChunk> extends
 		AbstractInboundKiSyHandler<byte[]> {
