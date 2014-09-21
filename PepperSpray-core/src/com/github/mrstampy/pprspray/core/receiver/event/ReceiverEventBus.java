@@ -20,18 +20,23 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.event;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.google.common.eventbus.EventBus;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ReceiverEventBus.
+ * Register to receive notification of changes to the state of
+ * {@link AbstractChunkReceiver}s.
  */
 public class ReceiverEventBus {
+	private static final Logger log = LoggerFactory.getLogger(ReceiverEventBus.class);
 
 	private static final EventBus BUS = new EventBus("Media Receiver Event Bus");
 
 	/**
-	 * Post.
+	 * Post, invoked when an {@link AbstractChunkReceiver} changes state.
 	 *
 	 * @param event
 	 *          the event
@@ -57,6 +62,10 @@ public class ReceiverEventBus {
 	 *          the o
 	 */
 	public static void unregister(Object o) {
-		BUS.unregister(o);
+		try {
+			BUS.unregister(o);
+		} catch (Exception e) {
+			log.debug("{} is not registered on the receiver event bus", o, e);
+		}
 	}
 }

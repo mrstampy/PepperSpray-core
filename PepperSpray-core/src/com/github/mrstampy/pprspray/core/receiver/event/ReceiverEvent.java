@@ -20,9 +20,11 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.event;
 
-// TODO: Auto-generated Javadoc
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
+
 /**
- * The Class ReceiverEvent.
+ * {@link ReceiverEvent}s are generated when an {@link AbstractChunkReceiver}
+ * changes state.
  */
 public class ReceiverEvent {
 

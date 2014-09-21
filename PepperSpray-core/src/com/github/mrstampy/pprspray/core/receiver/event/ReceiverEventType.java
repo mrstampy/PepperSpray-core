@@ -20,16 +20,12 @@
  */
 package com.github.mrstampy.pprspray.core.receiver.event;
 
-// TODO: Auto-generated Javadoc
+import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
+
 /**
- * The Enum ReceiverEventType.
+ * The Enum ReceiverEventType defines the various states in the lifecycle of an
+ * {@link AbstractChunkReceiver}.
  */
 public enum ReceiverEventType {
-
-	/** The open. */
-	OPEN,
-	/** The close. */
-	CLOSE,
-	/** The destroy. */
-	DESTROY;
+	OPEN, CLOSE, DESTROY;
 }
