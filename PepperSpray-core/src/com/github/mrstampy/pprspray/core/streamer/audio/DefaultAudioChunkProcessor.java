@@ -27,9 +27,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultAudioChunkProcessor.
+ * The Class DefaultAudioChunkProcessor prepends the header for each
+ * {@link DefaultAudioChunk} sent to the remote client.
  */
 public class DefaultAudioChunkProcessor extends AbstractMediaChunkProcessor {
 

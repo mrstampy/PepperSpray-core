@@ -31,7 +31,6 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * Abstract superclass representing {@link MediaStreamType} data. The
  * {@link #getData()} is to be considered an unprocessed part of a larger

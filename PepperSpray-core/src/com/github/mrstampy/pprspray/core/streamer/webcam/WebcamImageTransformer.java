@@ -22,7 +22,6 @@ package com.github.mrstampy.pprspray.core.streamer.webcam;
 
 import java.awt.image.BufferedImage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface WebcamImageTransformer.
  */

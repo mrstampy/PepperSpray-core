@@ -23,7 +23,6 @@ package com.github.mrstampy.pprspray.core.streamer.file;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DefaultFileChunkProcessor.
  */

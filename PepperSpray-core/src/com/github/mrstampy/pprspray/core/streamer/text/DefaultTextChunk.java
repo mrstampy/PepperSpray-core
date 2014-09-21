@@ -23,9 +23,9 @@ package com.github.mrstampy.pprspray.core.streamer.text;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultTextChunk.
+ * The Class DefaultTextChunk representing a chunk of text of a potentially
+ * larger block of text.
  */
 public class DefaultTextChunk extends AbstractMediaChunk {
 

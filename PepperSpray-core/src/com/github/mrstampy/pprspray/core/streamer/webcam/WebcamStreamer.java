@@ -32,7 +32,6 @@ import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamEvent;
 import com.github.sarxos.webcam.WebcamListener;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class WebcamStreamer.
  */

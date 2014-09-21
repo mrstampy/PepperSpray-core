@@ -31,9 +31,8 @@ import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class BinaryStreamer.
+ * Streams byte array data to the specified destination.
  */
 public class BinaryStreamer extends AbstractMediaStreamer {
 	private static final Logger log = LoggerFactory.getLogger(BinaryStreamer.class);

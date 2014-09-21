@@ -37,9 +37,8 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.BinaryStreamer;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MediaFileStreamer.
+ * A subclass of the {@link BinaryStreamer} for files.
  */
 public class MediaFileStreamer extends BinaryStreamer {
 	private static final Logger log = LoggerFactory.getLogger(MediaFileStreamer.class);
@@ -87,8 +86,8 @@ public class MediaFileStreamer extends BinaryStreamer {
 			@Override
 			public void call() {
 				try {
-					ft.transform(file, MediaFileStreamer.this);
-				} catch (IOException e) {
+					stream(ft.transform(file));
+				} catch (Exception e) {
 					log.error("Unexpected exception streaming file {}", file.getAbsolutePath(), e);
 				}
 

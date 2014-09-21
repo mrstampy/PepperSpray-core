@@ -22,9 +22,10 @@ package com.github.mrstampy.pprspray.core.streamer.audio;
 
 import io.netty.buffer.ByteBuf;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface AudioTransformer.
+ * The Interface AudioTransformer provides the ability to transform (ie.
+ * encrypt) a discrete chunk of audio data prior to streaming to the remote
+ * client.
  */
 public interface AudioTransformer {
 

@@ -23,9 +23,9 @@ package com.github.mrstampy.pprspray.core.streamer.file;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultFileChunk.
+ * The Class DefaultFileChunk represents a part of a file, typically 2
+ * kilobytes.
  */
 public class DefaultFileChunk extends AbstractMediaChunk {
 

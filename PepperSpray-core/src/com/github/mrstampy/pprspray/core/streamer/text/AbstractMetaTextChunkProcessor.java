@@ -27,7 +27,6 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMetaTextChunkProcessor.
  */

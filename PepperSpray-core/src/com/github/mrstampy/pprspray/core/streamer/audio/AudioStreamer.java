@@ -46,13 +46,18 @@ import rx.schedulers.Schedulers;
 
 import com.github.mrstampy.kitchensync.netty.channel.KiSyChannel;
 import com.github.mrstampy.kitchensync.util.KiSyUtils;
+import com.github.mrstampy.pprspray.core.receiver.audio.DefaultAudioProcessor;
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AudioStreamer.
+ * The Class AudioStreamer streams raw data from the audio subsystem to a remote
+ * connection. It is to be considered a reference implementation. Audio streamer
+ * implementations should stream a particular encoded audio stream ie. mp3,
+ * opus, ogg vorbis.
+ * 
+ * @see DefaultAudioProcessor
  */
 public class AudioStreamer extends AbstractMediaStreamer {
 	private static final Logger log = LoggerFactory.getLogger(AudioStreamer.class);

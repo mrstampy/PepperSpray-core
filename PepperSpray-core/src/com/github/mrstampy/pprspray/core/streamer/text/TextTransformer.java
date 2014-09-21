@@ -20,7 +20,6 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface TextTransformer.
  */
@@ -31,8 +30,6 @@ public interface TextTransformer {
 	 *
 	 * @param text
 	 *          the text
-	 * @param streamer
-	 *          the streamer
 	 */
-	void transform(String text, TextStreamer streamer);
+	byte[] transform(String text);
 }

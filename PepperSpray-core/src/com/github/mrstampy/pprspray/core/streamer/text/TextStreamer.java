@@ -36,9 +36,8 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.binary.BinaryStreamer;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class TextStreamer.
+ * The Class TextStreamer for streaming string data to a remote destination.
  */
 public class TextStreamer extends BinaryStreamer {
 	private static final Logger log = LoggerFactory.getLogger(TextStreamer.class);
@@ -84,7 +83,7 @@ public class TextStreamer extends BinaryStreamer {
 			@Override
 			public void call() {
 				try {
-					tt.transform(text, TextStreamer.this);
+					stream(tt.transform(text));
 				} catch (Exception e) {
 					log.error("Unexpected exception", e);
 				}

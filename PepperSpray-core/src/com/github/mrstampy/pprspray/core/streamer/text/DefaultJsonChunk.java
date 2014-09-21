@@ -20,9 +20,10 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultJsonChunk.
+ * The Class DefaultJsonChunk represents a chunk of Json text.
+ * The value returned by {@link #getMarshallingClassNameHash()} can be used to match
+ * the Java pojo via the value returned from Class.getName().hashCode()
  */
 public class DefaultJsonChunk extends AbstractMetaTextChunk {
 

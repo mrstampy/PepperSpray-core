@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sarxos.webcam.util.ImageUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DefaultWebcamImageTransformer.
  */
@@ -80,7 +79,7 @@ public class DefaultWebcamImageTransformer implements WebcamImageTransformer {
 	 * The Constructor.
 	 *
 	 * @param imageFormat
-	 *          the image format
+	 *          the image format, PNG by default
 	 */
 	public DefaultWebcamImageTransformer(ImageFormat imageFormat) {
 		if (imageFormat == null) throw new IllegalArgumentException("ImageFormat must be specified");

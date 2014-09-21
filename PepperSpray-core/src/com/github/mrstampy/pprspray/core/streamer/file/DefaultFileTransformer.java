@@ -22,9 +22,7 @@ package com.github.mrstampy.pprspray.core.streamer.file;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DefaultFileTransformer.
  */
@@ -35,18 +33,16 @@ public class DefaultFileTransformer implements FileTransformer {
 	 * 
 	 * @see
 	 * com.github.mrstampy.pprspray.core.streamer.file.FileTransformer#transform
-	 * (java.io.File,
-	 * com.github.mrstampy.pprspray.core.streamer.file.MediaFileStreamer)
+	 * (java.io.File)
 	 */
 	@Override
-	public void transform(File file, MediaFileStreamer streamer) throws IOException {
-		FileInputStream fis = new FileInputStream(file);
+	public byte[] transform(File file) throws Exception {
+		try (FileInputStream fis = new FileInputStream(file)) {
+			byte[] b = new byte[fis.available()];
+			fis.read(b);
 
-		byte[] b = new byte[fis.available()];
-		fis.read(b);
-		fis.close();
-
-		streamer.stream(b);
+			return b;
+		}
 	}
 
 }

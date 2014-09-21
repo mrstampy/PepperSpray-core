@@ -22,9 +22,12 @@ package com.github.mrstampy.pprspray.core.streamer.text;
 
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AbstractMetaTextChunk.
+ * The Class AbstractMetaTextChunk encapsulates the meta information for a chunk
+ * of text. The {@link #getMarshallingClassNameHash()} is an integer that
+ * represents the hash code of the value returned by Class.getName().hashCode() of the pojo
+ * which is the Java representation of the message to allow ease of matching of
+ * messages to classes.
  */
 public class AbstractMetaTextChunk extends DefaultTextChunk {
 

@@ -29,9 +29,9 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MediaFooterChunk.
+ * The Class MediaFooterChunk represents the received {@link MediaFooter}
+ * message.
  */
 public class MediaFooterChunk extends AbstractMediaChunk {
 

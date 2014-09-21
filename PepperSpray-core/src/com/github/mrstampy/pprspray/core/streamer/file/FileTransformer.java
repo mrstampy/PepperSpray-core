@@ -21,23 +21,20 @@
 package com.github.mrstampy.pprspray.core.streamer.file;
 
 import java.io.File;
-import java.io.IOException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface FileTransformer.
  */
 public interface FileTransformer {
 
 	/**
-	 * Transform.
+	 * Convert the file into a byte array, applying any transformations ie.
+	 * encryption along the way.
 	 *
 	 * @param file
 	 *          the file
-	 * @param streamer
-	 *          the streamer
-	 * @throws IOException
-	 *           the IO exception
+	 * @throws Exception
+	 *           the exception
 	 */
-	void transform(File file, MediaFileStreamer streamer) throws IOException;
+	byte[] transform(File file) throws Exception;
 }

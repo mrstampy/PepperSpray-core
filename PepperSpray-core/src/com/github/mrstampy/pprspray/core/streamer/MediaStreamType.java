@@ -25,39 +25,34 @@ import io.netty.buffer.Unpooled;
 
 import java.util.Arrays;
 
-// TODO: Auto-generated Javadoc
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooter;
+import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
+
 /**
  * The Enum MediaStreamType.
  */
 public enum MediaStreamType {
 
 	//@formatter:off
-	/** The audio. */
 	AUDIO,
-	
-	/** The binary. */
 	BINARY,
-	
-	/** The file. */
 	FILE,
-	
-	/** The text. */
 	TEXT,
-	
-	/** The video. */
 	VIDEO,
-	
-	/** The negotiation. */
 	NEGOTIATION,
-	
-	/** The negotiation ack. */
 	NEGOTIATION_ACK;
 	//@formatter:on
 
-	/** The ordinal bytes. */
+	/** The ordinal bytes, used to identify the stream's type. */
 	byte[] ordinalBytes;
 
-	/** The eom bytes. */
+	/**
+	 * The end of message bytes, used to signal the end of a discrete chunk of
+	 * data. Its value is calculated as Integer.MAX_VALUE - ordinal position.
+	 * 
+	 * @see MediaFooterChunk
+	 * @see MediaFooter
+	 */
 	byte[] eomBytes;
 
 	private MediaStreamType() {

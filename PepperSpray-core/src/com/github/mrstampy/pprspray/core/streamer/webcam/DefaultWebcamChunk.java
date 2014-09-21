@@ -23,9 +23,9 @@ package com.github.mrstampy.pprspray.core.streamer.webcam;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultWebcamChunk.
+ * The Class DefaultWebcamChunk represents a part of an image to be
+ * reconstituted at the destination.
  */
 public class DefaultWebcamChunk extends AbstractMediaChunk {
 

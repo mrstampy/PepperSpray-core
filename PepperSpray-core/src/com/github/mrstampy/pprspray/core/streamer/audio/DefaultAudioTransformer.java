@@ -22,9 +22,8 @@ package com.github.mrstampy.pprspray.core.streamer.audio;
 
 import io.netty.buffer.ByteBuf;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultAudioTransformer.
+ * The Class DefaultAudioTransformer returns the raw data unchanged.
  */
 public class DefaultAudioTransformer implements AudioTransformer {
 

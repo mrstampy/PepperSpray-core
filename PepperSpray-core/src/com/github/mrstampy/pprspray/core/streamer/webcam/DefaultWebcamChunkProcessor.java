@@ -26,7 +26,6 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunkProcessor;
 import com.github.sarxos.webcam.Webcam;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DefaultWebcamChunkProcessor.
  */

@@ -28,7 +28,6 @@ import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMediaChunkProcessor prepends the header to each chunk sent.
  * 
@@ -110,8 +109,13 @@ public abstract class AbstractMediaChunkProcessor extends AbstractChunkProcessor
 	 * @see AbstractMediaChunk#extractCustomHeaderChunk(byte[])
 	 */
 	protected void writeHeader(Streamer<?> streamer, ByteBuf buf, int headerLength) {
-		MediaStreamerUtils.writeHeader(buf, getMediaStreamType(), headerLength, getMessageHash(), getMediaHash(),
-				streamer.getSequence(), streamer.isAckRequired());
+		MediaStreamerUtils.writeHeader(buf,
+				getMediaStreamType(),
+				headerLength,
+				getMessageHash(),
+				getMediaHash(),
+				streamer.getSequence(),
+				streamer.isAckRequired());
 	}
 
 	/**

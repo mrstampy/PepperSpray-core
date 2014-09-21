@@ -24,9 +24,9 @@ import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultAudioChunk.
+ * The Class DefaultAudioChunk represents a part of a discrete chunk of audio
+ * data, and may be up to 2 kilobytes in size by default.
  */
 public class DefaultAudioChunk extends AbstractMediaChunk {
 

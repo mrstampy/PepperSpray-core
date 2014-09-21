@@ -20,7 +20,6 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.text;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DefaultTextTransformer.
  */
@@ -31,14 +30,11 @@ public class DefaultTextTransformer implements TextTransformer {
 	 * 
 	 * @see
 	 * com.github.mrstampy.pprspray.core.streamer.text.TextTransformer#transform
-	 * (java.lang.String,
-	 * com.github.mrstampy.pprspray.core.streamer.text.TextStreamer)
+	 * (java.lang.String)
 	 */
 	@Override
-	public void transform(String text, TextStreamer streamer) {
-		byte[] b = text.getBytes();
-
-		streamer.stream(b);
+	public byte[] transform(String text) {
+		return text.getBytes();
 	}
 
 }
