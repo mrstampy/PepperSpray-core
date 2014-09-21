@@ -26,9 +26,9 @@ import io.netty.buffer.Unpooled;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class NegotiationMessageUtils.
+ * The Class NegotiationMessageUtils provides the ability to create negotiation
+ * and negotiation acknowledgement messages as Netty ByteBuf objects.
  */
 public class NegotiationMessageUtils {
 

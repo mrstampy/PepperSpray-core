@@ -23,9 +23,11 @@ package com.github.mrstampy.pprspray.core.streamer.negotiation;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class NegotiationAckChunk.
+ * The Class NegotiationAckChunk represents an acknowledgement to a negotiation
+ * request.
+ * 
+ * @see NegotiationChunk
  */
 public class NegotiationAckChunk extends AbstractMediaChunk {
 

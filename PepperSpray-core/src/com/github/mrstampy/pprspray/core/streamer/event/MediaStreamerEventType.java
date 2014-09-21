@@ -20,32 +20,22 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.event;
 
-// TODO: Auto-generated Javadoc
+import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
+
 /**
- * The Enum MediaStreamerEventType.
+ * The various states of an {@link AbstractMediaStreamer} implementation.
+ * 
+ * @see MediaStreamerEventBus
  */
 public enum MediaStreamerEventType {
 
 	//@formatter:off
-	/** The started. */
 	STARTED,
-	
-	/** The stopped. */
 	STOPPED,
-	
-	/** The destroyed. */
 	DESTROYED,
-	
-	/** The destination added. */
 	DESTINATION_ADDED,
-	
-	/** The negotiating. */
 	NEGOTIATING,
-	
-	/** The negotiation successful. */
 	NEGOTIATION_SUCCESSFUL,
-
-	/** The negotiation failed. */
 	NEGOTIATION_FAILED;
 	//@formatter:on
 }

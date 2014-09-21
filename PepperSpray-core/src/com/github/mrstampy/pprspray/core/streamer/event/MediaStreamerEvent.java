@@ -22,9 +22,9 @@ package com.github.mrstampy.pprspray.core.streamer.event;
 
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MediaStreamerEvent.
+ * Generated when an {@link AbstractMediaStreamer} changes state and posted on
+ * the {@link MediaStreamerEventBus}.
  */
 public class MediaStreamerEvent {
 

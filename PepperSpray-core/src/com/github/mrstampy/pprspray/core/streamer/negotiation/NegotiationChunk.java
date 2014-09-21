@@ -23,9 +23,9 @@ package com.github.mrstampy.pprspray.core.streamer.negotiation;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class NegotiationChunk.
+ * The Class NegotiationChunk represents a request by a remote connection to
+ * establish a specific {@link MediaStreamType} connection.
  */
 public class NegotiationChunk extends AbstractMediaChunk {
 

@@ -36,9 +36,9 @@ import com.github.mrstampy.pprspray.core.receiver.text.TextReceiver;
 import com.github.mrstampy.pprspray.core.receiver.webcam.WebcamReceiver;
 import com.github.mrstampy.pprspray.core.streamer.util.MediaStreamerUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class AcceptingNegotationSubscriber.
+ * The Class AcceptingNegotationSubscriber accepts all requests for connections.
+ * It should be considered as a reference implementation - experimental.
  */
 public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber {
 
@@ -46,7 +46,9 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	private Mixer.Info mixerInfo;
 
 	/**
-	 * The Constructor.
+	 * The Constructor. The audio format object is used by
+	 * {@link DefaultAudioProcessor} instances by default and should be considered
+	 * experimental for audio.
 	 *
 	 * @param audioFormat
 	 *          the audio format
@@ -56,7 +58,9 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	}
 
 	/**
-	 * The Constructor.
+	 * The Constructor. The audio format and mixer info objects are used by
+	 * {@link DefaultAudioProcessor} instances by default and should be considered
+	 * experimental for audio.
 	 *
 	 * @param audioFormat
 	 *          the audio format
@@ -133,7 +137,7 @@ public class AcceptingNegotationSubscriber extends AbstractNegotiationSubscriber
 	 */
 	protected void createReceiver(NegotiationChunk event) {
 		int mediaHash = event.getMediaHash();
-		
+
 		switch (event.getRequestedType()) {
 		case AUDIO:
 			new AudioReceiver(mediaHash);

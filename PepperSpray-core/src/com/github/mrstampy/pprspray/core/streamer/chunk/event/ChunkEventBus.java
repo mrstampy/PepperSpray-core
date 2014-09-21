@@ -24,6 +24,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.mrstampy.pprspray.core.handler.AbstractInboundMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.AudioMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.BinaryMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.FileMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.JsonMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.NegotiationAckHandler;
+import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
+import com.github.mrstampy.pprspray.core.handler.TextMediaHandler;
+import com.github.mrstampy.pprspray.core.handler.WebcamMediaHandler;
 import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
 import com.github.mrstampy.pprspray.core.streamer.audio.DefaultAudioChunk;
 import com.github.mrstampy.pprspray.core.streamer.binary.DefaultBinaryChunk;
@@ -38,11 +50,12 @@ import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ChunkEventBus.
+ * {@link AbstractMediaChunk}s are posted to the event bus via
+ * {@link AbstractInboundMediaHandler} implementations.
  */
 public class ChunkEventBus {
+	private static final Logger log = LoggerFactory.getLogger(ChunkEventBus.class);
 
 	private static final AsyncEventBus BUS = new AsyncEventBus("Chunk Arrival Event Bus", Executors.newCachedThreadPool());
 
@@ -53,6 +66,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see AudioMediaHandler
 	 */
 	public static void post(DefaultAudioChunk chunk) {
 		BUS.post(chunk);
@@ -63,6 +77,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see BinaryMediaHandler
 	 */
 	public static void post(DefaultBinaryChunk chunk) {
 		BUS.post(chunk);
@@ -73,6 +88,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see FileMediaHandler
 	 */
 	public static void post(DefaultFileChunk chunk) {
 		BUS.post(chunk);
@@ -83,6 +99,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see JsonMediaHandler
 	 */
 	public static void post(DefaultJsonChunk chunk) {
 		BUS.post(chunk);
@@ -93,6 +110,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see TextMediaHandler
 	 */
 	public static void post(DefaultTextChunk chunk) {
 		BUS.post(chunk);
@@ -103,6 +121,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see WebcamMediaHandler
 	 */
 	public static void post(DefaultWebcamChunk chunk) {
 		BUS.post(chunk);
@@ -113,6 +132,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see NegotiationHandler
 	 */
 	public static void post(NegotiationChunk chunk) {
 		BUS.post(chunk);
@@ -123,6 +143,7 @@ public class ChunkEventBus {
 	 *
 	 * @param chunk
 	 *          the chunk
+	 * @see NegotiationAckHandler
 	 */
 	public static void post(NegotiationAckChunk chunk) {
 		BUS.post(chunk);
@@ -235,7 +256,11 @@ public class ChunkEventBus {
 	 *          the o
 	 */
 	public static void unregister(Object o) {
-		BUS.unregister(o);
+		try {
+			BUS.unregister(o);
+		} catch (Exception e) {
+			log.debug("{} is not registered on the chunk event bus", o, e);
+		}
 	}
 
 	private ChunkEventBus() {

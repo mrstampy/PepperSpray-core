@@ -20,15 +20,22 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.event;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.mrstampy.pprspray.core.streamer.AbstractMediaStreamer;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MediaStreamerEventBus.
+ * Classes interested in changes of state of specific
+ * {@link AbstractMediaStreamer}s will register themselves to receive
+ * {@link MediaStreamerEvent}s.
+ * 
+ * @see MediaStreamerEventType
  */
 public class MediaStreamerEventBus {
+	private static final Logger log = LoggerFactory.getLogger(MediaStreamerEventBus.class);
 
 	private static final EventBus BUS = new EventBus("Media Streamer Event Bus");
 
@@ -62,7 +69,11 @@ public class MediaStreamerEventBus {
 	 *          the subscriber
 	 */
 	public static void unregister(Object subscriber) {
-		BUS.unregister(subscriber);
+		try {
+			BUS.unregister(subscriber);
+		} catch (Exception e) {
+			log.debug("{} is not registered on the media streamer event bus", subscriber, e);
+		}
 	}
 
 }

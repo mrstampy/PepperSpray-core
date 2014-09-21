@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.mrstampy.pprspray.core.streamer.chunk.AbstractMediaChunk;
 import com.google.common.eventbus.AsyncEventBus;
 
@@ -34,13 +37,14 @@ import com.google.common.eventbus.AsyncEventBus;
  * s. The {@link AbstractChunkReceiver} invokes the {@link #post(MediaEvent)}
  * method when the end of a discrete unit of data has been received (
  * {@link AbstractChunkReceiver#endOfMessage(com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk)}
- * ). The various {@link AbstractMediaChunk}s received are reconstituted and used
- * to create the {@link MediaEvent} posted.
+ * ). The various {@link AbstractMediaChunk}s received are reconstituted and
+ * used to create the {@link MediaEvent} posted.
  * 
  * @see AbstractChunkReceiver
  * @see MediaProcessor
  */
 public class MediaEventBus {
+	private static final Logger log = LoggerFactory.getLogger(MediaEventBus.class);
 
 	private static final Map<Integer, MediaProcessor> mediaProcessors = new ConcurrentHashMap<>();
 	private static final AsyncEventBus BUS = new AsyncEventBus("Media Event Bus", Executors.newCachedThreadPool());
@@ -74,8 +78,13 @@ public class MediaEventBus {
 	 */
 	public static void unregister(MediaProcessor o) {
 		if (o == null) return;
-		BUS.unregister(o);
-		mediaProcessors.remove(o.getMediaHash());
+		
+		try {
+			mediaProcessors.remove(o.getMediaHash());
+			BUS.unregister(o);
+		} catch (Exception e) {
+			log.debug("{} is not registered on the media event bus", o, e);
+		}
 	}
 
 	/**

@@ -20,13 +20,24 @@
  */
 package com.github.mrstampy.pprspray.core.streamer.negotiation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.mrstampy.pprspray.core.handler.NegotiationHandler;
+import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
 import com.google.common.eventbus.EventBus;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class NegotiationEventBus.
+ * Classes interested in negotiating {@link MediaStreamType} connections will
+ * register themselves on this bus and respond to {@link NegotiationEvent}s as
+ * they are generated.
+ * 
+ * @see NegotiationHandler
+ * @see AbstractNegotiationSubscriber
+ * @see AcceptingNegotationSubscriber
  */
 public class NegotiationEventBus {
+	private static final Logger log = LoggerFactory.getLogger(NegotiationEventBus.class);
 
 	private static final EventBus BUS = new EventBus("Negotiation Event Bus");
 
@@ -67,7 +78,11 @@ public class NegotiationEventBus {
 	 *          the o
 	 */
 	public static void unregister(Object o) {
-		BUS.unregister(o);
+		try {
+			BUS.unregister(o);
+		} catch (Exception e) {
+			log.debug("{} is not registered on the negotiation event bus", o, e);
+		}
 	}
 
 	private NegotiationEventBus() {
