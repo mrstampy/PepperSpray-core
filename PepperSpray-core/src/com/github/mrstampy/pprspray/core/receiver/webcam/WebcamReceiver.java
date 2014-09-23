@@ -21,13 +21,15 @@
 package com.github.mrstampy.pprspray.core.receiver.webcam;
 
 import com.github.mrstampy.pprspray.core.receiver.AbstractChunkReceiver;
+import com.github.mrstampy.pprspray.core.receiver.MediaEvent;
 import com.github.mrstampy.pprspray.core.streamer.MediaStreamType;
+import com.github.mrstampy.pprspray.core.streamer.chunk.event.ChunkEventBus;
 import com.github.mrstampy.pprspray.core.streamer.footer.MediaFooterChunk;
 import com.github.mrstampy.pprspray.core.streamer.webcam.DefaultWebcamChunk;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class WebcamReceiver.
+ * Instances are registered on the {@link ChunkEventBus} and aggregate
+ * {@link DefaultWebcamChunk}s to {@link MediaEvent}s.
  */
 public class WebcamReceiver extends AbstractChunkReceiver<DefaultWebcamChunk> {
 
